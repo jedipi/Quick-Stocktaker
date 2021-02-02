@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:behaviorsPack="clr-namespace:Xamarin.Forms.BehaviorsPack;assembly=Xamarin.Forms.BehaviorsPack"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              x:Class="QuickStockTaker.Views.NewStocktakePage">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Save" Command="{Binding SaveCommand}"/>
@@ -18,8 +18,8 @@
                             <Switch IsToggled="{Binding IsToggled}" HorizontalOptions="EndAndExpand" OnColor="Orange" ThumbColor="Green">
                                 <Switch.Behaviors>
                                     <!-- behaviors namespace comes from "Xamarin.Forms Behaviors" nuget  -->
-                                    <behaviorsPack:EventToCommandBehavior EventName="Toggled"
-                                                                      Command="{Binding ToggleSwitchCommand}" />
+                                    <xct:EventToCommandBehavior EventName="Toggled"
+                                        Command="{Binding ToggleSwitchCommand}" />
                                 </Switch.Behaviors>
                             </Switch>
                         </StackLayout>
