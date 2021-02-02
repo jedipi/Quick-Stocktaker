@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QuickStockTaker.Views.ItemDetailPage"
+             >
+
+    <StackLayout Padding="10">
+        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+            <Label VerticalOptions="CenterAndExpand">Description:</Label>
+            <Label Text="{Binding SelectedItem.Description}" />
+        </StackLayout>
+        
+        <StackLayout Orientation="Horizontal" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
+            <Label VerticalOptions="CenterAndExpand">Bay/Loc/BIN or Ref No.:</Label>
+            <Label Text="{Binding SelectedItem.BayLocation}"  x:Name="BayEntry"/>
+        </StackLayout>
+        <StackLayout Orientation="Horizontal" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
+            <Label VerticalOptions="CenterAndExpand">Barcode:</Label>
+            <Entry Text="{Binding SelectedItem.Barcode}" Placeholder="Barcode..." VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" />
+        </StackLayout>
+        <StackLayout Orientation="Horizontal" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
+            <Label VerticalOptions="CenterAndExpand">Qty:</Label>
+            <Entry Text="{Binding SelectedItem.Qty}" Placeholder="Qty..." x:Name="QtyEntry" Keyboard="Numeric" VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" />
+        </StackLayout>
+        <Button Text="Save" Style="{StaticResource PrimaryButton}"
+                Command="{Binding SaveCmd}"  CornerRadius="5" />
+
+
+    </StackLayout>
+
+</ContentPage>

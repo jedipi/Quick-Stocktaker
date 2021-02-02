@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fa="clr-namespace:FontAwesome"
+             x:Class="QuickStockTaker.Views.DashboardPage" Title="Dashboard">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Button">
+                <Setter Property="TextColor" Value="{StaticResource Primary}"></Setter>
+                <Setter Property="ContentLayout" Value="Top"></Setter>
+                <Setter Property="Margin" Value="0"></Setter>
+                <Setter Property="Padding" Value="0"></Setter>
+                <Setter Property="WidthRequest" Value="100"></Setter>
+                <Setter Property="HeightRequest" Value="100"></Setter>
+            </Style>
+            <Style TargetType="ImageButton">
+                <Setter Property="BackgroundColor" Value="White"></Setter>
+                <Setter Property="Padding" Value="10"></Setter>
+                <Setter Property="WidthRequest" Value="120"></Setter>
+                <Setter Property="HeightRequest" Value="75"></Setter>
+            </Style>
+            <Style TargetType="StackLayout" x:Key="outer">
+                <Setter Property="Margin" Value="10"></Setter>
+                <Setter Property="Padding" Value="0"></Setter>
+                <Setter Property="VerticalOptions" Value="FillAndExpand"></Setter>
+            </Style>
+            <Style TargetType="Frame">
+                <Setter Property="Padding" Value="10"></Setter>
+            </Style>
+        </ResourceDictionary>
+</ContentPage.Resources>
+    <ContentPage.Content>
+        <ScrollView Padding="0" Margin="0">
+            <StackLayout>
+                <FlexLayout Wrap="Wrap" VerticalOptions="Start"
+                            JustifyContent="SpaceAround"  Margin="10">
+                
+                    <StackLayout Style="{StaticResource outer}">
+                        <Frame>
+                            <StackLayout Orientation="Vertical">
+                                <ImageButton Source="ic_stocktake.png" 
+                                        Command="{Binding NewStocktakeCmd}"/>
+                                <Label Text="New Stocktake" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+
+                            </StackLayout>
+                        </Frame>
+                    </StackLayout>
+                    <StackLayout Style="{StaticResource outer}">
+                        <Frame>
+                            <StackLayout Orientation="Vertical">
+                                <ImageButton Source="ic_scanner.png" 
+                                             Command="{Binding EnterDataCmd}"/>
+                                <Label Text="Enter Data" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+
+                            </StackLayout>
+                        </Frame>
+                    </StackLayout>
+                    <StackLayout Style="{StaticResource outer}">
+                        <Frame>
+                            <StackLayout Orientation="Vertical">
+                                <ImageButton Source="ic_list.png" 
+                                                 Command="{Binding BayListCmd}"/>
+                                <Label Text="Bay/Location List" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+
+                            </StackLayout>
+                        </Frame>
+                    </StackLayout>
+                    <StackLayout Style="{StaticResource outer}">
+                        <Frame>
+                            <StackLayout Orientation="Vertical">
+                                <ImageButton Source="ic_review.png" 
+                                                 Command="{Binding ReviewCmd}"/>
+                                <Label Text="Review/Correction" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+
+                            </StackLayout>
+                        </Frame>
+                    </StackLayout>
+                    <StackLayout Style="{StaticResource outer}">
+                        <Frame>
+                            <StackLayout Orientation="Vertical">
+                                <ImageButton Source="ic_upload.png" 
+                                                 Command="{Binding SendDataCmd}"/>
+                                <Label Text="Send Data" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+
+                            </StackLayout>
+                        </Frame>
+                    </StackLayout>
+                    <StackLayout Style="{StaticResource outer}">
+                        <Frame>
+                            <StackLayout Orientation="Vertical">
+                                <ImageButton Source="ic_bin.png" 
+                                                 Command="{Binding EnterDataCmd}"/>
+                                <Label Text="Purge Data" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                            </StackLayout>
+                        </Frame>
+                    </StackLayout>
+                </FlexLayout>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

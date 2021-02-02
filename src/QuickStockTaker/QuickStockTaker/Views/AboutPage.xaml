@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QuickStockTaker.Views.AboutPage"
+             xmlns:fa="clr-namespace:FontAwesome"
+             xmlns:vm="clr-namespace:QuickStockTaker.ViewModels"
+             xmlns:forms="clr-namespace:Lottie.Forms;assembly=Lottie.Forms"
+             Title="{Binding Title}">
+    <ContentPage.Content>
+        <ScrollView Padding="15">
+            <StackLayout Orientation="Vertical" Padding="16,10,16,40" Spacing="10">
+                <Image Source="ic_stocktake" HeightRequest="100" Margin="0,50,0,20"/>
+
+                <Label FontSize="Medium">Thank you  for trying Quick Stacktaker!</Label>
+                <Label FontSize="Medium">This app is free to use for personal and commercial. If you have any questions, comments, suggestions, or features you'd like to see, I'd appreciate your feedback.</Label>
+                <Label FontSize="Medium">If you'd like to show your support for this project and help me continue development, please consider a donation.</Label>
+
+                <TableView Intent="Menu" RowHeight="60" IsVisible="False">
+                    <TableRoot>
+                        <TableSection TextColor="{StaticResource Primary}">
+                            <ViewCell>
+                                <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand" >
+                                    <StackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding CommentCmd}"></TapGestureRecognizer>
+                                    </StackLayout.GestureRecognizers>
+                                    <Label Text="{x:Static fa:FontAwesomeIcons.Comment}" FontFamily="FA-S" 
+                                           FontSize="Large" Margin="0,0,30,0" 
+                                           VerticalTextAlignment="Center" />
+                                    <Label Text="Send feedback" FontSize="Medium" VerticalTextAlignment="Center" />
+                                </StackLayout>
+                            </ViewCell>
+
+                            <ViewCell>
+                                <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand" >
+                                    <StackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding DonationCmd}"></TapGestureRecognizer>
+                                    </StackLayout.GestureRecognizers>
+                                    <Label Text="{x:Static fa:FontAwesomeIcons.Donate}" FontFamily="FA-S" 
+                                           FontSize="Large" Margin="0,0,30,0" 
+                                           VerticalTextAlignment="Center" />
+                                    <Label Text="Donate" FontSize="Medium" VerticalTextAlignment="Center"/>
+                                </StackLayout>
+                            </ViewCell>
+
+                            <ViewCell>
+                                <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand">
+                                    <StackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding VersionCmd}"></TapGestureRecognizer>
+                                    </StackLayout.GestureRecognizers>
+                                    <Label Text="{x:Static fa:FontAwesomeIcons.InfoCircle}" FontFamily="FA-S" 
+                                           FontSize="Large" Margin="0,0,30,0" 
+                                           VerticalTextAlignment="Center" />
+                                    <Label FontSize="Medium" VerticalTextAlignment="Center" >
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="App Version " />
+                                                <Span Text="v" FontSize="Micro"/>
+                                                <Span Text="{Binding VersionNo}" TextColor="#cccccc"></Span>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </StackLayout>
+                            </ViewCell>
+
+                        </TableSection>
+
+                    </TableRoot>
+
+                </TableView>
+            </StackLayout>
+
+        </ScrollView>
+
+    </ContentPage.Content>
+
+</ContentPage>

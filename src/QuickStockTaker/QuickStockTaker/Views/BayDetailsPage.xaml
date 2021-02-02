@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:behaviorsPack="clr-namespace:Xamarin.Forms.BehaviorsPack;assembly=Xamarin.Forms.BehaviorsPack"
+			 xmlns:fa="clr-namespace:FontAwesome;assembly=QuickStockTaker"
+			 xmlns:pancakeView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+			 x:Class="QuickStockTaker.Views.BayDetailsPage"
+             x:Name="BayDetails">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="PDE QTY:"/>
+        <ToolbarItem Text="{Binding TotalQty}"/>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+		<StackLayout Padding="10">
+			<SearchBar Placeholder="find sku..." Text="{Binding SearchText}" 
+					   FontSize="Default" Keyboard="Text" HeightRequest="30" x:Name="SearchBarSearch">
+				<SearchBar.Behaviors>
+					<behaviorsPack:EventToCommandBehavior
+						EventName="TextChanged"
+						Command="{Binding SearchTextCmd}"/>
+				</SearchBar.Behaviors>
+			</SearchBar>
+            <ListView ItemsSource="{Binding Items, Mode=TwoWay}" 
+                      VerticalOptions="FillAndExpand" CachingStrategy="RecycleElement" >
+                <ListView.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.4*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="0.3*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Text="Bay/Loc" FontAttributes="Bold" Grid.Column="0" Margin="5"/>
+                        <Label Text="Item" FontAttributes="Bold" Grid.Column="1" Margin="5"/>
+                        <Label Text="Qty" FontAttributes="Bold" Grid.Column="2" Margin="5"/>
+                    </Grid>
+                </ListView.Header>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <SwipeView x:Name="swipeView1" BackgroundColor="#E1E7F1">
+                                <SwipeView.LeftItems>
+                                    <SwipeItemView Command="{Binding Source={x:Reference BayDetails}, Path=BindingContext.DeleteCmd}"
+                                                       CommandParameter="{Binding .}">
+                                        <Grid WidthRequest="100" >
+                                            <BoxView Margin="0,0,5,0"
+                                                    VerticalOptions="FillAndExpand"
+                                                    BackgroundColor="#DC3545"
+                                                    CornerRadius="0,6,0,6" />
+                                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" 
+                                                         Orientation="Horizontal">
+                                                <Label
+                                                    Text="{x:Static fa:FontAwesomeIcons.TrashAlt}"
+                                                    TextColor="White"
+                                                    FontFamily="FA-S"
+                                                    HorizontalOptions="Center"
+                                                    VerticalOptions="Center" />
+
+                                                <Label
+                                                    HorizontalOptions="Center"
+                                                    Text="Delete"
+                                                    TextColor="White"
+                                                    VerticalOptions="Center" />
+                                            </StackLayout>
+                                        </Grid>
+                                    </SwipeItemView>
+
+                                </SwipeView.LeftItems>
+                                <SwipeView.RightItems>
+                                    <SwipeItemView Command="{Binding Source={x:Reference BayDetails}, Path=BindingContext.EditCmd}"
+                                                   CommandParameter="{Binding .}">
+                                        <Grid WidthRequest="100" >
+                                            <BoxView Margin="5,0,0,0"
+                                                         VerticalOptions="FillAndExpand"
+                                                         BackgroundColor="{StaticResource Primary}"
+                                                         CornerRadius="6,0,6,0" />
+                                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" 
+                                                         Orientation="Horizontal">
+                                                <Label
+                                                        Text="{x:Static fa:FontAwesomeIcons.Edit}"
+                                                        TextColor="White"
+                                                        FontFamily="FA-S"
+                                                        HorizontalOptions="Center"
+                                                        VerticalOptions="Center" />
+
+                                                <Label
+                                                        HorizontalOptions="Center"
+                                                        Text="Details"
+                                                        TextColor="White"
+                                                        VerticalOptions="Center" />
+                                            </StackLayout>
+                                        </Grid>
+                                    </SwipeItemView>
+                                </SwipeView.RightItems>
+
+                                <pancakeView:PancakeView VerticalOptions="Fill" CornerRadius="5" BackgroundColor="#e1eff1 " Margin="0,0,0,0">
+                                    <Grid VerticalOptions="CenterAndExpand">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="0.4*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="0.3*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Text="{Binding BayLocation}" Grid.Column="0" Margin="5"/>
+                                        <StackLayout Orientation="Vertical" Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                                            <Label Text="{Binding Barcode}" />
+                                            <Label Text="{Binding Desc}"/>
+                                        </StackLayout>
+                                        <Label Text="{Binding Qty}" Grid.Column="2" Margin="5"/>
+                                    </Grid>
+                                </pancakeView:PancakeView>
+                            </SwipeView>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+        </StackLayout>
+	</ContentPage.Content>
+</ContentPage>

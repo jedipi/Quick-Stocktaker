@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:behaviorsPack="clr-namespace:Xamarin.Forms.BehaviorsPack;assembly=Xamarin.Forms.BehaviorsPack"
+             x:Class="QuickStockTaker.Views.NewStocktakePage">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Save" Command="{Binding SaveCommand}"/>
+    </ContentPage.ToolbarItems>
+    
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Spacing="20" Padding="15">
+                <Frame>
+                    <StackLayout>
+                        <Label Text="The current stocktake data will be cleared." FontSize="Medium" />
+                        <StackLayout Orientation="Horizontal" Spacing="0">
+                            <Label Text="Do you want to continue?"  VerticalOptions="Center" FontSize="Medium" />
+                            <Switch IsToggled="{Binding IsToggled}" HorizontalOptions="EndAndExpand" OnColor="Orange" ThumbColor="Green">
+                                <Switch.Behaviors>
+                                    <!-- behaviors namespace comes from "Xamarin.Forms Behaviors" nuget  -->
+                                    <behaviorsPack:EventToCommandBehavior EventName="Toggled"
+                                                                      Command="{Binding ToggleSwitchCommand}" />
+                                </Switch.Behaviors>
+                            </Switch>
+                        </StackLayout>
+                    </StackLayout>
+                </Frame>
+                <Frame IsVisible="{Binding IsDetailsVisible}">
+                    <StackLayout >
+                        <Label Text="New Stocktake Number:" />
+                        <Entry Text="{Binding StocktakeNumber}" Keyboard="Numeric" />
+
+                        <Label Text="Site/Warehouse:" />
+                        <Entry Text="{Binding Site}" />
+
+                        <Label Text="Stocktake Date"/>
+                        <DatePicker Date="{Binding StocktakeDate}" />
+
+                        <Button Text="Save" Command="{Binding SaveCommand}"/>
+                    </StackLayout>
+                </Frame>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
