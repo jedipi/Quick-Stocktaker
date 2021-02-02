@@ -174,27 +174,27 @@ namespace QuickStockTaker.ViewModels
 
         public async Task OnDropBoxCmd()
         {
-            new NotImplementedException();
+            await _dialogs.AlertAsync("This feature is currently not available.");
         }
 
 
         public async Task OnFtpCmd()
         {
-            new NotImplementedException();
+            await _dialogs.AlertAsync("This feature is currently not available.");
         }
 
         public async Task OnGoogleDriveCmd()
         {
-
+            await _dialogs.AlertAsync("This feature is currently not available.");
         }
 
         public async Task OnOneDriveCmd()
         {
-            new NotImplementedException();
+            await _dialogs.AlertAsync("This feature is currently not available.");
         }
         public async Task OnICloudCmd()
         {
-            new NotImplementedException();
+            await _dialogs.AlertAsync("This feature is currently not available.");
         }
 
         private void RefreshCanExecutes()
