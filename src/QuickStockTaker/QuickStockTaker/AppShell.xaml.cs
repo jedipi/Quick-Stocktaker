@@ -25,8 +25,6 @@ namespace QuickStockTaker
 
 
             Routing.RegisterRoute(nameof(ItemDetailPage), typeof(ItemDetailPage));
-            Routing.RegisterRoute(nameof(NewItemPage), typeof(NewItemPage));
-
             Routing.RegisterRoute(nameof(NewStocktakePage), typeof(NewStocktakePage));
             Routing.RegisterRoute(nameof(EnterDatePage), typeof(EnterDatePage));
             Routing.RegisterRoute(nameof(BayListPage), typeof(BayListPage));
