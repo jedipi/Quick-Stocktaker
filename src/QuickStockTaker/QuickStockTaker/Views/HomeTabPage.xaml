@@ -26,8 +26,8 @@
                 </Label>
                 <Grid HorizontalOptions="Center" Margin="0,20,0,0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="130"/>
-                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="140"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -41,17 +41,17 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <Label Grid.Row="0" Grid.Column="0" Text="Scanner ID: " />
-                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding DeviceId}"/>
+                    <Label Grid.Row="0" Grid.Column="0" Text="Scanner ID: " FontSize="Medium"/>
+                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding DeviceId}" FontSize="Medium"/>
 
-                    <Label Grid.Row="1" Grid.Column="0" Text="Stocktake No: " />
-                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding StocktakeNumber}"/>
+                    <Label Grid.Row="1" Grid.Column="0" Text="Stocktake No: " FontSize="Medium"/>
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding StocktakeNumber}" FontSize="Medium"/>
 
-                    <Label Grid.Row="2" Grid.Column="0" Text="Site/Warehouse: " />
-                    <Label Grid.Row="2" Grid.Column="1" Text="{Binding Site}" />
+                    <Label Grid.Row="2" Grid.Column="0" Text="Site/Warehouse: " FontSize="Medium"/>
+                    <Label Grid.Row="2" Grid.Column="1" Text="{Binding Site}" FontSize="Medium"/>
 
-                    <Label Grid.Row="3" Grid.Column="0" Text="Stocktake Date: " />
-                    <Label Grid.Row="3" Grid.Column="1" Text="{Binding StocktakeDate}"/>
+                    <Label Grid.Row="3" Grid.Column="0" Text="Stocktake Date: " FontSize="Medium"/>
+                    <Label Grid.Row="3" Grid.Column="1" Text="{Binding StocktakeDate}" FontSize="Medium"/>
 
 
 

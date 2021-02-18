@@ -44,22 +44,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Acr.UserDialogs" Version="7.1.0.470" />
+    <PackageReference Include="Acr.UserDialogs" Version="7.1.0.475" />
     <PackageReference Include="Autofac" Version="6.1.0" />
     <PackageReference Include="Com.Airbnb.Xamarin.Forms.Lottie" Version="4.0.8" />
-    <PackageReference Include="CsvHelper" Version="21.2.1" />
-    <PackageReference Include="FluentValidation" Version="9.4.0" />
+    <PackageReference Include="CsvHelper" Version="22.1.0" />
+    <PackageReference Include="FluentValidation" Version="9.5.0" />
     <PackageReference Include="MailKit" Version="2.10.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="NLog" Version="4.7.6" />
+    <PackageReference Include="NLog" Version="4.7.7" />
     <PackageReference Include="Plugin.MediaManager.Forms" Version="1.0.8" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.3.1" />
     <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
+    <PackageReference Include="Xamarin.CommunityToolkit" Version="1.0.2" />
     <PackageReference Include="Xamarin.FFImageLoading.Forms" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.1874" />  
-    <PackageReference Include="Xamarin.Essentials" Version="1.6.0" />  
-    <PackageReference Include="Xamarin.Forms.BehaviorsPack" Version="2.2.0" />  
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.1931" />  
+    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />  
     <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.759" />  
     <PackageReference Include="ZXing.Net.Mobile.Forms" Version="2.4.1" />
   </ItemGroup>

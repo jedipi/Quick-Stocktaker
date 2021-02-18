@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-			 xmlns:behaviorsPack="clr-namespace:Xamarin.Forms.BehaviorsPack;assembly=Xamarin.Forms.BehaviorsPack"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
 			 xmlns:fa="clr-namespace:FontAwesome;assembly=QuickStockTaker"
 			 x:Class="QuickStockTaker.Views.EnterDatePage"
              x:Name="EnterData">
@@ -52,7 +52,7 @@
                         <StackLayout Orientation="Horizontal">
                             <Entry Text="{Binding BayLocation}" Placeholder="Ref No..." HorizontalOptions="FillAndExpand" >
                                 <Entry.Behaviors>
-                                    <behaviorsPack:EventToCommandBehavior
+                                    <xct:EventToCommandBehavior
                                         EventName="TextChanged"
                                         Command="{Binding BayTextChangedCmd}"/>
                                 </Entry.Behaviors>
@@ -101,8 +101,8 @@
                         <Stepper Increment="1" Minimum="1"   Value="{Binding Qty}" IsEnabled="True">
                             <Stepper.Behaviors>
                                 <!-- behaviors namespace comes from "Xamarin.Forms Behaviors" nuget  -->
-                                <behaviorsPack:EventToCommandBehavior EventName="ValueChanged"
-																	  Command="{Binding StepperValueChangedCmd}" />
+                                <xct:EventToCommandBehavior EventName="ValueChanged"
+									Command="{Binding StepperValueChangedCmd}" />
                             </Stepper.Behaviors>
 
                             <Stepper.Triggers>
@@ -134,12 +134,6 @@
                     <Label Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Text="Last 3 items" Margin="0, 20, 0, 0"/>
                     <ListView Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" ItemsSource="{Binding Last5Items, Mode=TwoWay}"
 								  SelectedItem="{Binding SelectedItem}" HeightRequest="200">
-                        <ListView.Behaviors>
-                            <behaviorsPack:EventToCommandBehavior
-									EventName="ItemAppearing"
-									Command="{Binding ItemAppearingCmd}"
-									EventArgsPropertyPath="Item"/>
-                        </ListView.Behaviors>
                         <ListView.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>
