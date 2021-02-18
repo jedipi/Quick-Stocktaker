@@ -13,7 +13,7 @@ namespace QuickStockTaker
         public AppShell()
         {
             InitializeComponent();
-            _logger.Info("Application Start.");
+            //_logger.Info("Application Start.");
 
             //var folder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "logs");
             //var files = Directory.GetFiles(folder, "*.log");
