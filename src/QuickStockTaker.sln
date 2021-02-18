@@ -11,6 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickStockTaker", "QuickSto
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "QuickStockTaker.Common", "QuickStockTaker\QuickStockTaker.Common\QuickStockTaker.Common.shproj", "{3704C7CE-A2B2-48E2-A874-38C7AA2CBDFF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Documents", "!Documents", "{A6295A57-07DC-4053-80F4-3B80D20E46C6}"
+	ProjectSection(SolutionItems) = preProject
+		..\LICENSE = ..\LICENSE
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		QuickStockTaker\QuickStockTaker.Common\QuickStockTaker.Common.projitems*{3704c7ce-a2b2-48e2-a874-38c7aa2cbdff}*SharedItemsImports = 13
