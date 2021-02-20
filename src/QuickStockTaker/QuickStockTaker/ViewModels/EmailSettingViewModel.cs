@@ -17,8 +17,7 @@ namespace QuickStockTaker.ViewModels
     {
         #region Fields
 
-        private readonly NLog.ILogger _logger;
-        private IUserDialogs _dialogs;
+        
 
         #endregion
 
@@ -64,9 +63,8 @@ namespace QuickStockTaker.ViewModels
         #endregion
 
         public EmailSettingViewModel(IUserDialogs dialogs, ILogger logger)
+            : base(dialogs, logger)
         {
-            _dialogs = dialogs;
-            _logger = logger;
 
             HostTypeCmd = new Command(OnHostTypeCmd);
             SmtpHostCmd = new Command(async () => await OnSmtpHostCmd());

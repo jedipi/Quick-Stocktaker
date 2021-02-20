@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autofac;
 using QuickStockTaker.ViewModels;
+using QuickStockTaker.ViewModels.Base;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -15,7 +17,7 @@ namespace QuickStockTaker.Views
         public DashboardPage()
         {
             InitializeComponent();
-            BindingContext = new DashboardViewModel();
+            BindingContext = ViewModelLocator.Container.Resolve<DashboardViewModel>();
         }
     }
 }

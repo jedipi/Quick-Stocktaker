@@ -16,8 +16,7 @@ namespace QuickStockTaker.ViewModels
     {
         #region Fields
 
-        private readonly NLog.ILogger _logger;
-        private IUserDialogs _dialogs;
+        
         private List<DonationAmount> _donationAmounts;
 
         #endregion
@@ -41,10 +40,8 @@ namespace QuickStockTaker.ViewModels
         #endregion
 
 
-        public AboutViewModel(IUserDialogs dialogs, ILogger logger)
+        public AboutViewModel(IUserDialogs dialogs, ILogger logger) : base(dialogs, logger)
         {
-            _dialogs = dialogs;
-            _logger = logger;
             
             _donationAmounts = new List<DonationAmount>()
             {

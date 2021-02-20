@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autofac;
 using QuickStockTaker.ViewModels;
+using QuickStockTaker.ViewModels.Base;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -16,7 +18,7 @@ namespace QuickStockTaker.Views
         public HomeTabPage()
         {
             InitializeComponent();
-            BindingContext = _vm = new HomeTabViewModel();
+            BindingContext = _vm = ViewModelLocator.Container.Resolve<HomeTabViewModel>();
         }
 
         protected override void OnAppearing()

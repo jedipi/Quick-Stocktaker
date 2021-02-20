@@ -25,8 +25,6 @@ namespace QuickStockTaker.ViewModels
     {
         #region Fields
 
-        private readonly NLog.ILogger _logger;
-        private IUserDialogs _dialogs;
         private FileInfo _exportedFile;
         private IEmailUploader _uploader;
         #endregion
@@ -61,10 +59,9 @@ namespace QuickStockTaker.ViewModels
 
         #endregion
         public DataUploadViewModel(IEmailUploader uploader, IUserDialogs dialogs, ILogger logger)
+            : base(dialogs, logger)
         {
             _uploader = uploader;
-            _dialogs = dialogs;
-            _logger = logger;
         }
 
         /// <summary>

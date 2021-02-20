@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Acr.UserDialogs;
+using NLog;
 using QuickStockTaker.Models;
 using QuickStockTaker.Services;
 using Xamarin.Forms;
@@ -10,6 +12,9 @@ namespace QuickStockTaker.ViewModels.Base
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
+        protected IUserDialogs _dialogs;
+        protected readonly NLog.ILogger _logger;
+
         bool isBusy = false;
         public bool IsBusy
         {
@@ -36,6 +41,14 @@ namespace QuickStockTaker.ViewModels.Base
             OnPropertyChanged(propertyName);
             return true;
         }
+
+        public BaseViewModel() { }
+        public BaseViewModel(IUserDialogs dialogs, ILogger logger)
+        {
+            _dialogs = dialogs;
+            _logger = logger;
+        }
+
 
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;

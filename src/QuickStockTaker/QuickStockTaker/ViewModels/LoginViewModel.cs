@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Acr.UserDialogs;
+using NLog;
 using QuickStockTaker.ViewModels.Base;
 using Xamarin.Forms;
 
@@ -11,7 +13,7 @@ namespace QuickStockTaker.ViewModels
     {
         public Command LoginCommand { get; }
 
-        public LoginViewModel()
+        public LoginViewModel(IUserDialogs dialogs, ILogger logger) : base(dialogs, logger)
         {
             LoginCommand = new Command(OnLoginClicked);
         }
