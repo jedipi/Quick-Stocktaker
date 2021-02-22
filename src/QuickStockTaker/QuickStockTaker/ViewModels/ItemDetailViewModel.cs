@@ -18,8 +18,6 @@ namespace QuickStockTaker.ViewModels
     public class ItemDetailViewModel : BaseViewModel
     {
         #region fields
-        private IUserDialogs _dialogs;
-        private readonly NLog.ILogger _logger;
         private IDBConnection _dbConnection;
         #endregion
 
@@ -59,10 +57,9 @@ namespace QuickStockTaker.ViewModels
 
 
 
-        public ItemDetailViewModel(IUserDialogs dialogs, ILogger logger)
+        public ItemDetailViewModel(IUserDialogs dialogs, ILogger logger) : base(dialogs, logger)
         {
-            _dialogs = dialogs;
-            _logger = logger;
+            
             _dbConnection = ViewModelLocator.Container.Resolve<IDBConnection>();
         }
 

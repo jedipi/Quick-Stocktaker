@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="2" android:versionName="2.0" package="com.thyconsultants.quickstocktaker" android:installLocation="auto">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="4" android:versionName="4.0" package="com.thyconsultants.quickstocktaker" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="27" android:targetSdkVersion="29" />
 	<application android:label="QuickStockTaker.Android" android:theme="@style/MainTheme"></application>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -8,7 +8,6 @@
 	<uses-permission android:name="android.permission.CAMERA" />
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.INSTALL_PACKAGES" />
-	<uses-permission android:name="android.permission.BATTERY_STATS" />
 	<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 	<uses-permission android:name="android.permission.FLASHLIGHT" />
 </manifest>

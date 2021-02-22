@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
@@ -9,6 +10,7 @@ using QuickStockTaker.Data;
 using QuickStockTaker.DataAccess;
 using QuickStockTaker.Models;
 using QuickStockTaker.Services;
+using QuickStockTaker.Validators;
 using QuickStockTaker.ViewModels.Base;
 using QuickStockTaker.Views;
 using Xamarin.Essentials;
@@ -19,12 +21,10 @@ namespace QuickStockTaker.ViewModels
     /// <summary>
     /// Start a new stocktake
     /// </summary>
-    class NewStocktakeViewModel : BaseViewModel
+    public class NewStocktakeViewModel : BaseViewModel
     {
         #region Fields
 
-        private IUserDialogs _dialogs;
-        private readonly NLog.ILogger _logger;
         private IDBConnection _dbConnection;
 
         #endregion
@@ -45,10 +45,9 @@ namespace QuickStockTaker.ViewModels
         #endregion
         
 
-        public NewStocktakeViewModel(IUserDialogs dialogs, ILogger logger)
+        public NewStocktakeViewModel(IUserDialogs dialogs, ILogger logger):base(dialogs,logger)
         {
-            _dialogs = dialogs;
-            _logger = logger;
+            
             _dbConnection = ViewModelLocator.Container.Resolve<IDBConnection>();
 
             SaveCommand = new Command(async () => await OnSaveCmd());
@@ -57,6 +56,15 @@ namespace QuickStockTaker.ViewModels
 
         private async Task OnSaveCmd()
         {
+            var validator = ViewModelLocator.Container.Resolve<StocktakeValidator>();
+            var validateResult = validator.Validate(this);
+
+            if (!validateResult.IsValid)
+            {
+                await _dialogs.AlertAsync(validateResult.Errors.First().ErrorMessage, "Error", "OK");
+                return;
+            }
+
             // clear data by drop table and re-create table
             await _dbConnection.Database.RunInTransactionAsync((trans) =>
                 {

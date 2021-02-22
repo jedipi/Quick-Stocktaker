@@ -32,11 +32,16 @@ namespace QuickStockTaker.ViewModels
     class EnterDateViewModel:BaseViewModel
     {
 #region fields
-        private IUserDialogs _dialogs;
-        private readonly NLog.ILogger _logger;
         private IMobileBarcodeScanner _scanner;
         private Queue<StocktakeItem> _last5Items;
         private IDBConnection _dbConnection;
+        private bool _isContinuousMode = Preferences.Get("ContinuousMode", false);
+        private int _deviceId = Preferences.Get(Constants.DeviceId, 0);
+        private int _stocktakeNumber = Preferences.Get(Constants.StocktakeNumber, 0);
+        private string _site = Preferences.Get(Constants.Site, "");
+
+        private string _stocktakeDate =
+            (Preferences.Get(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString());
         #endregion
 
         #region properties
@@ -86,16 +91,16 @@ namespace QuickStockTaker.ViewModels
         public ICommand ClearBarcodeCmd { get; set; }
         public ICommand BayTextChangedCmd { get; set; }
         public ICommand DeleteItemCmd { get; set; }
+        public ICommand AppearingCmd { get; set; }
 
         #endregion
 
-        
+
 
         public EnterDateViewModel(IMobileBarcodeScanner scanner, IUserDialogs dialogs, ILogger logger)
+            :base(dialogs, logger)
         {
             _scanner = scanner;
-            _dialogs = dialogs;
-            _logger = logger;
             _dbConnection = ViewModelLocator.Container.Resolve<IDBConnection>();
             _last5Items = new Queue<StocktakeItem>();
 
@@ -103,6 +108,7 @@ namespace QuickStockTaker.ViewModels
             _scanner.BottomText = "Barcode will automatically scan";
 
             AutoQty = true;
+            Last5Items = new ObservableCollection<StocktakeItem>();
 
             StepperValueChangedCmd = new Command(ExecuteStepperValueChangedCmd);
             ScanBayNoCmd = new Command(async ()=> await OnScanBayNoCmd(), () => CanNavigate);
@@ -114,17 +120,17 @@ namespace QuickStockTaker.ViewModels
             BayTextChangedCmd = new Command(async () => await GetItemCount());
         }
 
+        
         public async Task OnDeleteItemCmd(StocktakeItem item)
         {
-            CanNavigate = false;
-            
             try
             {
+                CanNavigate = false;
                 // remove the select item from db and last 5 items list
                 var result = await _dbConnection.Database.DeleteAsync(item);
                 if (result != 0)
                 {
-                    BayUnits = BayUnits - (int)item.Qty;
+                    BayUnits = BayUnits - (int) item.Qty;
                     Last5Items.Remove(item);
                     _logger.Info($"removed item {item.Barcode} with {item.Qty} units");
                 }
@@ -133,10 +139,12 @@ namespace QuickStockTaker.ViewModels
             {
                 _logger.Error(e, $"Cannot delete stocktake item {e.Message}");
                 await _dialogs.AlertAsync($"Error occured while deleting stocktake item.\n{e.Message}", "Error");
+                //CanNavigate = true;
+            }
+            finally
+            {
                 CanNavigate = true;
             }
-
-            CanNavigate = true;
         }
 
         void RefreshCanExecutes()
@@ -155,6 +163,7 @@ namespace QuickStockTaker.ViewModels
         {
             CanNavigate = false;
 
+            // error : missing bay/location
             if (string.IsNullOrEmpty(BayLocation))
             {
                 Vibration.Vibrate(TimeSpan.FromSeconds(2));
@@ -163,6 +172,7 @@ namespace QuickStockTaker.ViewModels
                 return;
             }
 
+            // error: empty barcode
             if (string.IsNullOrEmpty(Barcode))
             {
                 Vibration.Vibrate(TimeSpan.FromSeconds(2));
@@ -172,14 +182,14 @@ namespace QuickStockTaker.ViewModels
 
             var item = new StocktakeItem()
             {
-                DeviceId = Preferences.Get(Constants.DeviceId, 0),
-                StocktakeNumber = Preferences.Get(Constants.StocktakeNumber, 0),
-                Site = Preferences.Get(Constants.Site, ""),
+                DeviceId = _deviceId,
+                StocktakeNumber = _stocktakeNumber,
+                Site = _site,
                 BayLocation = BayLocation,
                 Barcode = Barcode,
                 Description = "",
                 Qty = Qty,
-                StocktakeDate = (Preferences.Get(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString()),
+                StocktakeDate = _stocktakeDate,
                 InsertedAt = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToShortTimeString()}",
                 UpdatedAt = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToShortTimeString()}"
             };
@@ -201,40 +211,54 @@ namespace QuickStockTaker.ViewModels
             BayUnits = BayUnits + Qty;
 
             // add last scanned item to the queue
-            _last5Items.Enqueue(item);
+            //_last5Items.Enqueue(item);
 
             // remove the first scanned item from the queue
-            if (_last5Items.Count > 3)
-                _last5Items.Dequeue();
+            //if (_last5Items.Count > 3)
+            //_last5Items.Dequeue();
 
-            Last5Items = new ObservableCollection<StocktakeItem>(_last5Items.ToList());
+            //Last5Items = new ObservableCollection<StocktakeItem>(_last5Items.ToList());
+
+            Last5Items.Add(item);
+            if (Last5Items.Count > 5)
+                Last5Items.RemoveAt(5);
+
             CanNavigate = true;
         }
 
+        /// <summary>
+        /// Scan item barcode
+        /// </summary>
+        /// <returns></returns>
         private async Task OnScanBarcodeCmd()
         {
             
 
-            if (AutoQty)
-            {
-                CanNavigate = false;
-                ScanContinuously();
-                CanNavigate = true;
-
-            }
-            else
+            if (!_isContinuousMode)
             {
                 CanNavigate = false;
 
                 Barcode = await Scan();
                 CanNavigate = true;
 
-                AddItemCmd.Execute(null);
+                if (AutoQty)
+                    AddItemCmd.Execute(null);
+
+                return;
             }
+
+            // continuous scanning mode
+
+            CanNavigate = false;
+            ScanContinuously();
+            CanNavigate = true;
 
         }
 
-        
+        /// <summary>
+        /// Scan bay no from barcode
+        /// </summary>
+        /// <returns></returns>
         private async Task OnScanBayNoCmd()
         {
             var bay = await Scan();
@@ -255,16 +279,20 @@ namespace QuickStockTaker.ViewModels
         {
             try
             {
-                var opt = new MobileBarcodeScanningOptions { DelayBetweenContinuousScans = 1000 };
+                var opt = new MobileBarcodeScanningOptions { DelayBetweenContinuousScans = 1500 };
 
                 _scanner.ScanContinuously(opt, async (result) =>
                 {
                     if (result != null && !string.IsNullOrEmpty(result.Text))
                     {
                         await CrossMediaManager.Current.PlayFromAssembly("beep.mp3", typeof(BaseViewModel).Assembly);
-                        Vibration.Vibrate();
+                        //Vibration.Vibrate();
                         Barcode = result.Text;
-                        AddItemCmd.Execute(null);
+                        Device.BeginInvokeOnMainThread(async () =>
+                        {
+                            AddItemCmd.Execute(null);
+                        });
+                        
                     }
                 });
             }
@@ -286,7 +314,7 @@ namespace QuickStockTaker.ViewModels
                 if (result != null)
                 {
                     await CrossMediaManager.Current.PlayFromAssembly("beep.mp3", typeof(BaseViewModel).Assembly);
-                    Vibration.Vibrate();
+                    //Vibration.Vibrate();
                 }
 
                 return result?.Text;
@@ -296,6 +324,7 @@ namespace QuickStockTaker.ViewModels
                 _logger.Error(e,"Fail to scan");
                 Device.BeginInvokeOnMainThread( async () => 
                 {
+                    Vibration.Vibrate();
                     await _dialogs.AlertAsync("Something wrong while scanning. Please try again.", "Error");
                 });
                 return null;
@@ -314,6 +343,7 @@ namespace QuickStockTaker.ViewModels
                 _logger.Error(e, $"Calculate total units failed. {e.Message}");
             }
         }
+        
 
     }
 }

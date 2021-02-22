@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autofac;
+using QuickStockTaker.ViewModels.Base;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -15,7 +17,7 @@ namespace QuickStockTaker.Views
         public LoginPage()
         {
             InitializeComponent();
-            this.BindingContext = new LoginViewModel();
+            this.BindingContext = ViewModelLocator.Container.Resolve<LoginViewModel>();
         }
     }
 }

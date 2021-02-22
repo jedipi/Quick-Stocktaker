@@ -43,6 +43,10 @@ namespace QuickStockTaker.ViewModels.Base
                 .Where(t => t.Name.EndsWith("Service"))
                 .AsImplementedInterfaces();
 
+            builder.RegisterAssemblyTypes(dataAccess)
+                .Where(t => t.Name.EndsWith("Repository"))
+                .AsImplementedInterfaces();
+
             builder.RegisterInstance(NLog.LogManager.GetCurrentClassLogger()).As<ILogger>();
             builder.RegisterInstance(UserDialogs.Instance).As<IUserDialogs>().SingleInstance();
             builder.RegisterType<DBConnection>().As<IDBConnection>().SingleInstance();

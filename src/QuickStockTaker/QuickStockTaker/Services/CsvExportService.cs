@@ -10,8 +10,8 @@ using CsvHelper.Configuration;
 using NLog;
 using QuickStockTaker.Data;
 using QuickStockTaker.DataAccess;
-using QuickStockTaker.Interfaces;
 using QuickStockTaker.Models;
+using QuickStockTaker.Services.Interfaces;
 using Xamarin.Essentials;
 
 namespace QuickStockTaker.Services

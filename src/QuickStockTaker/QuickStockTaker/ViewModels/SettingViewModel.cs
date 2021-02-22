@@ -35,15 +35,5 @@ namespace QuickStockTaker.ViewModels
                 Preferences.Set("ContinuousMode", value);
             }
         }
-
-
-
-
-        public SettingViewModel()
-        {
-            
-
-        }
-
     }
 }

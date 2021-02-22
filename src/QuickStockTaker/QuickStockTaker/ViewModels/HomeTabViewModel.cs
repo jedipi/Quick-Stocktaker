@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Acr.UserDialogs;
+using NLog;
 using QuickStockTaker.Data;
 using QuickStockTaker.ViewModels.Base;
 using QuickStockTaker.Views;
@@ -43,7 +45,7 @@ namespace QuickStockTaker.ViewModels
 
         #endregion
 
-        public HomeTabViewModel()
+        public HomeTabViewModel(IUserDialogs dialogs, ILogger logger) : base(dialogs, logger)
         {
             GetStartedCmd = new Command(async  ()=> await OnGetStartedCmd(), () => CanNavigate);
         }

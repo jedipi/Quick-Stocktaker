@@ -3,14 +3,20 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Acr.UserDialogs;
+using NLog;
+using QuickStockTaker.Data;
 using QuickStockTaker.ViewModels.Base;
 using QuickStockTaker.Views;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace QuickStockTaker.ViewModels
 {
     class DashboardViewModel:BaseViewModel
     {
+        
+
         public ICommand NewStocktakeCmd { get; set; }
         public ICommand EnterDataCmd { get; set; }
         public ICommand BayListCmd { get; set; }
@@ -28,7 +34,7 @@ namespace QuickStockTaker.ViewModels
             }
         }
 
-        public DashboardViewModel()
+        public DashboardViewModel(IUserDialogs dialogs, ILogger logger):base(dialogs, logger)
         {
             NewStocktakeCmd = new Command(async () => await OnNewStocktakeCmd(), ()=>CanNavigate);
             EnterDataCmd = new Command(async () => await OnEnterDataCmd(), () => CanNavigate);
@@ -63,6 +69,11 @@ namespace QuickStockTaker.ViewModels
 
         private async Task OnEnterDataCmd()
         {
+            if (Preferences.Get(Constants.StocktakeNumber, 0) == 0)
+            {
+                await _dialogs.AlertAsync("Please specify a stocktake number before scanning any item", "Error");
+                return;
+            }
             CanNavigate = false;
             await Shell.Current.GoToAsync($"{nameof(EnterDatePage)}");
             CanNavigate = true;

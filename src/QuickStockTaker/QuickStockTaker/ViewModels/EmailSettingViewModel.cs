@@ -17,8 +17,7 @@ namespace QuickStockTaker.ViewModels
     {
         #region Fields
 
-        private readonly NLog.ILogger _logger;
-        private IUserDialogs _dialogs;
+        
 
         #endregion
 
@@ -64,9 +63,8 @@ namespace QuickStockTaker.ViewModels
         #endregion
 
         public EmailSettingViewModel(IUserDialogs dialogs, ILogger logger)
+            : base(dialogs, logger)
         {
-            _dialogs = dialogs;
-            _logger = logger;
 
             HostTypeCmd = new Command(OnHostTypeCmd);
             SmtpHostCmd = new Command(async () => await OnSmtpHostCmd());
@@ -148,6 +146,14 @@ namespace QuickStockTaker.ViewModels
                     OnPropertyChanged();
                     //await SecureStorage.SetAsync(Constants.SmptProvider, SmtpProvider);
                     Preferences.Set(Constants.SmtpProvider, SmtpProvider);
+                    if (SmtpProvider == "Gmail")
+                    {
+                        SmtpHost = "smtp.gmail.com";
+                        SmtpPort = "587";
+                    }
+
+                    SecureStorage.SetAsync(Constants.SmtpHost, SmtpHost);
+                    SecureStorage.SetAsync(Constants.SmtpPort, SmtpPort);
                 });
             }
 

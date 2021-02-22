@@ -7,8 +7,8 @@ using Acr.UserDialogs;
 using Autofac;
 using NLog;
 using QuickStockTaker.Data;
-using QuickStockTaker.Interfaces;
 using QuickStockTaker.Models;
+using QuickStockTaker.Services.Interfaces;
 using QuickStockTaker.ViewModels.Base;
 using Xamarin.Essentials;
 

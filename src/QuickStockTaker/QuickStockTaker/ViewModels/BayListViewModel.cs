@@ -22,9 +22,9 @@ namespace QuickStockTaker.ViewModels
     {
         #region fields
 
-        private readonly NLog.ILogger _logger;
+        
         private IDBConnection _dbConnection;
-        private IUserDialogs _dialogs;
+        
         private ObservableCollection<Bay> _unfilteredItems;
 
         #endregion
@@ -65,10 +65,9 @@ namespace QuickStockTaker.ViewModels
 
         
 
-        public BayListViewModel(IUserDialogs dialogs, ILogger logger)
+        public BayListViewModel(IUserDialogs dialogs, ILogger logger) : base(dialogs, logger)
         {
-            _dialogs = dialogs;
-            _logger = logger;
+           
             _dbConnection = ViewModelLocator.Container.Resolve<IDBConnection>();
         }
 

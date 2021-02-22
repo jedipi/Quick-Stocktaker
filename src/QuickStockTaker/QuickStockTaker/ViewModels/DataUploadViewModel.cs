@@ -12,8 +12,10 @@ using FluentValidation.Validators;
 using NLog;
 using QuickStockTaker.Data;
 using QuickStockTaker.DataAccess;
-using QuickStockTaker.Interfaces;
+using QuickStockTaker.Repositories;
+using QuickStockTaker.Repositories.Interfaces;
 using QuickStockTaker.Services;
+using QuickStockTaker.Services.Interfaces;
 using QuickStockTaker.ViewModels.Base;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -25,8 +27,6 @@ namespace QuickStockTaker.ViewModels
     {
         #region Fields
 
-        private readonly NLog.ILogger _logger;
-        private IUserDialogs _dialogs;
         private FileInfo _exportedFile;
         private IEmailUploader _uploader;
         #endregion
@@ -61,10 +61,9 @@ namespace QuickStockTaker.ViewModels
 
         #endregion
         public DataUploadViewModel(IEmailUploader uploader, IUserDialogs dialogs, ILogger logger)
+            : base(dialogs, logger)
         {
             _uploader = uploader;
-            _dialogs = dialogs;
-            _logger = logger;
         }
 
         /// <summary>
@@ -128,7 +127,7 @@ namespace QuickStockTaker.ViewModels
 
             // get smtp details.
             var provider = Preferences.Get(Constants.SmtpProvider, "Other");
-            var smtpService = ViewModelLocator.Container.Resolve<SmtpService>();
+            var smtpService = ViewModelLocator.Container.Resolve<ISmtpRepository>();
             var smtp = await smtpService.GetSmtp(provider);
 
             try
@@ -143,7 +142,6 @@ namespace QuickStockTaker.ViewModels
                     OnCancel = tokenSource.Cancel
                 };
 
-                bool isSuccess;
                 string msg;
                 using (var progress = _dialogs.Progress(config))
                 {
@@ -157,7 +155,7 @@ namespace QuickStockTaker.ViewModels
                     var from = await SecureStorage.GetAsync(Constants.SmtpFrom);
                     _uploader.From = provider != "Other" ? emailAddress : from;
                     
-                    (isSuccess, msg) = await _uploader.Upload(_exportedFile);
+                    (_, msg) = await _uploader.Upload(_exportedFile);
                 }
 
                 await _dialogs.AlertAsync(msg);

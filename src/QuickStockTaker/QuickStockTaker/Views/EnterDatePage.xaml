@@ -151,7 +151,7 @@
                                 <ViewCell>
 
                                     <SwipeView x:Name="swipeView1" BackgroundColor="#E1E7F1">
-                                        <SwipeView.LeftItems>
+                                        <!--<SwipeView.LeftItems>
                                             <SwipeItemView Command="{Binding Source={x:Reference EnterData}, Path=BindingContext.DeleteItemCmd}"
                                                            CommandParameter="{Binding .}">
                                                 <Grid WidthRequest="100" >
@@ -177,7 +177,7 @@
                                                 </Grid>
                                             </SwipeItemView>
 
-                                        </SwipeView.LeftItems>
+                                        </SwipeView.LeftItems>-->
                                         <Grid BackgroundColor="#E1E7F1">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="0.4*"/>

@@ -21,8 +21,7 @@ namespace QuickStockTaker.ViewModels
     {
         #region Fields
 
-        private IUserDialogs _dialogs;
-        private readonly NLog.ILogger _logger;
+        
         private IDBConnection _dbConnection;
 
         #endregion
@@ -58,10 +57,8 @@ namespace QuickStockTaker.ViewModels
 
         #endregion
 
-        public ReviewViewModel(IUserDialogs dialogs, ILogger logger, IDBConnection dbConnection)
+        public ReviewViewModel(IUserDialogs dialogs, ILogger logger, IDBConnection dbConnection) : base(dialogs, logger)
         {
-            _dialogs = dialogs;
-            _logger = logger;
             _dbConnection = dbConnection;
 
             StocktakeNumber = Preferences.Get(Constants.StocktakeNumber, 0);

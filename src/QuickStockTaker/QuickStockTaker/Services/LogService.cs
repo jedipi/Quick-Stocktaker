@@ -1,10 +1,10 @@
-﻿using QuickStockTaker.Interfaces.Logging;
-using System;
+﻿using System;
 using System.Reflection;
 using NLog;
 using NLog.Config;
 using Xamarin.Forms;
 using System.IO;
+using QuickStockTaker.Services.Interfaces;
 
 namespace QuickStockTaker.Services
 {
