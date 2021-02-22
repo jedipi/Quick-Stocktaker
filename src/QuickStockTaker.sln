@@ -20,6 +20,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Pipelines", "!Pipelines", "{1DBF51C7-3CA7-454D-BA55-CE63752A2A9A}"
 	ProjectSection(SolutionItems) = preProject
 		..\!backup_azure-pipelines.yml = ..\!backup_azure-pipelines.yml
+		..\.github\workflows\main.yml = ..\.github\workflows\main.yml
 	EndProjectSection
 EndProject
 Global
