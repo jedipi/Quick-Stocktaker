@@ -28,10 +28,6 @@ jobs:
     - name: Show what's in the directory
       run: |
         ls
-    - name: Show what all is in the parent directory
-      run: |
-        cd ..
-        ls
         
   Android:
     runs-on: macos-latest
