@@ -36,7 +36,7 @@ jobs:
     - name: Android
       run: |
         cd src
-        cd QuickStockTaker
         nuget restore
+        cd QuickStockTaker
         cd QuickStockTaker.Android
         msbuild QuickStockTaker.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
