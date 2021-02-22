@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using QuickStockTaker.Models;
+﻿using QuickStockTaker.Models;
 
-namespace QuickStockTaker.Interfaces
+namespace QuickStockTaker.Services.Interfaces
 {
     /// <summary>
     /// intermediate interface for sending email

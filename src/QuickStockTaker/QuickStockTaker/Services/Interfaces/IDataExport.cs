@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace QuickStockTaker.Interfaces
+namespace QuickStockTaker.Services.Interfaces
 {
     /// <summary>
     /// Interface for exporting data

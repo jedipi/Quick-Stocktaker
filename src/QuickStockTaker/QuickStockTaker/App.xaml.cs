@@ -6,7 +6,6 @@ using Acr.UserDialogs;
 using Autofac;
 using NLog;
 using QuickStockTaker.DataAccess;
-using QuickStockTaker.Interfaces.Logging;
 using QuickStockTaker.ViewModels.Base;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;

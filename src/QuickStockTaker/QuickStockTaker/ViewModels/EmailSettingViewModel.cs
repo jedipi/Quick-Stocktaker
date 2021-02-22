@@ -146,6 +146,14 @@ namespace QuickStockTaker.ViewModels
                     OnPropertyChanged();
                     //await SecureStorage.SetAsync(Constants.SmptProvider, SmtpProvider);
                     Preferences.Set(Constants.SmtpProvider, SmtpProvider);
+                    if (SmtpProvider == "Gmail")
+                    {
+                        SmtpHost = "smtp.gmail.com";
+                        SmtpPort = "587";
+                    }
+
+                    SecureStorage.SetAsync(Constants.SmtpHost, SmtpHost);
+                    SecureStorage.SetAsync(Constants.SmtpPort, SmtpPort);
                 });
             }
 

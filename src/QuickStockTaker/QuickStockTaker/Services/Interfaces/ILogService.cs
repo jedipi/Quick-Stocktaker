@@ -2,7 +2,7 @@
 
 //using NLog;
 
-namespace QuickStockTaker.Interfaces.Logging
+namespace QuickStockTaker.Services.Interfaces
 {
     /// <summary>
     /// This interface provides logging service interface.

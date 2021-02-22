@@ -85,7 +85,7 @@
                             </StackLayout>
                         </Frame>
                     </StackLayout>
-                    <StackLayout Style="{StaticResource outer}">
+                    <StackLayout Style="{StaticResource outer}" IsVisible="False">
                         <Frame>
                             <StackLayout Orientation="Vertical">
                                 <ImageButton Source="ic_bin.png" 

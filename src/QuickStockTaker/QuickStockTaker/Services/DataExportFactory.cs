@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Autofac;
-using QuickStockTaker.Interfaces;
+using QuickStockTaker.Services.Interfaces;
 using QuickStockTaker.ViewModels.Base;
 
 namespace QuickStockTaker.Services
