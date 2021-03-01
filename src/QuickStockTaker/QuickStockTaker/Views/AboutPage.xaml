@@ -3,13 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="QuickStockTaker.Views.AboutPage"
              xmlns:fa="clr-namespace:FontAwesome"
-             xmlns:vm="clr-namespace:QuickStockTaker.ViewModels"
-             xmlns:forms="clr-namespace:Lottie.Forms;assembly=Lottie.Forms"
+             xmlns:local="clr-namespace:QuickStockTaker;assembly=QuickStockTaker"
              Title="{Binding Title}">
     <ContentPage.Content>
         <ScrollView Padding="15">
             <StackLayout Orientation="Vertical" Padding="16,10,16,40" Spacing="10">
-                <Image Source="ic_stocktake" HeightRequest="100" Margin="0,50,0,20"/>
+                <Image Source="{local:ImageResource QuickStockTaker.Images.ic_stocktake.png}" HeightRequest="100" Margin="0,50,0,20"/>
 
                 <Label FontSize="Medium">Thank you  for trying Quick Stacktaker!</Label>
                 <Label FontSize="Medium">This app is free to use for personal and commercial. If you have any questions, comments, suggestions, or features you'd like to see, I'd appreciate your feedback.</Label>

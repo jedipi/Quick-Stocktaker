@@ -190,20 +190,8 @@
     <AndroidResource Include="Resources\drawable\barcode_scan.gif" />
     <AndroidResource Include="Resources\drawable\codigo_de_barras_09.gif" />
     <AndroidResource Include="Resources\drawable\home_barcode.png" />
-    <AndroidResource Include="Resources\drawable\ic_stocktake.png" />
-    <AndroidResource Include="Resources\drawable\ic_email.png" />
-    <AndroidResource Include="Resources\drawable\ic_google_drive.png" />
-    <AndroidResource Include="Resources\drawable\ic_ftp.png" />
-    <AndroidResource Include="Resources\drawable\ic_dropbox.png" />
-    <AndroidResource Include="Resources\drawable\ic_onedrive.png" />
-    <AndroidResource Include="Resources\drawable\ic_icloud.png" />
-    <AndroidResource Include="Resources\drawable\ic_review.png" />
-    <AndroidResource Include="Resources\drawable\ic_scanner.png" />
-    <AndroidResource Include="Resources\drawable\ic_list.png" />
     <AndroidResource Include="Resources\drawable\vd_vector_1.xml" />
     <AndroidResource Include="Resources\drawable\vd_vector_color.xml" />
-    <AndroidResource Include="Resources\drawable\ic_bin.png" />
-    <AndroidResource Include="Resources\drawable\ic_upload.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="..\QuickStockTaker.Common\QuickStockTaker.Common.projitems" Label="Shared" />

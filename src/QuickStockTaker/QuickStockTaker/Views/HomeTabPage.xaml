@@ -2,20 +2,13 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:forms="clr-namespace:Lottie.Forms;assembly=Lottie.Forms"
-             xmlns:behaviorsPack="clr-namespace:Xamarin.Forms.BehaviorsPack;assembly=Xamarin.Forms.BehaviorsPack"
+             xmlns:local="clr-namespace:QuickStockTaker;assembly=QuickStockTaker"
              x:Class="QuickStockTaker.Views.HomeTabPage">
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Orientation="Vertical" Padding="16,10,16,40" Spacing="10">
-                <Image Source="ic_stocktake" HeightRequest="100" Margin="0,50,0,20"/>
-                <!--<forms:AnimationView
-                    Animation="resource://Resources.4089-barcode-scanner.json?assembly=QuickStockTaker"
-                    AnimationSource="EmbeddedResource"
-                    AutoPlay="True"
-                    RepeatCount="-1"
-                    RepeatMode="Restart"
-                    HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" />-->
-                <Label HorizontalOptions="Center">
+                <Image Source="{local:ImageResource QuickStockTaker.Images.ic_stocktake.png}" HeightRequest="100" Margin="0,50,0,20"/>
+   <Label HorizontalOptions="Center">
                     <Label.FormattedText>
                         <FormattedString>
                             <Span Text="Quick Stocktaker" FontSize="Medium" FontAttributes="Bold"/>
