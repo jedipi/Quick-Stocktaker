@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Acr.UserDialogs;
+using Autofac;
 using NLog;
 using Org.BouncyCastle.Asn1;
 using QuickStockTaker.Data;
+using QuickStockTaker.Repositories.Interfaces;
+using QuickStockTaker.Services;
+using QuickStockTaker.Validators;
 using QuickStockTaker.ViewModels.Base;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -47,6 +53,7 @@ namespace QuickStockTaker.ViewModels
         public string SmtpPassword { get; set; }
         public string SmtpFrom { get; set; }
         public bool ShowFrom { get;set; }
+        public string TestEmailButtonText { get; set; }
         #endregion
 
 
@@ -59,6 +66,8 @@ namespace QuickStockTaker.ViewModels
         public ICommand SmtpFromCmd { get; set; }
 
         public ICommand HostTypeCmd { get; set; }
+        public ICommand TestEmailCmd { get; set; }
+
 
         #endregion
 
@@ -72,6 +81,87 @@ namespace QuickStockTaker.ViewModels
             SmtpUsernameCmd = new Command(async () => await OnSmtpUsernameCmd());
             SmtpPasswordCmd = new Command(async () => await OnSmtpPasswordCmd());
             SmtpFromCmd = new Command(async () => await OnSmtpFromCmd());
+            TestEmailCmd = new Command(async () => await OnTestEmailCmd());
+            TestEmailButtonText = $"{MaterialDesign.MaterialDesignIcons.Send} Send Test Email";
+        }
+
+        private async Task OnTestEmailCmd()
+        {
+            //CanNavigate = false;
+
+            // ask for email address
+            var result = await _dialogs.PromptAsync("", "Type in your email address", placeholder: "email address");
+
+            // validate email address
+            if (!result.Ok || string.IsNullOrEmpty(result.Value.Trim()))
+            {
+                return;
+            }
+
+            var emailAddress = result.Value.Trim();
+            var validator = ViewModelLocator.Container.Resolve<EmailValidator>();
+            var validateResult = validator.Validate(emailAddress);
+            if (!validateResult.IsValid)
+            {
+                await _dialogs.AlertAsync(validateResult.Errors.First().ErrorMessage, "Error", "OK");
+                return;
+            }
+
+
+
+
+            try
+            {
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+                var config = new ProgressDialogConfig()
+                {
+                    Title = $"Sending test email...'",
+                    CancelText = "Cancel",
+                    IsDeterministic = false,
+                    OnCancel = tokenSource.Cancel
+                };
+
+                string msg;
+                using (var progress = _dialogs.Progress(config))
+                {
+                    progress.Show();
+
+
+
+                    // get smtp details.
+                    var provider = Preferences.Get(Constants.SmtpProvider, "Other");
+                    var smtpService = ViewModelLocator.Container.Resolve<ISmtpRepository>();
+                    var smtp = await smtpService.GetSmtp(provider);
+
+                    // get the from email address
+                    var from = await SecureStorage.GetAsync(Constants.SmtpFrom);
+                    from = provider != "Other" ? emailAddress : from;
+
+                    var sender = ViewModelLocator.Container.Resolve<EmailService>(
+                        new NamedParameter("username", smtp.Username),
+                        new NamedParameter("password", smtp.Password),
+                        new NamedParameter("host", smtp.Host),
+                        new NamedParameter("port", smtp.Port));
+
+                    sender.AddRecipient(emailAddress)
+                        .AddFrom(from)
+                        .AddSubject($"[Quick Stocktaker] Test Email from Stocktake device")
+                        .AddBody("This is a test email from the stocktak scanner")
+                        .SetBodyHTML(true);
+                    await sender.SendAsync();
+                    _logger.Info($"Smtp server response: {sender.Response}");
+                    await _dialogs.AlertAsync("Test email send successfully.");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                await _dialogs.AlertAsync($"{ex.Message}", "ERROR", "OK");
+                _logger.Error(ex, "Send test email fail");
+            }
         }
 
         private async Task OnSmtpFromCmd()
