@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:QuickStockTaker;assembly=QuickStockTaker"
              x:Class="QuickStockTaker.Views.DataUploadPage">
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -37,7 +38,7 @@
                     <StackLayout Style="{StaticResource outer}">
                         <Frame>
                             <StackLayout Orientation="Vertical">
-                                <ImageButton Source="ic_email.png" 
+                                <ImageButton Source="{local:ImageResource QuickStockTaker.Images.ic_email.png}" 
                                     Command="{Binding EmailCmd}"/>
                                 <Label Text="Email" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
 
@@ -47,7 +48,7 @@
                     <StackLayout Style="{StaticResource outer}" IsEnabled="False">
                         <Frame>
                             <StackLayout Orientation="Vertical">
-                                <ImageButton Source="ic_ftp.png" 
+                                <ImageButton Source="{local:ImageResource QuickStockTaker.Images.ic_ftp.png}" 
                                          Command="{Binding FtpCmd}"/>
                                 <Label Text="FTP/SFTP" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
 
@@ -57,7 +58,7 @@
                     <StackLayout Style="{StaticResource outer}"  IsEnabled="False">
                         <Frame>
                             <StackLayout Orientation="Vertical">
-                                <ImageButton Source="ic_icloud.png" 
+                                <ImageButton Source="{local:ImageResource QuickStockTaker.Images.ic_icloud.png}" 
                                              Command="{Binding ICloudCmd}"/>
                                 <Label Text="iCloud" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
 
@@ -68,7 +69,7 @@
                     <StackLayout Style="{StaticResource outer}"  IsEnabled="False">
                         <Frame>
                             <StackLayout Orientation="Vertical">
-                                <ImageButton Source="ic_google_drive.png" 
+                                <ImageButton Source="{local:ImageResource QuickStockTaker.Images.ic_google_drive.png}" 
                                              Command="{Binding GoogleDriveCmd}"/>
                                 <Label Text="Google Drive" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
 
@@ -79,7 +80,7 @@
                     <StackLayout Style="{StaticResource outer}"  IsEnabled="False">
                         <Frame>
                             <StackLayout Orientation="Vertical">
-                                <ImageButton Source="ic_dropbox.png" 
+                                <ImageButton Source="{local:ImageResource QuickStockTaker.Images.ic_dropbox.png}"
                                              Command="{Binding DropBoxCmd}"/>
                                 <Label Text="DropBox" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
 
@@ -90,7 +91,7 @@
                     <StackLayout Style="{StaticResource outer}"  IsEnabled="False">
                         <Frame>
                             <StackLayout Orientation="Vertical">
-                                <ImageButton Source="ic_onedrive.png" 
+                                <ImageButton Source="{local:ImageResource QuickStockTaker.Images.ic_onedrive.png}" 
                                              Command="{Binding OneDriveCmd}"/>
                                 <Label Text="One Drive" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
 

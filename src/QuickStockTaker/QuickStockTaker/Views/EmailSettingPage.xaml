@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:md="clr-namespace:MaterialDesign"
              xmlns:pancakeView="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
-             xmlns:behaviorsPack="clr-namespace:Xamarin.Forms.BehaviorsPack;assembly=Xamarin.Forms.BehaviorsPack"
              x:Class="QuickStockTaker.Views.EmailSettingPage">
     <ContentPage.Content>
         <ScrollView Padding="15">
@@ -72,6 +72,11 @@
                         </TableSection>
                     </TableRoot>
                 </TableView>
+                <Button Text="Send Test Email" Command="{Binding TestEmailCmd}" Style="{StaticResource PrimaryButton}" HorizontalOptions="Center" WidthRequest="200">
+                    <Button.ImageSource>
+                        <FontImageSource Glyph="{x:Static md:MaterialDesignIcons.Send}" FontFamily="MD-O"></FontImageSource>
+                    </Button.ImageSource>
+                </Button>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>
