@@ -93,4 +93,9 @@
 	  <Folder Include="Views\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\QuickStockTaker.Core\QuickStockTaker.Core.csproj" />
+	  <ProjectReference Include="..\QuickStockTaker.ViewModel\QuickStockTaker.ViewModel.csproj" />
+	</ItemGroup>
+
 </Project>
