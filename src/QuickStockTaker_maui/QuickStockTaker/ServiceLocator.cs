@@ -5,7 +5,9 @@ using System.Text;
 using Acr.UserDialogs;
 using Autofac;
 using NLog;
-using QuickStockTaker.DataAccess;
+using QuickStockTaker.Core.Models.Sqlite;
+using QuickStockTaker.Core.Repositories.Interfaces;
+using QuickStockTaker.Core.Repositories;
 using QuickStockTaker.Models;
 using QuickStockTaker.Services;
 using IContainer = Autofac.IContainer;
@@ -49,8 +51,14 @@ namespace QuickStockTaker
                 .AsImplementedInterfaces();
 
             builder.RegisterInstance(LogManager.GetCurrentClassLogger()).As<ILogger>();
-            //builder.RegisterInstance(UserDialogs.Instance).As<IUserDialogs>().SingleInstance();
-            builder.RegisterType<DBConnection>().As<IDBConnection>().SingleInstance();
+
+            builder.Register(x => new SQLiteDB(Path.Combine(FileSystem.AppDataDirectory, "StockTacker.db3")))
+                .InstancePerLifetimeScope();
+
+            builder.RegisterGeneric(typeof(SQLiteRepository<>))
+               .As(typeof(ISQLiteRepository<>))
+               .InstancePerLifetimeScope();
+
             builder.RegisterType<DataExportFactory>();
             builder.RegisterType<EmailService>();
 

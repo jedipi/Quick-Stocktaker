@@ -8,9 +8,9 @@ using Acr.UserDialogs;
 using CsvHelper;
 using CsvHelper.Configuration;
 using NLog;
+using QuickStockTaker.Core.Models.Sqlite;
+using QuickStockTaker.Core.Repositories.Interfaces;
 using QuickStockTaker.Data;
-using QuickStockTaker.DataAccess;
-using QuickStockTaker.Models;
 using QuickStockTaker.Services.Interfaces;
 
 namespace QuickStockTaker.Services
@@ -22,27 +22,29 @@ namespace QuickStockTaker.Services
     {
         private IUserDialogs _dialogs;
         private readonly NLog.ILogger _logger;
-        private IDBConnection _dbConnection;
+        //private IDBConnection _dbConnection;
         private static object locker = new object();
 
         // the exported file info
         public FileInfo ExportedFile { get; set; }
 
+        private ISQLiteRepository<StocktakeItem> _stocktakeItemRepo;
+
         /// <summary>
         /// Export stocktake data as a CSV file
         /// </summary>
-        public CsvExportService(IUserDialogs dialogs, ILogger logger, IDBConnection dbConnection)
+        public CsvExportService(IUserDialogs dialogs, ILogger logger, ISQLiteRepository<StocktakeItem> stocktakeItemRepo)
         {
             _dialogs = dialogs;
             _logger = logger;
-            _dbConnection = dbConnection;
+            _stocktakeItemRepo = stocktakeItemRepo;
         }
         
         
         public async Task Export()
         {
             // get all stocktake data
-            var data = await _dbConnection.Database.Table<StocktakeItem>().ToListAsync();
+            var data = await _stocktakeItemRepo.GetAllAsync();
 
             // There is no stocktake data to export
             if (data.Count == 0)

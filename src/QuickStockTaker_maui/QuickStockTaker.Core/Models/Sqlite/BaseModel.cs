@@ -1,6 +1,6 @@
 ﻿using SQLite;
 
-namespace B2CUtilities.CoreMaui.SQLiteModel
+namespace QuickStockTaker.Core.Models.Sqlite
 {
     /// <summary>
     /// the base model for SQLite entities
