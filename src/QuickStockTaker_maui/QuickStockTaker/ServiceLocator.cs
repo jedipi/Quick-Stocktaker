@@ -32,24 +32,34 @@ namespace QuickStockTaker
         // register all viewmodels ans services 
         static void RegisterType(ContainerBuilder builder)
         {
-            //_builder.RegisterType<RequestProvider>().As<IRequestProvider>();
-            //builder.RegisterType<OrderService>().As<IOrderService>().SingleInstance();
-            var dataAccess = Assembly.GetAssembly(typeof(App));
+            // main assembly
+            var mainAccess = AppDomain.CurrentDomain.GetAssemblies()
+                .First(x => x.Location.Contains("QuickStockTaker.dll"));
 
-            builder.RegisterAssemblyTypes(dataAccess)
-                .Where(t => t.Name.EndsWith("ViewModel"));
-
-            builder.RegisterAssemblyTypes(dataAccess)
+            builder.RegisterAssemblyTypes(mainAccess)
                 .Where(t => t.Name.EndsWith("Validator"));
 
-            builder.RegisterAssemblyTypes(dataAccess)
+            builder.RegisterAssemblyTypes(mainAccess)
                 .Where(t => t.Name.EndsWith("Service"))
                 .AsImplementedInterfaces();
 
-            builder.RegisterAssemblyTypes(dataAccess)
+
+            // register core assembly  ========================
+            var coreAssembly = AppDomain.CurrentDomain.GetAssemblies()
+                .First(x => x.Location.Contains("QuickStockTaker.Core.dll"));
+
+            builder.RegisterAssemblyTypes(coreAssembly)
                 .Where(t => t.Name.EndsWith("Repository"))
                 .AsImplementedInterfaces();
 
+            // register viewmodel assembly =====================
+            var vmAssembly = AppDomain.CurrentDomain.GetAssemblies()
+                .First(x => x.Location.Contains("QuickStockTaker.ViewModel.dll"));
+
+            builder.RegisterAssemblyTypes(vmAssembly)
+                .Where(t => t.Name.EndsWith("ViewModel"));
+
+            // register individule class ======================
             builder.RegisterInstance(LogManager.GetCurrentClassLogger()).As<ILogger>();
 
             builder.Register(x => new SQLiteDB(Path.Combine(FileSystem.AppDataDirectory, "StockTacker.db3")))
