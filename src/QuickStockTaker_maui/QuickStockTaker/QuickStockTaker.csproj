@@ -78,15 +78,17 @@
 	<ItemGroup>
 	  <PackageReference Include="Acr.UserDialogs" Version="8.0.1" />
 	  <PackageReference Include="Autofac" Version="7.1.0" />
+	  <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
 	  <PackageReference Include="CommunityToolkit.Maui" Version="6.1.0" />
-	  <PackageReference Include="CommunityToolkit.Maui.Markup" Version="3.3.0" />
+	  <PackageReference Include="CommunityToolkit.Maui.Markup" Version="3.3.1" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 	  <PackageReference Include="CsvHelper" Version="30.0.1" />
-	  <PackageReference Include="FluentValidation" Version="11.8.0" />
 	  <PackageReference Include="MailKit" Version="4.3.0" />
 	  <PackageReference Include="NLog" Version="5.2.5" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
 	  <PackageReference Include="System.Text.Json" Version="7.0.3" />
+	  <PackageReference Include="ZXing.Net.Maui" Version="0.4.0" />
+	  <PackageReference Include="ZXing.Net.Maui.Controls" Version="0.4.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -95,7 +97,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\QuickStockTaker.Core\QuickStockTaker.Core.csproj" />
-	  <ProjectReference Include="..\QuickStockTaker.ViewModel\QuickStockTaker.ViewModel.csproj" />
 	</ItemGroup>
 
 </Project>
