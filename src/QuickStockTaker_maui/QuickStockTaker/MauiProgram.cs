@@ -1,7 +1,11 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using CommunityToolkit.Maui;
+using Microsoft.Extensions.Logging;
 using QuickStockTaker.Core;
+using Serilog;
+using Serilog.Events;
+using System.Net;
 
 namespace QuickStockTaker;
 
@@ -44,9 +48,31 @@ public static class MauiProgram
 
         });
 
-       
+        SetupSerilog();
+        builder.Logging.AddSerilog(dispose: true);
+
+        //#if DEBUG
+        //        builder.Logging.AddDebug();
+        //#endif
 
 
         return builder.Build();
 	}
+
+    private static void SetupSerilog()
+    {
+        
+        var flushInterval = new TimeSpan(0, 0, 1);
+        var file = Path.Combine(FileSystem.AppDataDirectory, "log.log");
+        Log.Logger = new LoggerConfiguration()
+             .Enrich.FromLogContext()
+             .MinimumLevel.Verbose()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+#if DEBUG
+            .WriteTo.Debug()
+#endif
+             .WriteTo.File(file, flushToDiskInterval: flushInterval, encoding: System.Text.Encoding.UTF8, rollingInterval: RollingInterval.Day, retainedFileCountLimit: 22,
+              outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj} OtherProperties:{OtherProperty}{NewLine}{Exception}")
+             .CreateLogger();
+    }
 }

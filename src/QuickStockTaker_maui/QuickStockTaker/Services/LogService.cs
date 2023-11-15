@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using NLog;
-using NLog.Config;
 using System.IO;
 using QuickStockTaker.Services.Interfaces;
 
@@ -30,7 +28,7 @@ namespace QuickStockTaker.Services
             if (stream == null)
                 throw new Exception($"The resource '{location}' was not loaded properly.");
             
-            LogManager.Configuration = new XmlLoggingConfiguration(System.Xml.XmlReader.Create(stream), null);
+            //LogManager.Configuration = new XmlLoggingConfiguration(System.Xml.XmlReader.Create(stream), null);
         }
     }
 }

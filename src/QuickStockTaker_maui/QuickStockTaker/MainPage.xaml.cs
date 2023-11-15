@@ -1,4 +1,5 @@
-﻿using QuickStockTaker.Core.Repositories;
+﻿using Microsoft.Extensions.Logging;
+using QuickStockTaker.Core.Repositories;
 using QuickStockTaker.Core.Repositories.Interfaces;
 
 namespace QuickStockTaker;
@@ -7,11 +8,12 @@ public partial class MainPage : ContentPage
 {
 	int count = 0;
 	IServiceProvider _provider;
-
-    public MainPage(IServiceProvider provider)
+    private readonly ILogger<MainPage> _logger;
+    public MainPage(IServiceProvider provider, ILogger<MainPage> logger)
 	{
 		InitializeComponent();
         _provider = provider;
+		_logger = logger;
 
     }
 
@@ -26,8 +28,10 @@ public partial class MainPage : ContentPage
 
 		SemanticScreenReader.Announce(CounterBtn.Text);
 
-		//var a = _provider.GetService<ISmtpService>();
-		//var b = await a.GetSmtp("");
+        _logger.LogInformation("Click was called");
+
+        //var a = _provider.GetService<ISmtpService>();
+        //var b = await a.GetSmtp("");
 
 
     }
