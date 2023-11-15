@@ -1,11 +1,9 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using CommunityToolkit.Maui;
-using Microsoft.Extensions.Logging;
 using QuickStockTaker.Core;
 using Serilog;
 using Serilog.Events;
-using System.Net;
 
 namespace QuickStockTaker;
 
@@ -21,7 +19,11 @@ public static class MauiProgram
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-				fonts.AddFont("MaterialIconsOutlined-Regular", "MD-O");
+                fonts.AddFont("material-icons-outlined-regular.ttf", "MD-O");
+                fonts.AddFont("Font Awesome 6 Duotone-Solid-900.otf", "FA-D");
+                fonts.AddFont("Font Awesome 6 Free-Regular-400.otf", "FA");
+                fonts.AddFont("Font Awesome 6 Free-Solid-900.otf", "FA-S");
+                fonts.AddFont("pro-fa-regular-400.ttf", "FA-Pro");
             });
 
         builder.ConfigureContainer(new AutofacServiceProviderFactory(), autofacBuilder =>
@@ -44,17 +46,10 @@ public static class MauiProgram
             autofacBuilder.RegisterAssemblyTypes(typeof(ServiceLocator).Assembly)
                         .Where(t => t.Name.EndsWith("Service"))
                         .AsImplementedInterfaces();
-
-
         });
 
         SetupSerilog();
         builder.Logging.AddSerilog(dispose: true);
-
-        //#if DEBUG
-        //        builder.Logging.AddDebug();
-        //#endif
-
 
         return builder.Build();
 	}

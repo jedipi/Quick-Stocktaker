@@ -48,19 +48,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiFont Remove="Resources\Fonts\FontAwesome.cs" />
-	  <MauiFont Remove="Resources\Fonts\MaterialDesignIcon.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Remove="Resources\Fonts\fa-brands-400.ttf" />
-	  <None Remove="Resources\Fonts\fa-regular-400.ttf" />
-	  <None Remove="Resources\Fonts\fa-solid-900.ttf" />
-	  <None Remove="Resources\Fonts\MaterialIcons-Regular.ttf" />
-	  <None Remove="Resources\Fonts\MaterialIconsOutlined-Regular.ttf" />
-	  <None Remove="Resources\Fonts\MaterialIconsRound-Regular.ttf" />
-	  <None Remove="Resources\Fonts\MaterialIconsSharp-Regular.ttf" />
-	  <None Remove="Resources\Fonts\MaterialIconsTwoTone-Regular.ttf" />
+	  <None Remove="Resources\Fonts\Font Awesome 6 Brands-Regular-400.otf" />
+	  <None Remove="Resources\Fonts\Font Awesome 6 Duotone-Solid-900.otf" />
+	  <None Remove="Resources\Fonts\Font Awesome 6 Free-Regular-400.otf" />
+	  <None Remove="Resources\Fonts\Font Awesome 6 Free-Solid-900.otf" />
+	  <None Remove="Resources\Fonts\material-icons-outlined-regular.ttf" />
 	  <None Remove="Resources\Images\ic_bin.png" />
 	  <None Remove="Resources\Images\ic_dropbox.png" />
 	  <None Remove="Resources\Images\ic_email.png" />
