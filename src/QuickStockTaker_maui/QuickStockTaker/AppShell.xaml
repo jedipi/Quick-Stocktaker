@@ -4,11 +4,22 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:QuickStockTaker"
-    Shell.FlyoutBehavior="Disabled">
+    xmlns:views="clr-namespace:QuickStockTaker.Views"
+    xmlns:fa="clr-namespace:FontAwesome"
+    xmlns:md="clr-namespace:MaterialDesign"
+    FlyoutHeaderBehavior="CollapseOnScroll">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <!--<FlyoutItem Title="Settings">
+        <FlyoutItem.Icon>
+            <FontImageSource Glyph="{x:Static md:MaterialDesignIcons.Settings}" FontFamily="MD-O" Color="#333333"></FontImageSource>
+        </FlyoutItem.Icon>
+        <ShellContent Route="SettingPage" ContentTemplate="{DataTemplate views:SettingsPage}" />
+    </FlyoutItem>-->
+    <FlyoutItem Title="About">
+        <FlyoutItem.Icon>
+            <FontImageSource Glyph="{x:Static md:MaterialDesignIcons.Info}" FontFamily="MD-O" Color="#333333"></FontImageSource>
+        </FlyoutItem.Icon>
+        <ShellContent Route="AboutPage" ContentTemplate="{DataTemplate views:AboutPage}" />
+    </FlyoutItem>
 
 </Shell>

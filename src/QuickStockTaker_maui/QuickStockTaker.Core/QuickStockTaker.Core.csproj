@@ -31,8 +31,4 @@
 	  <PackageReference Include="ZXing.Net.Maui" Version="0.4.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="ViewModels\" />
-	</ItemGroup>
-
 </Project>

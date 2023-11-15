@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QuickStockTaker.Views.AboutPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit" 
+             Title="AboutPage">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+                EventName="Appearing"
+                Command="{Binding AppearingCommand}" />
+        <!--<toolkit:EventToCommandBehavior
+                EventName="Disappearing"
+                Command="{Binding DisappearingCommand}" />-->
+    </ContentPage.Behaviors>
+    <ScrollView>
+        <StackLayout Orientation="Vertical" Padding="16,10,16,40" Spacing="10">
+            <Image Source="dotnet_bot" HeightRequest="150" />
+            <Label HorizontalOptions="Center">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Quick Stocktaker" FontSize="Medium" FontAttributes="Bold"/>
+                        <Span Text=" v" FontSize="Micro"/>
+                        <Span Text="{Binding VersionNo, Mode=TwoWay}" FontSize="Micro"/>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+            <Grid HorizontalOptions="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="100"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Text="Scanner ID: "/>
+                <Label Grid.Row="0" Grid.Column="1" Text="{Binding DeviceId, Mode=TwoWay}"/>
+
+                <Label Grid.Row="1" Grid.Column="0" Text="Warehouse: "/>
+                <Label Grid.Row="1" Grid.Column="1" Text="{Binding Warehouse, Mode=TwoWay}"/>
+            </Grid>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
