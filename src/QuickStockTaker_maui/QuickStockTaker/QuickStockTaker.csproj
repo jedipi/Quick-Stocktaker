@@ -68,12 +68,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Acr.UserDialogs" Version="8.0.1" />
 	  <PackageReference Include="Autofac" Version="7.1.0" />
 	  <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
 	  <PackageReference Include="CommunityToolkit.Maui" Version="7.0.0" />
 	  <PackageReference Include="CommunityToolkit.Maui.Markup" Version="4.0.0" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+	  <PackageReference Include="Controls.UserDialogs.Maui" Version="1.4.0" />
 	  <PackageReference Include="CsvHelper" Version="30.0.1" />
 	  <PackageReference Include="MailKit" Version="4.3.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.3" />

@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using CommunityToolkit.Maui;
+using Controls.UserDialogs.Maui;
 using QuickStockTaker.Core;
 using Serilog;
 using Serilog.Events;
@@ -15,6 +16,18 @@ public static class MauiProgram
 		builder
 			.UseMauiApp<App>()
 			.UseMauiCommunityToolkit()
+            .UseUserDialogs(registerInterface: true, () =>
+            {
+                //setup your default styles for dialogs
+                AlertConfig.DefaultBackgroundColor = Colors.Purple;
+#if ANDROID
+        AlertConfig.DefaultMessageFontFamily = "OpenSans-Regular.ttf";
+#else
+                AlertConfig.DefaultMessageFontFamily = "OpenSans-Regular";
+#endif
+
+                ToastConfig.DefaultCornerRadius = 15;
+            })
             .ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

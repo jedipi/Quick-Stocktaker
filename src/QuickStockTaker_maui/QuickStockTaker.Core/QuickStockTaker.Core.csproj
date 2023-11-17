@@ -19,6 +19,7 @@
 	<ItemGroup>
 	  <PackageReference Include="Autofac" Version="7.1.0" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+	  <PackageReference Include="Controls.UserDialogs.Maui" Version="1.4.0" />
 	  <PackageReference Include="CsvHelper" Version="30.0.1" />
 	  <PackageReference Include="FluentValidation" Version="11.8.0" />
 	  <PackageReference Include="MailKit" Version="4.3.0" />
