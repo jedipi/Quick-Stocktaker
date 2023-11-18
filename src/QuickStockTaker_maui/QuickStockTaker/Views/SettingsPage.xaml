@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QuickStockTaker.Views.SettingsPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit" 
+             Title="SettingsPage">
+    <ContentPage.Content>
+        <ScrollView Padding="15">
+            <TableView Intent="Settings">
+                <TableRoot>
+                    <TableSection Title="Device" TextColor="{StaticResource Primary}">
+                        <EntryCell Label="Device ID: " Text="{Binding DeviceId}" />
+                    </TableSection>
+                    <TableSection Title="General" TextColor="{StaticResource Primary}">
+                        <SwitchCell Text="Continuous Scan Mode" On="{Binding ContinuousMode}" OnColor="{StaticResource Primary}" />
+                    </TableSection>
+
+                </TableRoot>
+
+            </TableView>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

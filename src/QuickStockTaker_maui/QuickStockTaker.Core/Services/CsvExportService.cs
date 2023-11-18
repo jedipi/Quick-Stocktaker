@@ -45,7 +45,7 @@ namespace QuickStockTaker.Core.Services
                 return;
 
             var site = Preferences.Get(Constants.Site, "");
-            var deviceId = Preferences.Get(Constants.DeviceId, 0);
+            var deviceId = Preferences.Get(Constants.DeviceId, "");
             
             var dir = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             var filePath = Path.Combine(dir, $"{DateTime.Now.ToString("yyMMdd-HHmmss")}-{site}-{deviceId}-Stocktake.csv");

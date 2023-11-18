@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="QuickStockTaker.Views.AboutPage"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit" 
+             xmlns:fa="clr-namespace:FontAwesome"
              Title="AboutPage">
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior
@@ -12,35 +13,70 @@
                 EventName="Disappearing"
                 Command="{Binding DisappearingCommand}" />-->
     </ContentPage.Behaviors>
-    <ScrollView>
-        <StackLayout Orientation="Vertical" Padding="16,10,16,40" Spacing="10">
-            <Image Source="dotnet_bot" HeightRequest="150" />
-            <Label HorizontalOptions="Center">
-                <Label.FormattedText>
-                    <FormattedString>
-                        <Span Text="Quick Stocktaker" FontSize="Medium" FontAttributes="Bold"/>
-                        <Span Text=" v" FontSize="Micro"/>
-                        <Span Text="{Binding VersionNo, Mode=TwoWay}" FontSize="Micro"/>
-                    </FormattedString>
-                </Label.FormattedText>
-            </Label>
+    <ContentPage.Content>
+        <ScrollView Padding="15">
+            <StackLayout Orientation="Vertical" Padding="16,10,16,40" Spacing="10">
+                <Image Source="ic_stocktake" HeightRequest="100" Margin="0,50,0,20"/>
 
-            <Grid HorizontalOptions="Center">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="100"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+                <Label FontSize="Medium">Thank you  for trying Quick StockTaker!</Label>
+                <Label FontSize="Medium">This app is free to use for personal and commercial. If you have any questions, comments, suggestions, or features you'd like to see, I'd appreciate your feedback.</Label>
+                <Label FontSize="Medium">If you'd like to show your support for this project and help me continue development, please consider a donation.</Label>
 
-                <Label Grid.Row="0" Grid.Column="0" Text="Scanner ID: "/>
-                <Label Grid.Row="0" Grid.Column="1" Text="{Binding DeviceId, Mode=TwoWay}"/>
+                <TableView Intent="Menu" RowHeight="60" IsVisible="False">
+                    <TableRoot>
+                        <TableSection TextColor="{StaticResource Primary}">
+                            <ViewCell>
+                                <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand" >
+                                    <StackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding CommentCmd}"></TapGestureRecognizer>
+                                    </StackLayout.GestureRecognizers>
+                                    <Label Text="{x:Static fa:FontAwesomeFreeReg.Comments}" FontFamily="FA" 
+                                           FontSize="Large" Margin="0,0,30,0" 
+                                           VerticalTextAlignment="Center" />
+                                    <Label Text="Send feedback" FontSize="Medium" VerticalTextAlignment="Center" />
+                                </StackLayout>
+                            </ViewCell>
 
-                <Label Grid.Row="1" Grid.Column="0" Text="Warehouse: "/>
-                <Label Grid.Row="1" Grid.Column="1" Text="{Binding Warehouse, Mode=TwoWay}"/>
-            </Grid>
-        </StackLayout>
-    </ScrollView>
+                            <ViewCell>
+                                <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand" >
+                                    <StackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding DonationCommand}"></TapGestureRecognizer>
+                                    </StackLayout.GestureRecognizers>
+                                    <Label Text="{x:Static fa:FontAwesomeFreeReg.DollarSign}" FontFamily="FA" 
+                                           FontSize="Large" Margin="0,0,30,0" 
+                                           VerticalTextAlignment="Center" />
+                                    <Label Text="Donate" FontSize="Medium" VerticalTextAlignment="Center"/>
+                                </StackLayout>
+                            </ViewCell>
+
+                            <ViewCell>
+                                <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand">
+                                    <StackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding VersionCmd}"></TapGestureRecognizer>
+                                    </StackLayout.GestureRecognizers>
+                                    <Label Text="{x:Static fa:FontAwesomeFreeSolid.CircleInfo}" FontFamily="FA-S" 
+                                           FontSize="Large" Margin="0,0,30,0" 
+                                           VerticalTextAlignment="Center" />
+                                    <Label FontSize="Medium" VerticalTextAlignment="Center" >
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="App Version " />
+                                                <Span Text="v" FontSize="Micro"/>
+                                                <Span Text="{Binding VersionNo}" TextColor="#cccccc"></Span>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </StackLayout>
+                            </ViewCell>
+
+                        </TableSection>
+
+                    </TableRoot>
+
+                </TableView>
+            </StackLayout>
+
+        </ScrollView>
+
+    </ContentPage.Content>
 </ContentPage>

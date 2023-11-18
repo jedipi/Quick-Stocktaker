@@ -35,7 +35,7 @@
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" Color="#ffffff" ForegroundFile="Resources\AppIcon\ic_launcher.svg" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splashscreen.svg" Color="#ffffff"  BaseSize="128,128" />
+		<MauiSplashScreen Include="Resources\Splash\splashscreen.svg" Color="#ffffff" BaseSize="128,128" />
 		
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
@@ -66,6 +66,7 @@
 	  <None Remove="Resources\Images\ic_scanner.png" />
 	  <None Remove="Resources\Images\ic_stocktake.png" />
 	  <None Remove="Resources\Images\ic_upload.png" />
+	  <None Remove="Resources\Raw\2160-get-started-button.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -82,6 +83,7 @@
 	  <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
 	  <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
 	  <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+	  <PackageReference Include="SkiaSharp.Extended.UI.Maui" Version="2.0.0-preview.86" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
 	  <PackageReference Include="System.Text.Json" Version="8.0.0" />
 	  <PackageReference Include="ZXing.Net.Maui" Version="0.4.0" />
@@ -94,6 +96,15 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="Views\AboutPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\DashboardPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\HomeTabPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\SettingsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

@@ -6,10 +6,10 @@ namespace QuickStockTaker.Core.Models.Sqlite
     {
 
         [NotNull]
-        public long DeviceId { get; set; }
+        public string DeviceId { get; set; }
 
         [NotNull]
-        public long StocktakeNumber { get; set; }
+        public string StocktakeNumber { get; set; }
 
         [NotNull]
         public string Site { get; set; } // site or warehouse

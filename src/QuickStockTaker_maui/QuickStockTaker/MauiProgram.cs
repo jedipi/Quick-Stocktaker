@@ -5,6 +5,7 @@ using Controls.UserDialogs.Maui;
 using QuickStockTaker.Core;
 using Serilog;
 using Serilog.Events;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace QuickStockTaker;
 
@@ -16,6 +17,7 @@ public static class MauiProgram
 		builder
 			.UseMauiApp<App>()
 			.UseMauiCommunityToolkit()
+            .UseSkiaSharp()
             .UseUserDialogs(registerInterface: true, () =>
             {
                 //setup your default styles for dialogs

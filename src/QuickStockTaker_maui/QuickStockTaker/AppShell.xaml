@@ -7,14 +7,33 @@
     xmlns:views="clr-namespace:QuickStockTaker.Views"
     xmlns:fa="clr-namespace:FontAwesome"
     xmlns:md="clr-namespace:MaterialDesign"
-    FlyoutHeaderBehavior="CollapseOnScroll">
+    FlyoutHeaderBehavior="CollapseOnScroll" FlyoutBackgroundColor="#E1E7F1">
 
-    <!--<FlyoutItem Title="Settings">
+    <FlyoutItem Title="Home">
+        <FlyoutItem.Icon>
+            <FontImageSource Glyph="{x:Static md:MaterialDesignIcons.Home}" FontFamily="MD-O" Color="#333333"></FontImageSource>
+        </FlyoutItem.Icon>
+        <Tab Title="Home">
+            <Tab.Icon>
+                <FontImageSource Glyph="{x:Static md:MaterialDesignIcons.Home}" FontFamily="MD-O"  />
+            </Tab.Icon>
+            <ShellContent Route="HomeTabPage" ContentTemplate="{DataTemplate views:HomeTabPage}" />
+        </Tab>
+        <Tab Title="Dashboard">
+            <Tab.Icon>
+                <FontImageSource Glyph="{x:Static md:MaterialDesignIcons.Dashboard}" FontFamily="MD-O" />
+            </Tab.Icon>
+            <ShellContent Route="DashboardPage" ContentTemplate="{DataTemplate views:DashboardPage}" />
+        </Tab>
+    </FlyoutItem>
+    
+    <FlyoutItem Title="Settings">
         <FlyoutItem.Icon>
             <FontImageSource Glyph="{x:Static md:MaterialDesignIcons.Settings}" FontFamily="MD-O" Color="#333333"></FontImageSource>
         </FlyoutItem.Icon>
-        <ShellContent Route="SettingPage" ContentTemplate="{DataTemplate views:SettingsPage}" />
-    </FlyoutItem>-->
+        <ShellContent Route="SettingsPage" ContentTemplate="{DataTemplate views:SettingsPage}" />
+    </FlyoutItem>
+
     <FlyoutItem Title="About">
         <FlyoutItem.Icon>
             <FontImageSource Glyph="{x:Static md:MaterialDesignIcons.Info}" FontFamily="MD-O" Color="#333333"></FontImageSource>

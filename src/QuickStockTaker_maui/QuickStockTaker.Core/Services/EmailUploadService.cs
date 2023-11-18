@@ -30,7 +30,7 @@ namespace QuickStockTaker.Core.Services
         {
             try
             { 
-                var deviceId = Preferences.Get(Constants.DeviceId, 0);
+                var deviceId = Preferences.Get(Constants.DeviceId, "");
                 var site = Preferences.Get(Constants.Site, "");
                 var stocktakeDate = (Preferences.Get(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString());
                 var stocktakeNumber = Preferences.Get(Constants.StocktakeNumber, 0);

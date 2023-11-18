@@ -9,6 +9,7 @@ namespace QuickStockTaker.Core.Data
         public static readonly string StocktakeNumber = "StocktakeNumber";
         public static readonly string Site = "Site";
         public static readonly string StocktakeDate = "StocktakeDate";
+        public static readonly string ContinuousMode = "ContinuousMode";
         public static readonly string DeviceId = "DeviceId";
         public static readonly string SmtpProvider = "SmtpProvider";
         public static readonly string SmtpHost = "SmtpHost";
