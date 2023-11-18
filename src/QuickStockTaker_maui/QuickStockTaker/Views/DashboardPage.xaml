@@ -40,7 +40,7 @@
                         <Frame>
                             <StackLayout Orientation="Vertical">
                                 <ImageButton Source="ic_stocktake"
-                                             Command="{Binding NewStocktakeCmd}"/>
+                                             Command="{Binding NewStocktakeCommand}"/>
                                 <Label Text="New Stocktake" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
 
                             </StackLayout>

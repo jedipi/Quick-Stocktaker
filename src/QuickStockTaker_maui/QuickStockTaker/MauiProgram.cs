@@ -46,7 +46,7 @@ public static class MauiProgram
             // register views
             autofacBuilder.RegisterAssemblyTypes(typeof(MauiProgram).Assembly)
                         .Where(t => t.Name.EndsWith("Page"));
-            autofacBuilder.RegisterType<AppShell>().SingleInstance();
+            //autofacBuilder.RegisterType<AppShell>().SingleInstance();
 
             // register view models
             autofacBuilder.RegisterAssemblyTypes(typeof(ServiceLocator).Assembly)
