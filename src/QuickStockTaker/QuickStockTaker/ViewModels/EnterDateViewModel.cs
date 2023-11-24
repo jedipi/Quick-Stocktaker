@@ -45,7 +45,6 @@ namespace QuickStockTaker.ViewModels
         #endregion
 
         #region properties
-
         public string BayLocation { get; set; }
         public ObservableCollection<StocktakeItem> Last5Items { get; set; }
         public string Barcode { get; set; }

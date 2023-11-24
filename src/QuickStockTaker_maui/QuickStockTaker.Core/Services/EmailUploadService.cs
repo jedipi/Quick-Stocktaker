@@ -54,10 +54,15 @@ namespace QuickStockTaker.Core.Services
                 //var port = Convert.ToInt32(await SecureStorage.GetAsync("SmtpPort"));
 
                 var sender = _provider.GetService<EmailService>();
-                    new NamedParameter("username", SmtpDetail.Username), 
-                    new NamedParameter("password", SmtpDetail.Password),
-                    new NamedParameter("host", SmtpDetail.Host),
-                    new NamedParameter("port", SmtpDetail.Port));
+                sender.Username = SmtpDetail.Username;
+                sender.Password = SmtpDetail.Password;
+                sender.Host = SmtpDetail.Host;
+                sender.Port = SmtpDetail.Port;
+                
+                    //new NamedParameter("username", SmtpDetail.Username), 
+                    //new NamedParameter("password", SmtpDetail.Password),
+                    //new NamedParameter("host", SmtpDetail.Host),
+                    //new NamedParameter("port", SmtpDetail.Port));
 
                 sender.AddRecipient(To)
                     .AddFrom(From)

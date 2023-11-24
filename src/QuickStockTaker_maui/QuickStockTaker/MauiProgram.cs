@@ -9,6 +9,8 @@ using QuickStockTaker.Core.Repositories.Interfaces;
 using Serilog;
 using Serilog.Events;
 using SkiaSharp.Views.Maui.Controls.Hosting;
+using ZXing.Net.Maui;
+using ZXing.Net.Maui.Controls;
 
 namespace QuickStockTaker;
 
@@ -21,6 +23,7 @@ public static class MauiProgram
 			.UseMauiApp<App>()
 			.UseMauiCommunityToolkit()
             .UseSkiaSharp()
+            .UseBarcodeReader()
             .UseUserDialogs(registerInterface: true, () =>
             {
                 //setup your default styles for dialogs

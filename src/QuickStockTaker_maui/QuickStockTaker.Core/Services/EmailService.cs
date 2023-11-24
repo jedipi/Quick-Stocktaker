@@ -17,14 +17,19 @@ namespace QuickStockTaker.Core.Services
     {
         #region Fields
 
-        private string _username;
-        private string _password;
-        private string _host;
-        private int _port;
+        //private string _username;
+        //private string _password;
+        //private string _host;
+        //private int _port;
 
         #endregion
 
         #region Properties
+
+        public string Username { get;set; }
+        public string Password { get;set; }
+        public string Host { get;set; }
+        public int Port { get;set; }
 
         public List<string> Recipients { get; set; }
         public string From { get; set; }
@@ -36,16 +41,20 @@ namespace QuickStockTaker.Core.Services
 
         #endregion
 
-
-        public EmailService(string username, string password, string host, int port)
+        public EmailService() 
         {
-            _username = username;
-            _password = password;
-            _host = host;
-            _port = port;
-
             Recipients = new List<string>();
         }
+
+        //public EmailService(string username, string password, string host, int port)
+        //{
+        //    Username = username;
+        //    Password = password;
+        //    Host = host;
+        //    Port = port;
+
+        //    Recipients = new List<string>();
+        //}
 
         public EmailService WithAttachment(string file)
         {
@@ -124,8 +133,8 @@ namespace QuickStockTaker.Core.Services
             client.MessageSent += (sender, args) => { Response = args.Response; };
             client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 
-            await client.ConnectAsync(_host, _port);
-            await client.AuthenticateAsync(_username, _password);
+            await client.ConnectAsync(Host, Port);
+            await client.AuthenticateAsync(Username, Password);
             await client.SendAsync(mail);
             await client.DisconnectAsync(true);
         }

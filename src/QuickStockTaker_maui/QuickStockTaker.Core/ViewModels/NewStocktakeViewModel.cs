@@ -71,7 +71,6 @@ namespace QuickStockTaker.Core.ViewModels
 
             // clear data by drop table and re - create table
             await _repo.DropandRecreateTable();
-           
 
             // save values
             Preferences.Set(Constants.StocktakeNumber, StocktakeNumber);
@@ -113,7 +112,6 @@ namespace QuickStockTaker.Core.ViewModels
             StocktakeNumber = "";
             Site = "";
             StocktakeDate = DateTime.Today;
-
 
             IsDetailsVisible = true;
         }
