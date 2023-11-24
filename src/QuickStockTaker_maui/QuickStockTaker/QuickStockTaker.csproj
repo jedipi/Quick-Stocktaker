@@ -29,6 +29,30 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
+	  <ApplicationId>com.thyconsultants.quickstocktaker</ApplicationId>
+	  <ApplicationDisplayVersion>5.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>5</ApplicationVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|AnyCPU'">
+	  <ApplicationId>com.thyconsultants.quickstocktaker</ApplicationId>
+	  <ApplicationDisplayVersion>5.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>5</ApplicationVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-ios|AnyCPU'">
+	  <ApplicationId>com.thyconsultants.quickstocktaker</ApplicationId>
+	  <ApplicationDisplayVersion>5.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>5</ApplicationVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
+	  <ApplicationId>com.thyconsultants.quickstocktaker</ApplicationId>
+	  <ApplicationDisplayVersion>5.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>5</ApplicationVersion>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<!-- App Icon -->
 		<!--<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\ic_launcher.svg" />-->
@@ -85,6 +109,7 @@
 	  <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 	  <PackageReference Include="SkiaSharp.Extended.UI.Maui" Version="2.0.0-preview.86" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.6" />
 	  <PackageReference Include="System.Text.Json" Version="8.0.0" />
 	  <PackageReference Include="ZXing.Net.Maui" Version="0.4.0" />
 	  <PackageReference Include="ZXing.Net.Maui.Controls" Version="0.4.0" />

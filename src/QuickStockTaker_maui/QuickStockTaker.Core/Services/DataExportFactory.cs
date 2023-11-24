@@ -8,14 +8,19 @@ namespace QuickStockTaker.Core.Services
     /// </summary>
     public class DataExportFactory
     {
+        IServiceProvider _provider;
+        public DataExportFactory(IServiceProvider provider) 
+        {
+            _provider = provider;
+        }
         public IDataExport CreateExporter(string type)
         {
             switch (type)
             {
                 case "csv":
-                    return ServiceLocator.Container.Resolve<Interfaces.ICsvExportService>();
+                    return _provider.GetService<ICsvExportService>();
                 case "json":
-                    return ServiceLocator.Container.Resolve<IJsonExportService>();
+                    return _provider.GetService<IJsonExportService>();
                 default:
                     return null;
 

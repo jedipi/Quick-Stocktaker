@@ -18,5 +18,7 @@ namespace QuickStockTaker.Core.Repositories.Interfaces
         Task<T> GetByIdAsync(int id);
         Task<List<T>> GetAllAsync();
         Task<List<T>> FindAsync(Expression<Func<T, bool>> expression);
+
+        Task DropandRecreateTable();
     }
 }

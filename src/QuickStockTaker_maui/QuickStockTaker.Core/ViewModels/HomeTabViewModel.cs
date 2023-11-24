@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 
 namespace QuickStockTaker.Core.ViewModels
 {
@@ -15,6 +16,8 @@ namespace QuickStockTaker.Core.ViewModels
     {
         #region Fields
         private bool _shown;
+        IServiceProvider _provider;
+        private readonly ILogger<HomeTabViewModel> _logger;
         #endregion
 
         #region Properties
@@ -39,17 +42,17 @@ namespace QuickStockTaker.Core.ViewModels
         
         #endregion
 
-        public HomeTabViewModel() 
+        public HomeTabViewModel(IServiceProvider provider, ILogger<HomeTabViewModel> logger) 
         {
             Log.Information("Start HomeTabViewModel");
+            _provider = provider;
+            _logger = logger;
         }
 
         [RelayCommand]
         private async Task OnGetStarted()
         {
-            //CanNavigate = false;
-            //await Shell.Current.GoToAsync($"//{nameof(DashboardPage)}");
-            //CanNavigate = true;
+            await Shell.Current.GoToAsync($"//DashboardPage");
         }
 
 

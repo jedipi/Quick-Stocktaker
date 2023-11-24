@@ -5,6 +5,7 @@ using QuickStockTaker.Core.Data;
 using QuickStockTaker.Core.Models;
 using QuickStockTaker.Core.Services.Interfaces;
 using Microsoft.Maui;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace QuickStockTaker.Core.Services
 {
@@ -14,15 +15,17 @@ namespace QuickStockTaker.Core.Services
     public class EmailUploadService:IEmailUploadService
     {
         //private readonly NLog.ILogger _logger;
+        IServiceProvider _provider;
 
         public string Name { get; }
         public string To { get; set; }
         public Smtp SmtpDetail { get; set; }
         public string From { get; set; }
 
-        public EmailUploadService()
+        public EmailUploadService(IServiceProvider provider)
         {
             //_logger = logger;
+            _provider = provider;
             Name = nameof(EmailUploadService);
         }
 
@@ -50,7 +53,7 @@ namespace QuickStockTaker.Core.Services
                 //var host = await SecureStorage.GetAsync("SmtpHost");
                 //var port = Convert.ToInt32(await SecureStorage.GetAsync("SmtpPort"));
 
-                var sender = ServiceLocator.Container.Resolve<EmailService>(
+                var sender = _provider.GetService<EmailService>();
                     new NamedParameter("username", SmtpDetail.Username), 
                     new NamedParameter("password", SmtpDetail.Password),
                     new NamedParameter("host", SmtpDetail.Host),

@@ -3,6 +3,9 @@ using Autofac.Extensions.DependencyInjection;
 using CommunityToolkit.Maui;
 using Controls.UserDialogs.Maui;
 using QuickStockTaker.Core;
+using QuickStockTaker.Core.Models.Sqlite;
+using QuickStockTaker.Core.Repositories;
+using QuickStockTaker.Core.Repositories.Interfaces;
 using Serilog;
 using Serilog.Events;
 using SkiaSharp.Views.Maui.Controls.Hosting;
@@ -46,21 +49,11 @@ public static class MauiProgram
             // register views
             autofacBuilder.RegisterAssemblyTypes(typeof(MauiProgram).Assembly)
                         .Where(t => t.Name.EndsWith("Page"));
-            //autofacBuilder.RegisterType<AppShell>().SingleInstance();
 
-            // register view models
-            autofacBuilder.RegisterAssemblyTypes(typeof(ServiceLocator).Assembly)
-                            .Where(t => t.Name.EndsWith("ViewModel"));
+            ServiceLocator.RegisterType(autofacBuilder);
 
-            // register db repository
-            autofacBuilder.RegisterAssemblyTypes(typeof(ServiceLocator).Assembly)
-                        .Where(t => t.Name.EndsWith("Repository"))
-                        .AsImplementedInterfaces();
 
-            // register db repository
-            autofacBuilder.RegisterAssemblyTypes(typeof(ServiceLocator).Assembly)
-                        .Where(t => t.Name.EndsWith("Service"))
-                        .AsImplementedInterfaces();
+
         });
 
         SetupSerilog();

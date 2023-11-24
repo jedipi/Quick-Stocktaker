@@ -71,6 +71,16 @@ namespace QuickStockTaker.Core.Repositories
             return await connection.Table<T>().Where(expression).ToListAsync();
         }
 
+        public async Task DropandRecreateTable()
+        {
+            await connection.RunInTransactionAsync((trans) =>
+            {
+                trans.DropTable<T>();
+                trans.CreateTable<T>();
+            }
+           );
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

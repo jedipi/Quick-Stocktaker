@@ -36,8 +36,14 @@ namespace QuickStockTaker.Core.Models.Sqlite
         {
             if (Database is not null)
                 return;
-
-            Database = new SQLiteAsyncConnection(DatabasePath, Flags);
+            try
+            {
+                Database = new SQLiteAsyncConnection(DatabasePath, Flags);
+            }
+            catch(Exception e)
+            {
+                var a = e.Message;
+            }
         }
     }
 }
