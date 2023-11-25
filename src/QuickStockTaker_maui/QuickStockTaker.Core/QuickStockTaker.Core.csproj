@@ -18,6 +18,7 @@
 
 	<ItemGroup>
 	  <PackageReference Include="Autofac" Version="7.1.0" />
+	  <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 	  <PackageReference Include="Controls.UserDialogs.Maui" Version="1.5.0" />
 	  <PackageReference Include="CsvHelper" Version="30.0.1" />
@@ -31,6 +32,25 @@
 	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
 	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.6" />
 	  <PackageReference Include="ZXing.Net.Maui" Version="0.4.0" />
+	  <PackageReference Include="ZXing.Net.Maui.Controls" Version="0.4.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Views\CameraPage.xaml.cs">
+	    <DependentUpon>%(Filename)</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Views\CameraPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
+	  <PackageReference Include="AndHUD">
+	    <Version>2.0.1</Version>
+	  </PackageReference>
 	</ItemGroup>
 
 </Project>

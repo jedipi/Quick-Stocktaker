@@ -68,7 +68,7 @@
                         <StackLayout Orientation="Horizontal">
                             <Entry Text="{Binding Barcode}" Placeholder="Barcode..." Keyboard="Text" HorizontalOptions="FillAndExpand"/>
                             <Button Style="{StaticResource SmallButton}"
-                                    Command="{Binding ScanBarcodeCmd}"  
+                                    Command="{Binding ScanBarcodeCommand}"  
                                     Text="Scan"/>
 
                             <Button Style="{StaticResource SmallButton}" BackgroundColor="LightGray" TextColor="#333333"

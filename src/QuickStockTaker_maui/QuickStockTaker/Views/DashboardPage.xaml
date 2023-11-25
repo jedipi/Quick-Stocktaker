@@ -50,7 +50,7 @@
                         <Frame>
                             <StackLayout Orientation="Vertical">
                                 <ImageButton Source="ic_scanner"
-                                             Command="{Binding EnterDataCmd}"/>
+                                             Command="{Binding EnterDataCommand}"/>
                                 <Label Text="Enter Data" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
 
                             </StackLayout>
