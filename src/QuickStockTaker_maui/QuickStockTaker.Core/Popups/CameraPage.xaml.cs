@@ -1,7 +1,7 @@
 using QuickStockTaker.Core.ViewModels;
 using ZXing.Net.Maui;
 
-namespace QuickStockTaker.Core.Views;
+namespace QuickStockTaker.Core.Popups;
 
 public partial class CameraPage : ContentPage
 {

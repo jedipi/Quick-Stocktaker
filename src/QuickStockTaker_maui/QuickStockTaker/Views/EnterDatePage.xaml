@@ -6,7 +6,7 @@
              Title="EnterDatePage">
     <ContentPage.Resources>
         <ResourceDictionary>
-            <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}" x:Key="SmallButton" >
+            <Style TargetType="Button" x:Key="SmallButton" >
                 <Setter Property="WidthRequest" Value="60"></Setter>
                 <Setter Property="HeightRequest" Value="35"></Setter>
                 <Setter Property="Padding" Value="0"></Setter>
@@ -100,7 +100,7 @@
                     <Label Grid.Row="3" Grid.Column="0" Text="Auto Save:" VerticalOptions="Center" VerticalTextAlignment="Center" HorizontalOptions="Start" HorizontalTextAlignment="Start"/>
                     <Switch Grid.Row="3" Grid.Column="1" HorizontalOptions="Start" IsToggled="{Binding AutoQty}" x:Name="AutoQty"/>
                     <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" HorizontalOptions="FillAndExpand"
-                            Command="{Binding AddItemCmd}" IsVisible="False" Style="{StaticResource PrimaryButton}"
+                            Command="{Binding AddItemCmd}" IsVisible="False" 
                             Text="Add Item">
                         <Button.Triggers>
                             <DataTrigger TargetType="Button"

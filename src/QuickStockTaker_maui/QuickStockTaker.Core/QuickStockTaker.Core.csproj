@@ -36,13 +36,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Views\CameraPage.xaml.cs">
+	  <Compile Update="Popups\CameraPage.xaml.cs">
 	    <DependentUpon>%(Filename)</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Views\CameraPage.xaml">
+	  <MauiXaml Update="Popups\CameraPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

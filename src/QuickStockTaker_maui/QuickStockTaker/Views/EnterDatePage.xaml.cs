@@ -4,9 +4,9 @@ namespace QuickStockTaker.Views;
 
 public partial class EnterDatePage : ContentPage
 {
-	public EnterDatePage(EnterDateViewModel vm)
+	public EnterDatePage(IServiceProvider provider)
 	{
 		InitializeComponent();
-		BindingContext = vm;
+		BindingContext = provider.GetService(typeof(EnterDateViewModel));
 	}
 }

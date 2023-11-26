@@ -9,20 +9,20 @@ using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using ZXing.Net.Maui;
-using QuickStockTaker.Core.Views;
+using QuickStockTaker.Core.Popups;
 
 namespace QuickStockTaker.Core.ViewModels
 {
     public partial class EnterDateViewModel : ObservableObject
     {
         #region fields
-        //private bool _isContinuousMode = Preferences.Get(Constants.ContinuousMode, false);
-        //private string _deviceId = Preferences.Get(Constants.DeviceId, "");
-        //private string _stocktakeNumber = Preferences.Get(Constants.StocktakeNumber, "");
-        //private string _site = Preferences.Get(Constants.Site, "");
+        private bool _isContinuousMode = Preferences.Get(Constants.ContinuousMode, false);
+        private string _deviceId = Preferences.Get(Constants.DeviceId, "");
+        private string _stocktakeNumber = Preferences.Get(Constants.StocktakeNumber, "");
+        private string _site = Preferences.Get(Constants.Site, "");
 
-        //private string _stocktakeDate =Preferences.Get(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString();
-        //IServiceProvider _provider;
+        private string _stocktakeDate = Preferences.Get(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString();
+        IServiceProvider _provider;
 
         #endregion
 
@@ -47,9 +47,9 @@ namespace QuickStockTaker.Core.ViewModels
 
         #endregion
 
-        public EnterDateViewModel( ) 
+        public EnterDateViewModel(IServiceProvider provider) 
         {
-            //_provider = provider;
+            _provider = provider;
         }
 
         [RelayCommand]
@@ -60,13 +60,13 @@ namespace QuickStockTaker.Core.ViewModels
             var barcode = scanResults.FirstOrDefault();
             if (barcode != null)
             {
-                _ = $"Barcodes: {barcode.Format} -> {barcode.Value}";
+                Barcode =barcode.Value;
             }
         }
 
         public async Task<BarcodeResult[]> GetScanResultsAsync()
         {
-            //var vm = _provider.GetService(typeof(CameraViewModel)) as CameraViewModel;
+            //var cameraPage = _provider.GetService(typeof(CameraPage)) as CameraPage;
             var cameraPage = new CameraPage();
             await Application.Current.MainPage.Navigation.PushModalAsync(cameraPage);
 
