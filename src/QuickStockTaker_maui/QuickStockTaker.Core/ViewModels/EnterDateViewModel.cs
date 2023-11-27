@@ -66,8 +66,8 @@ namespace QuickStockTaker.Core.ViewModels
 
         public async Task<BarcodeResult[]> GetScanResultsAsync()
         {
-            //var cameraPage = _provider.GetService(typeof(CameraPage)) as CameraPage;
-            var cameraPage = new CameraPage();
+            var cameraPage = _provider.GetService(typeof(CameraPage)) as CameraPage;
+            //var cameraPage = new CameraPage();
             await Application.Current.MainPage.Navigation.PushModalAsync(cameraPage);
 
             return await cameraPage.WaitForResultAsync();
