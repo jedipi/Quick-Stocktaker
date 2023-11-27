@@ -10,6 +10,10 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using ZXing.Net.Maui;
 using QuickStockTaker.Core.Popups;
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Views;
+
 
 namespace QuickStockTaker.Core.ViewModels
 {
@@ -23,6 +27,7 @@ namespace QuickStockTaker.Core.ViewModels
 
         private string _stocktakeDate = Preferences.Get(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString();
         IServiceProvider _provider;
+        private readonly IPopupService _popupService;
 
         #endregion
 
@@ -47,31 +52,37 @@ namespace QuickStockTaker.Core.ViewModels
 
         #endregion
 
-        public EnterDateViewModel(IServiceProvider provider) 
+        public EnterDateViewModel(IServiceProvider provider,IPopupService popupService) 
         {
             _provider = provider;
+            _popupService = popupService;
         }
 
         [RelayCommand]
         private async Task OnScanBarcode()
         {
-
-            var scanResults = await GetScanResultsAsync();
-            var barcode = scanResults.FirstOrDefault();
-            if (barcode != null)
+            try
             {
-                Barcode =barcode.Value;
+                List<BarcodeResult> barcodes = new List<BarcodeResult>();
+                var scanResults = await _popupService.ShowPopupAsync<CameraPopupViewModel>() as BarcodeResult[];
+                if (scanResults == null) return;
+
+                barcodes = scanResults.ToList();
+
+                var barcode = barcodes.FirstOrDefault();
+                if (barcode != null)
+                {
+                    Barcode = barcode.Value;
+                }
             }
+            catch (Exception ex)
+            {
+                var a = ex.Message;
+            }
+
         }
 
-        public async Task<BarcodeResult[]> GetScanResultsAsync()
-        {
-            var cameraPage = _provider.GetService(typeof(CameraPage)) as CameraPage;
-            //var cameraPage = new CameraPage();
-            await Application.Current.MainPage.Navigation.PushModalAsync(cameraPage);
-
-            return await cameraPage.WaitForResultAsync();
-        }
+        
 
         partial void OnAutoQtyChanged(bool value)
         {

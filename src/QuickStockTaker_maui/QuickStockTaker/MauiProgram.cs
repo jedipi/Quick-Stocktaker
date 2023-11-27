@@ -4,6 +4,7 @@ using CommunityToolkit.Maui;
 using Controls.UserDialogs.Maui;
 using QuickStockTaker.Core;
 using QuickStockTaker.Core.Models.Sqlite;
+using QuickStockTaker.Core.Popups;
 using QuickStockTaker.Core.Repositories;
 using QuickStockTaker.Core.Repositories.Interfaces;
 using Serilog;
@@ -58,6 +59,8 @@ public static class MauiProgram
 
 
         });
+
+        builder.Services.AddTransientPopup<CameraPopupPage, CameraPopupViewModel>();
 
         SetupSerilog();
         builder.Logging.AddSerilog(dispose: true);

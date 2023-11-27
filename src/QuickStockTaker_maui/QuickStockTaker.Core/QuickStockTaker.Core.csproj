@@ -19,6 +19,7 @@
 	<ItemGroup>
 	  <PackageReference Include="Autofac" Version="7.1.0" />
 	  <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
+	  <PackageReference Include="CommunityToolkit.Maui" Version="7.0.0" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 	  <PackageReference Include="Controls.UserDialogs.Maui" Version="1.5.0" />
 	  <PackageReference Include="CsvHelper" Version="30.0.1" />
@@ -43,6 +44,9 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="Popups\CameraPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Popups\CameraPopupPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
