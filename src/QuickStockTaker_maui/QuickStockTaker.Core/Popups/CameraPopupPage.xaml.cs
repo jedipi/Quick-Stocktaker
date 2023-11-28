@@ -1,33 +1,38 @@
 using CommunityToolkit.Maui.Views;
+using Microsoft.Extensions.Logging;
 using ZXing.Net.Maui;
 
 namespace QuickStockTaker.Core.Popups;
 
 public partial class CameraPopupPage : Popup
 {
-	public CameraPopupPage(CameraPopupViewModel vm)
+    ILogger<CameraPopupPage> _logger;
+
+    public CameraPopupPage(CameraPopupViewModel vm, ILogger<CameraPopupPage> logger)
 	{
 		InitializeComponent();
-
         Size = new Size(DeviceDisplay.Current.MainDisplayInfo.Width, DeviceDisplay.Current.MainDisplayInfo.Height);
-		BindingContext = vm;
+		
+        BindingContext = vm;
+        _logger = logger;
+
         cameraBarcodeReaderView.Options = new BarcodeReaderOptions
         {
             Formats = BarcodeFormats.OneDimensional,
             AutoRotate = true,
-            Multiple = false
+            Multiple = true
         };
     }
 
     protected async void BarcodesDetected(object sender, BarcodeDetectionEventArgs e)
     {
-        try { 
+        try 
+        { 
             await CloseAsync(e.Results); 
-        } catch (Exception ex) {
-            var a = ex.Message;
+        } 
+        catch (Exception ex) 
+        {
+            _logger.LogError(ex, ex.Message, ex.StackTrace);
         }
-
-        //scanTask.TrySetResult(e.Results);
-        
     }
 }

@@ -4,13 +4,15 @@
              x:Class="QuickStockTaker.Core.Popups.CameraPopupPage"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls">
-    <Grid VerticalOptions="FillAndExpand" BackgroundColor="White">
+    <Grid VerticalOptions="FillAndExpand" BackgroundColor="#8025b47c">
         <Grid.RowDefinitions>
             <RowDefinition Height="150" />
             <RowDefinition Height="*" />
             <RowDefinition Height="150" />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Text="Hold camera up to barcode to scan"/>
+        <Label Grid.Row="0" Text="Hold camera up to barcode to scan" 
+               HeightRequest="90" HorizontalOptions="Center"
+               TextColor="{StaticResource White}" FontSize="Medium" />
         <VerticalStackLayout Grid.Row="1">
             <zxing:CameraBarcodeReaderView
           x:Name="cameraBarcodeReaderView"
@@ -22,7 +24,9 @@
             </zxing:CameraBarcodeReaderView.Behaviors>-->
             </zxing:CameraBarcodeReaderView>
         </VerticalStackLayout>
-        <Label Grid.Row="2" Text="Barcode will automatically scan" VerticalTextAlignment="Center"/>
+        <Label Grid.Row="2" Text="Barcode will automatically scan" 
+               HeightRequest="40" HorizontalOptions="Center" 
+               TextColor="{StaticResource White}" FontSize="Medium" />
     </Grid>
     
 </toolkit:Popup>
