@@ -7,8 +7,27 @@ using System.Threading.Tasks;
 
 namespace QuickStockTaker.Core.Popups
 {
-    public class CameraPopupViewModel : ObservableObject
+    public partial class CameraPopupViewModel : ObservableObject
     {
-        public CameraPopupViewModel() { }  
+        [ObservableProperty]
+        private bool _isScanContinuously;
+
+        [ObservableProperty]
+        private int _delayBetweenContinuousScans;
+        public CameraPopupViewModel() 
+        {
+            // default delay in ms
+            DelayBetweenContinuousScans = 1500;
+        }  
+
+        public void SetIsScanContinuously(bool value)
+        {
+            IsScanContinuously = value;
+        }
+
+        public void SetDelayBetweenContinuousScans(int value)
+        {
+            DelayBetweenContinuousScans = value;
+        }
     }
 }

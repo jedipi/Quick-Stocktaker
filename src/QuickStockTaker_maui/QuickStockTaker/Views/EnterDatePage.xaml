@@ -35,7 +35,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
@@ -48,15 +48,15 @@
                                 <Entry.Behaviors>
                                     <toolkit:EventToCommandBehavior
                                         EventName="TextChanged"
-                                        Command="{Binding BayTextChangedCmd}"/>
+                                        Command="{Binding BayTextChangedCommand}"/>
                                 </Entry.Behaviors>
                             </Entry>
                             <Button Style="{StaticResource SmallButton}"
-                                    Command="{Binding ScanBayNoCmd}"  
+                                    Command="{Binding ScanBayNoCommand}"  
                                     Text="Scan" />
 
                             <Button Style="{StaticResource SmallButton}" BackgroundColor="LightGray" TextColor="#333333"
-                                    Command="{Binding ClearBayNoCmd}"  
+                                    Command="{Binding ClearBayNoCommand}"  
                                     Text="Clear" />
                         </StackLayout>
                     </StackLayout>
@@ -72,7 +72,7 @@
                                     Text="Scan" Clicked="Button_Clicked"/>
 
                             <Button Style="{StaticResource SmallButton}" BackgroundColor="LightGray" TextColor="#333333"
-                                    Command="{Binding ClearBarcodeCmd}"  
+                                    Command="{Binding ClearBarcodeCommand}"  
                                     Text="Clear" />
                         </StackLayout>
                     </StackLayout>
@@ -81,26 +81,26 @@
                     <Label Text="QTY:" Grid.Row="2" Grid.Column="0" VerticalOptions="Center" VerticalTextAlignment="End"/>
                     <StackLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalOptions="StartAndExpand">
                         <Entry Text="{Binding Qty}" Keyboard="Numeric"  WidthRequest="100" IsReadOnly="{Binding AutoQty}" HorizontalTextAlignment="Center"/>
-                        <Stepper Increment="1" Minimum="1"   Value="{Binding Qty}" IsEnabled="True">
-                            <Stepper.Behaviors>
+                        <Stepper Increment="1" Minimum="1" Value="{Binding Qty}" IsEnabled="True">
+                            <!--<Stepper.Behaviors>
                                 <toolkit:EventToCommandBehavior EventName="ValueChanged"
 									Command="{Binding StepperValueChangedCmd}" />
-                            </Stepper.Behaviors>
+                            </Stepper.Behaviors>-->
 
-                            <Stepper.Triggers>
+                            <!--<Stepper.Triggers>
                                 <DataTrigger TargetType="Stepper" 
 											 Binding="{Binding AutoQty}" Value="True">
                                     <Setter Property="IsEnabled" Value="False" />
                                 </DataTrigger>
-                            </Stepper.Triggers>
+                            </Stepper.Triggers>-->
                         </Stepper>
                     </StackLayout>
 
 
                     <Label Grid.Row="3" Grid.Column="0" Text="Auto Save:" VerticalOptions="Center" VerticalTextAlignment="Center" HorizontalOptions="Start" HorizontalTextAlignment="Start"/>
-                    <Switch Grid.Row="3" Grid.Column="1" HorizontalOptions="Start" IsToggled="{Binding AutoQty}" x:Name="AutoQty"/>
+                    <Switch Grid.Row="3" Grid.Column="1" HorizontalOptions="Start" IsToggled="{Binding AutoQty,Mode=TwoWay}" x:Name="AutoQty"/>
                     <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" HorizontalOptions="FillAndExpand"
-                            Command="{Binding AddItemCmd}" IsVisible="False" 
+                            Command="{Binding AddItemCommand}" IsVisible="False" 
                             Text="Add Item">
                         <Button.Triggers>
                             <DataTrigger TargetType="Button"
@@ -113,9 +113,9 @@
                     </Button>
 
                     <!--Last 5 scanned items-->
-                    <Label Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Text="Last 3 items" Margin="0, 20, 0, 0"/>
-                    <ListView Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" ItemsSource="{Binding Last5Items, Mode=TwoWay}"
-								  SelectedItem="{Binding SelectedItem}" HeightRequest="200">
+                    <Label Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Text="Last 5 items" Margin="0, 20, 0, 0"/>
+                    <ListView Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" ItemsSource="{Binding LastAddedItems, Mode=TwoWay}"
+								  SelectedItem="{Binding SelectedItem}" HeightRequest="300">
                         <ListView.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>

@@ -91,6 +91,7 @@
 	  <None Remove="Resources\Images\ic_stocktake.png" />
 	  <None Remove="Resources\Images\ic_upload.png" />
 	  <None Remove="Resources\Raw\2160-get-started-button.json" />
+	  <None Remove="Resources\Raw\beep.mp3" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -103,6 +104,7 @@
 	  <PackageReference Include="CsvHelper" Version="30.0.1" />
 	  <PackageReference Include="MailKit" Version="4.3.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.3" />
+		<PackageReference Include="Plugin.Maui.Audio" Version="2.1.0" />
 	  <PackageReference Include="Serilog" Version="3.1.1" />
 	  <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
 	  <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />

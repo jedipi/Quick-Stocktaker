@@ -16,7 +16,7 @@
         <VerticalStackLayout Grid.Row="1">
             <zxing:CameraBarcodeReaderView
           x:Name="cameraBarcodeReaderView"
-          BarcodesDetected="BarcodesDetected" >
+          BarcodesDetected="BarcodesDetected"  >
                 <!--<zxing:CameraBarcodeReaderView.Behaviors>
                 <toolkit:EventToCommandBehavior
                                         EventName="BarcodesDetected"

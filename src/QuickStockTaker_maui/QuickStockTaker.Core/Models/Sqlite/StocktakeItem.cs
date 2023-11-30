@@ -1,8 +1,10 @@
-﻿using SQLite;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SQLite;
 
 namespace QuickStockTaker.Core.Models.Sqlite
 {
-    public class StocktakeItem : BaseModel
+    [INotifyPropertyChanged]
+    public partial class StocktakeItem : BaseModel
     {
 
         [NotNull]
