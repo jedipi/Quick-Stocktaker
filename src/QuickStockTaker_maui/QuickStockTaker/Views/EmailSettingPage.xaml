@@ -77,7 +77,7 @@
                 <Border  Stroke="#ccc" StrokeThickness="1" StrokeShape="Line 0 0 2000 0" IsVisible="{Binding ShowFrom}"/>
 
                 <StackLayout Orientation="Vertical" VerticalOptions="Center" Margin="20,50,0,0">
-                    <Button Text="Send Test Email" Command="{Binding TestEmailCommand}" Style="{StaticResource PrimaryButton}" HorizontalOptions="Center" WidthRequest="200">
+                    <Button Text="Send Test Email" Command="{Binding TestEmailCommand}" HorizontalOptions="Center" WidthRequest="200">
                         <Button.ImageSource>
                             <FontImageSource Glyph="{x:Static md:MaterialDesignIcons.Send}" FontFamily="MD-O"></FontImageSource>
                         </Button.ImageSource>

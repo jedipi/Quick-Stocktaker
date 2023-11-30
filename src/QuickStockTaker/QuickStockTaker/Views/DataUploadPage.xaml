@@ -45,7 +45,7 @@
                             </StackLayout>
                         </Frame>
                     </StackLayout>
-                    <StackLayout Style="{StaticResource outer}" IsEnabled="False">
+                    <!--<StackLayout Style="{StaticResource outer}" IsEnabled="False">
                         <Frame>
                             <StackLayout Orientation="Vertical">
                                 <ImageButton Source="{local:ImageResource QuickStockTaker.Images.ic_ftp.png}" 
@@ -97,7 +97,7 @@
 
                             </StackLayout>
                         </Frame>
-                    </StackLayout>
+                    </StackLayout>-->
                     
 
 

@@ -46,8 +46,8 @@
 
                     <StackLayout>
                         <Button Text="Change Stocktake Date" Command="{Binding ChangeDateCmd}" Style="{StaticResource PrimaryButton}"></Button>
-                        <Button Text="Change Stocktake Number" Command="{Binding ChangeStoreCmd}" Style="{StaticResource PrimaryButton}"></Button>
-                        <Button Text="Change Site/Warehouse" Command="{Binding ChangeCompanyCmd}" Style="{StaticResource PrimaryButton}"></Button>
+                        <Button Text="Change Stocktake Number" Command="{Binding ChangeStocktakeNumberCmd}" Style="{StaticResource PrimaryButton}"></Button>
+                        <Button Text="Change Site/Warehouse" Command="{Binding ChangeSiteCmd}" Style="{StaticResource PrimaryButton}"></Button>
                     </StackLayout>
               
             </StackLayout>

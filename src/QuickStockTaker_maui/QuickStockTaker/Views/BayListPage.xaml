@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QuickStockTaker.Views.BayListPage"
+             xmlns:fa="clr-namespace:FontAwesome"
+             xmlns:md="clr-namespace:MaterialDesign"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             Title="BayListPage">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+                EventName="Appearing"
+                Command="{Binding AppearingCommand}" />
+    </ContentPage.Behaviors>
+    <Shell.TitleView>
+        <StackLayout Padding="0,10,0,0">
+            <Label TextColor="White" FontSize="12"  Text="Bay/Location List" />
+            <Label TextColor="White" FontSize="12" Text="{Binding TotalBayCount, StringFormat='Bay Count: {0}'}" />
+        </StackLayout>
+    </Shell.TitleView>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="PDE QTY:"/>
+        <ToolbarItem Text="{Binding TotalQty}"/>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <StackLayout Padding="10,10,0,10">
+            <SearchBar Placeholder="Find Bay/Location..." Text="{Binding SearchText}" 
+                       FontSize="Default" Keyboard="Text" HeightRequest="30" x:Name="SearchBarSearch">
+                <SearchBar.Behaviors>
+                    <toolkit:EventToCommandBehavior
+                        EventName="TextChanged"
+                        Command="{Binding SearchTextCommand}"/>
+                </SearchBar.Behaviors>
+            </SearchBar>
+            <ListView ItemsSource="{Binding Bays, Mode=TwoWay}" x:Name="BayListView"
+					  SelectedItem="{Binding SelectedBay}" RowHeight="70"
+					  VerticalOptions="FillAndExpand" CachingStrategy="RecycleElement" SeparatorVisibility="None">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <!--<ViewCell.ContextActions>
+                                <MenuItem Command="{Binding Path=BindingContext.BayDetailCmd, Source={x:Reference BayListView}}" 
+										  CommandParameter="{Binding .}"
+										  Icon="ic_action_mode_edit" />
+                            </ViewCell.ContextActions>-->
+
+                            <SwipeView x:Name="swipeView1" Background="Transparent">
+                                <SwipeView.LeftItems>
+                                    <SwipeItemView Command="{Binding Source={x:Reference BayList}, Path=BindingContext.DeleteBayCommand}"
+                                                       CommandParameter="{Binding .}">
+                                        <Grid WidthRequest="100" >
+
+                                            <Border Stroke="#DC3545" 
+                                                StrokeThickness="4"
+                                                StrokeShape="RoundRectangle 0,12,0,12"
+                                                Background="#DC3545"
+                                                Padding="16,0"
+                                                HorizontalOptions="FillAndExpand">
+                                                <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Orientation="Vertical">
+                                                    <Label 
+                                                    Text="{x:Static fa:FontAwesomeFreeReg.TrashCan}"
+                                                    TextColor="White"
+                                                    FontFamily="FA"
+                                                    HorizontalOptions="Center"
+                                                    VerticalOptions="Center" />
+
+                                                    <Label
+                                                    HorizontalOptions="Center"
+                                                    Text="Delete"
+                                                    TextColor="White"
+                                                    VerticalOptions="Center" />
+                                                </StackLayout>
+                                            </Border>
+                                        </Grid>
+                                    </SwipeItemView>
+
+                                </SwipeView.LeftItems>
+                                <SwipeView.RightItems>
+                                    <SwipeItemView Command="{Binding Source={x:Reference BayList}, Path=BindingContext.ChangeBayNoCommand}"
+                                                       CommandParameter="{Binding .}">
+                                        <Grid WidthRequest="100" >
+
+                                            <Border Stroke="{StaticResource Primary}" 
+                                                StrokeThickness="1"
+                                                StrokeShape="RoundRectangle 0,0,0,0"
+                                                Background="{StaticResource Primary}"
+                                                Padding="16,0"
+                                                HorizontalOptions="FillAndExpand">
+                                                <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Orientation="Vertical">
+                                                    <Label
+                                                        Text="{x:Static md:MaterialDesignIcons.Edit}"
+                                                        TextColor="White"
+                                                        FontFamily="MD-O"
+                                                        HorizontalOptions="Center"
+                                                        VerticalOptions="Center" />
+
+                                                    <Label
+                                                        HorizontalOptions="Center"
+                                                        Text="Update"
+                                                        TextColor="White"
+                                                        VerticalOptions="Center" />
+                                                </StackLayout>
+                                            </Border>
+                                        </Grid>
+                                    </SwipeItemView>
+                                    <SwipeItemView Command="{Binding Source={x:Reference BayList}, Path=BindingContext.BayDetailsCommand}"
+                                                       CommandParameter="{Binding .}">
+                                        <Grid WidthRequest="100" >
+
+                                            <Border Stroke="{StaticResource Primary}" Margin="5,0,0,0"
+                                                StrokeThickness="4"
+                                                StrokeShape="RoundRectangle 12,0,12,0"
+                                                Background="{StaticResource Primary}"
+                                                Padding="16,0"
+                                                HorizontalOptions="FillAndExpand">
+                                                <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Orientation="Vertical">
+                                                    <Label
+                                                        Text="{x:Static fa:FontAwesomeFreeSolid.List}"
+                                                        TextColor="White"
+                                                        FontFamily="FA-S"
+                                                        HorizontalOptions="Center"
+                                                        VerticalOptions="Center" />
+
+                                                    <Label
+                                                        HorizontalOptions="Center"
+                                                        Text="Details"
+                                                        TextColor="White"
+                                                        VerticalOptions="Center" />
+                                                </StackLayout>
+                                            </Border>
+                                        </Grid>
+                                    </SwipeItemView>
+                                </SwipeView.RightItems>
+
+                                <!--<yummy:PancakeView VerticalOptions="Fill" CornerRadius="12" BackgroundColor="#e1eff1 " Margin="0,0,10,5">-->
+                                <Border Stroke="#e1eff1" Margin="0,0,10,5"
+                                                StrokeThickness="1"
+                                                StrokeShape="RoundRectangle 12,12,12,12"
+                                                Background="#e1eff1"
+                                                HorizontalOptions="FillAndExpand">
+                                    <StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand" Padding="10,0,0,0">
+                                        <Label VerticalTextAlignment="Center" FontSize="Medium" VerticalOptions="Center">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Bay/Location: "/>
+                                                    <Span Text="{Binding BayLocation}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label VerticalTextAlignment="Center" VerticalOptions="Center">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Total Units: "/>
+                                                    <Span Text="{Binding TotalCount}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                    </StackLayout>
+                                    <!--</yummy:PancakeView>-->
+                                </Border>
+                            </SwipeView>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <!--<StackLayout Orientation="Horizontal" VerticalOptions="End" HorizontalOptions="CenterAndExpand" Padding="0,5,0,0">
+                <Button Command="{Binding BayDetailCmd}" 
+                        FontSize="Small" HeightRequest="40" Padding="10,0" CornerRadius="5"
+                        Text="&#xf06e; Bay/Location Details"
+                        FontFamily="FA-R"
+                        />
+                -->
+            <!-- font awesome icon eye-->
+            <!--
+
+                <Button Command="{Binding ChangeBayNoCmd}"
+                        FontSize="Small" HeightRequest="40" Padding="10,0" CornerRadius="5"
+                        Text="&#xf044; Change Bay/Location"
+                        />
+                -->
+            <!-- font awesome icon edit-->
+            <!--
+            </StackLayout>-->
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

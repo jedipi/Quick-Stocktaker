@@ -3,6 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using Controls.UserDialogs.Maui;
 using Microsoft.Extensions.Logging;
 using QuickStockTaker.Core.Data;
+using QuickStockTaker.Core.Repositories.Interfaces;
+using QuickStockTaker.Core.Services;
+using QuickStockTaker.Core.Validators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +16,10 @@ namespace QuickStockTaker.Core.ViewModels
 {
     public partial class EmailSettingViewModel : BaseViewModel
     {
+        #region fields
+        private IServiceProvider _serviceProvider;
+        #endregion
+
         #region Properties
 
         [ObservableProperty]
@@ -41,9 +48,13 @@ namespace QuickStockTaker.Core.ViewModels
 
         #endregion
 
-        public EmailSettingViewModel(IUserDialogs dialogs, ILogger<EmailSettingViewModel> logger) : base(dialogs, logger)
+        public EmailSettingViewModel(
+            IUserDialogs dialogs,
+            IServiceProvider serviceProvider,
+            ILogger<EmailSettingViewModel> logger) : base(dialogs, logger)
         {
             _logger.LogInformation("test");
+            _serviceProvider = serviceProvider;
         }
 
         #region RelayCommands
@@ -55,6 +66,128 @@ namespace QuickStockTaker.Core.ViewModels
             SmtpPort = await SecureStorage.GetAsync(Constants.SmtpPort);
             SmtpUsername = await SecureStorage.GetAsync(Constants.SmtpUsername);
             SmtpFrom = await SecureStorage.GetAsync(Constants.SmtpFrom);
+        }
+
+        [RelayCommand]
+        private async Task OnTestEmail()
+        {
+            // ask for email address
+            var result = await Application.Current.MainPage.DisplayPromptAsync(
+                "", "Type in your email address:", accept:"Send", placeholder: "email address",keyboard: Keyboard.Email);
+
+            // validate email address
+            if (string.IsNullOrEmpty(result))
+                return;
+
+            var emailAddress = result.Trim();
+            var validator = _serviceProvider.GetService<EmailValidator>();
+            var validateResult = validator.Validate(emailAddress);
+            if (!validateResult.IsValid)
+            {
+                await _dialogs.AlertAsync(validateResult.Errors.First().ErrorMessage, "Error", "OK");
+                return;
+            }
+
+            try
+            {
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+                using (var progress = _dialogs.Progress("Sending test email...", cancelText: "Cancel", cancel: tokenSource.Cancel))
+                {
+                    progress.Show();
+
+                    // get smtp details.
+                    var provider = Preferences.Get(Constants.SmtpProvider, "Other");
+                    var smtpService = _serviceProvider.GetService<ISmtpService>();
+                    var smtp = await smtpService.GetSmtp(provider);
+
+                    // get the from email address
+                    var from = await SecureStorage.GetAsync(Constants.SmtpFrom);
+                    from = provider != "Other" ? emailAddress : from;
+
+                    var sender = _serviceProvider.GetService<EmailService>();
+                    sender.Username = smtp.Username;
+                    sender.Password = smtp.Password;
+                    sender.Host = smtp.Host;
+                    sender.Port = smtp.Port;
+
+                    sender.AddRecipient(emailAddress)
+                        .AddFrom(from)
+                        .AddSubject($"[Quick Stocktaker] Test Email from Stocktake device")
+                        .AddBody("This is a test email from the stocktak scanner")
+                        .SetBodyHTML(true);
+                    await sender.SendAsync();
+                    _logger.LogInformation($"Smtp server response: {sender.Response}");
+                    await _dialogs.AlertAsync("Test email send successfully.");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _dialogs.AlertAsync($"{ex.Message}", "ERROR", "OK");
+                _logger.LogError(ex, "Send test email fail");
+            }
+        }
+
+        [RelayCommand]
+        private async Task OnSmtpFrom()
+        {
+            var result = await Application.Current.MainPage.DisplayPromptAsync("From", "Please type in the From email address:");
+
+            if (string.IsNullOrEmpty(result))
+                return;
+
+            SmtpFrom = result.Trim();
+            await SecureStorage.SetAsync(Constants.SmtpFrom, SmtpFrom);
+        }
+
+        [RelayCommand]
+        private async Task OnSmtpPassword()
+        {
+            var result = await Application.Current.MainPage.DisplayPromptAsync("Password", "Please type in the password:");
+
+            if (string.IsNullOrEmpty(result))
+                return;
+
+            SmtpPassword = result.Trim();
+            await SecureStorage.SetAsync(Constants.SmtpPassword, SmtpPassword);
+        }
+
+        [RelayCommand]
+        private async Task OnSmtpUsername()
+        {
+            var result = await Application.Current.MainPage.DisplayPromptAsync("Username", "Please type in the username:");
+
+            if (string.IsNullOrEmpty(result))
+                return;
+
+            SmtpUsername = result.Trim();
+            await SecureStorage.SetAsync(Constants.SmtpUsername, SmtpUsername);
+        }
+
+        [RelayCommand]
+        private async Task OnSmtpPort()
+        {
+
+            var result = await Application.Current.MainPage.DisplayPromptAsync("SMTP port", "Please type in the SMTP port:", keyboard:Keyboard.Numeric);
+
+            if (string.IsNullOrEmpty(result))
+                return;
+
+            SmtpPort = result.Trim();
+            await SecureStorage.SetAsync(Constants.SmtpPort, SmtpPort);
+        }
+
+        [RelayCommand]
+        private async Task OnSmtpHost()
+        {
+            //var result = await _dialogs.("Please type in the SMTP host:", "SMTP HOST");
+            var result = await Application.Current.MainPage.DisplayPromptAsync("SMTP HOST", "Please type in the SMTP host:");
+
+            if (string.IsNullOrEmpty(result))
+                return;
+
+            SmtpHost = result.Trim();
+            await SecureStorage.SetAsync(Constants.SmtpHost, SmtpHost);
         }
 
         [RelayCommand]

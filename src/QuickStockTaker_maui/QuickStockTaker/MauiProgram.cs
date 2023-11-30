@@ -28,7 +28,7 @@ public static class MauiProgram
             .UseUserDialogs(registerInterface: true, () =>
             {
                 //setup your default styles for dialogs
-                AlertConfig.DefaultBackgroundColor = Colors.Purple;
+                //AlertConfig.DefaultBackgroundColor = Colors.Purple;
 #if ANDROID
         AlertConfig.DefaultMessageFontFamily = "OpenSans-Regular.ttf";
 #else

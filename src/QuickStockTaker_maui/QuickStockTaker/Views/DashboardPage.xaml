@@ -60,7 +60,7 @@
                         <Frame>
                             <StackLayout Orientation="Vertical">
                                 <ImageButton Source="ic_list"
-                                             Command="{Binding BayListCmd}"/>
+                                             Command="{Binding BayListCommand}"/>
                                 <Label Text="Bay/Location List" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
 
                             </StackLayout>
@@ -70,7 +70,7 @@
                         <Frame>
                             <StackLayout Orientation="Vertical">
                                 <ImageButton Source="ic_review" 
-                                             Command="{Binding ReviewCmd}"/>
+                                             Command="{Binding ReviewCommand}"/>
                                 <Label Text="Review/Correction" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
 
                             </StackLayout>
@@ -80,7 +80,7 @@
                         <Frame>
                             <StackLayout Orientation="Vertical">
                                 <ImageButton Source="ic_upload"  
-                                             Command="{Binding SendDataCmd}"/>
+                                             Command="{Binding SendDataCommand}"/>
                                 <Label Text="Send Data" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
 
                             </StackLayout>
@@ -90,7 +90,7 @@
                         <Frame>
                             <StackLayout Orientation="Vertical">
                                 <ImageButton Source="ic_bin" 
-                                             Command="{Binding EnterDataCmd}"/>
+                                             Command="{Binding EnterDataCommand}"/>
                                 <Label Text="Purge Data" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
                             </StackLayout>
                         </Frame>

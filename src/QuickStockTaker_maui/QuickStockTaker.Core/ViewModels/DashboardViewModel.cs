@@ -34,7 +34,7 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private async Task OnBayList()
         {
-            //await Shell.Current.GoToAsync($"{nameof(BayListPage)}");
+            await Shell.Current.GoToAsync("BayListPage");
 
         }
 

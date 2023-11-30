@@ -67,7 +67,7 @@ namespace QuickStockTaker.ViewModels
 
             ChangeDateCmd = new Command(async ()=>await OnChangeDateCmd(), ()=>CanNavigate);
             ChangeSiteCmd = new Command(async () => await OnChangeSiteCmd(), () => CanNavigate);
-
+            ChangeStocktakeNumberCmd = new Command(async () => await OnChangeStocktakeNumberCmd(), () => CanNavigate);
         }
 
         public async Task OnChangeDateCmd()
@@ -136,7 +136,7 @@ namespace QuickStockTaker.ViewModels
             {
                 await _dbConnection.Database.RunInTransactionAsync((trans) =>
                 {
-                    var sql = "UPDATE Stocktake SET Site=?";
+                    var sql = "UPDATE StocktakeItem SET Site=?";
                     trans.Execute(sql, newSite);
                 }
                 );
@@ -144,8 +144,8 @@ namespace QuickStockTaker.ViewModels
                 Preferences.Set(Constants.Site, newSite);
                 Site = newSite;
 
-                await _dialogs.AlertAsync($"Store number changed to {newSite}", "SUCCESS");
-                _logger.Info($"stocktake date changed from {oldSite} to {newSite}");
+                await _dialogs.AlertAsync($"Site/Warehouse changed to {newSite}", "SUCCESS");
+                _logger.Info($"Site/Warehouse changed from {oldSite} to {newSite}");
 
             }
             catch (Exception e)
@@ -166,6 +166,51 @@ namespace QuickStockTaker.ViewModels
 
             BaysCounts = bays.Count;
             ItemCounts = (int)bays.Sum(x => x.TotalCount);
+        }
+
+        private async Task OnChangeStocktakeNumberCmd()
+        {
+            CanNavigate = false;
+
+            // keep the original data for logging
+            var oldStocktakeNo = StocktakeNumber;
+            var result = await _dialogs.PromptAsync("Please enter the new Stocktake Number:", "Change Stocktake Number", placeholder: "Stocktake Number...");
+
+           // int newStocktakeNo;
+            var isInt = int.TryParse(result.Text.Trim(), out var newStocktakeNo);
+
+            if (!result.Ok || string.IsNullOrEmpty(result.Text) || !isInt)
+            {
+                CanNavigate = true;
+                return;
+            }
+
+
+            //var newSite = result.Text.Trim();
+
+            try
+            {
+                await _dbConnection.Database.RunInTransactionAsync((trans) =>
+                {
+                    var sql = "UPDATE StocktakeItem SET StocktakeNumber=?";
+                    trans.Execute(sql, newStocktakeNo);
+                }
+                );
+
+                Preferences.Set(Constants.StocktakeNumber, newStocktakeNo);
+                StocktakeNumber = newStocktakeNo;
+
+                await _dialogs.AlertAsync($"Stocktake number changed to {newStocktakeNo}", "SUCCESS");
+                _logger.Info($"stocktake number changed from {oldStocktakeNo} to {newStocktakeNo}");
+
+            }
+            catch (Exception e)
+            {
+                _logger.Warn($"Failed to change stocktake no. {e.Message}");
+                await _dialogs.AlertAsync("Failed to change stocktake number. Please try again", "ERROR");
+            }
+
+            CanNavigate = true;
         }
 
         public async Task GetReady()

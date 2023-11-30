@@ -37,7 +37,7 @@
                         <Label Text="Stocktake Date"/>
                         <DatePicker Date="{Binding StocktakeDate}" />
 
-                        <Button Text="Save" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}"/>
+                        <Button Text="Save" Command="{Binding SaveCommand}"/>
                     </StackLayout>
                 </Frame>
             </StackLayout>
