@@ -133,7 +133,7 @@
                                     </SwipeItemView>
                                 </SwipeView.RightItems>
 
-                                <!--<yummy:PancakeView VerticalOptions="Fill" CornerRadius="12" BackgroundColor="#e1eff1 " Margin="0,0,10,5">-->
+                               
                                 <Border Stroke="#e1eff1" Margin="0,0,10,5"
                                                 StrokeThickness="1"
                                                 StrokeShape="RoundRectangle 12,12,12,12"
@@ -157,7 +157,6 @@
                                             </Label.FormattedText>
                                         </Label>
                                     </StackLayout>
-                                    <!--</yummy:PancakeView>-->
                                 </Border>
                             </SwipeView>
                         </ViewCell>

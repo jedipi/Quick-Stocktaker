@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QuickStockTaker.Views.BayDetailsPage"
+             xmlns:fa="clr-namespace:FontAwesome"
+             xmlns:md="clr-namespace:MaterialDesign"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             Title="BayDetailsPage"
+             x:Name="BayDetails">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+                EventName="Appearing"
+                Command="{Binding AppearingCommand}" />
+    </ContentPage.Behaviors>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="PDE QTY:"/>
+        <ToolbarItem Text="{Binding TotalQty}"/>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <StackLayout Padding="10">
+            <SearchBar Placeholder="find sku..." Text="{Binding SearchText}" 
+					   FontSize="Default" Keyboard="Text" HeightRequest="30" x:Name="SearchBarSearch">
+                <SearchBar.Behaviors>
+                    <toolkit:EventToCommandBehavior
+						EventName="TextChanged"
+						Command="{Binding SearchTextCommand}"/>
+                </SearchBar.Behaviors>
+            </SearchBar>
+            <ListView ItemsSource="{Binding Items, Mode=TwoWay}" 
+                      VerticalOptions="FillAndExpand" CachingStrategy="RecycleElement" SeparatorVisibility="None" >
+                <ListView.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.4*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="0.3*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Text="Bay/Loc" FontAttributes="Bold" Grid.Column="0" Margin="5"/>
+                        <Label Text="Item" FontAttributes="Bold" Grid.Column="1" Margin="5"/>
+                        <Label Text="Qty" FontAttributes="Bold" Grid.Column="2" Margin="5"/>
+                    </Grid>
+                </ListView.Header>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <SwipeView x:Name="swipeView1" BackgroundColor="Transparent">
+                                <SwipeView.LeftItems>
+                                    <SwipeItemView Command="{Binding Source={x:Reference BayDetails}, Path=BindingContext.DeleteCommand}"
+                                                       CommandParameter="{Binding .}">
+                                        <Grid WidthRequest="100" >
+                                            <Border Stroke="#DC3545" 
+                                                StrokeThickness="4"
+                                                StrokeShape="RoundRectangle 0,12,0,12"
+                                                Background="#DC3545"
+                                                Padding="16,0"
+                                                HorizontalOptions="FillAndExpand">
+                                                <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" 
+                                                         Orientation="Horizontal">
+                                                    <Label
+                                                    Text="{x:Static fa:FontAwesomeFreeReg.TrashCan}"
+                                                    TextColor="White"
+                                                    FontFamily="FA"
+                                                    HorizontalOptions="Center"
+                                                    VerticalOptions="Center" />
+
+                                                    <Label
+                                                    HorizontalOptions="Center"
+                                                    Text="Delete"
+                                                    TextColor="White"
+                                                    VerticalOptions="Center" />
+                                                </StackLayout>
+                                            </Border>
+                                        </Grid>
+                                    </SwipeItemView>
+
+                                </SwipeView.LeftItems>
+                                <SwipeView.RightItems>
+                                    <SwipeItemView Command="{Binding Source={x:Reference BayDetails}, Path=BindingContext.EditCommand}"
+                                                   CommandParameter="{Binding .}">
+                                        <Grid WidthRequest="100" >
+                                            <Border Stroke="{StaticResource Primary}" 
+                                                StrokeThickness="1"
+                                                StrokeShape="RoundRectangle 12,0,12,0"
+                                                Background="{StaticResource Primary}"
+                                                Padding="16,0"
+                                                HorizontalOptions="FillAndExpand">
+                                                <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" 
+                                                         Orientation="Horizontal">
+                                                    <Label
+                                                        Text="{x:Static md:MaterialDesignIcons.Edit}"
+                                                        TextColor="White"
+                                                        FontFamily="MD-O"
+                                                        HorizontalOptions="Center"
+                                                        VerticalOptions="Center" />
+
+                                                    <Label
+                                                        HorizontalOptions="Center"
+                                                        Text="Details"
+                                                        TextColor="White"
+                                                        VerticalOptions="Center" />
+                                                </StackLayout>
+                                            </Border>
+                                        </Grid>
+                                    </SwipeItemView>
+                                </SwipeView.RightItems>
+
+                                <Border Stroke="#e1eff1" Margin="0,0,10,5"
+                                                StrokeThickness="1"
+                                                StrokeShape="RoundRectangle 12,12,12,12"
+                                                Background="#e1eff1"
+                                                HorizontalOptions="FillAndExpand">
+                                    <Grid VerticalOptions="CenterAndExpand">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="0.4*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="0.3*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Text="{Binding BayLocation}" Grid.Column="0" Margin="5"/>
+                                        <StackLayout Orientation="Vertical" Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                                            <Label Text="{Binding Barcode}" />
+                                            <Label Text="{Binding Desc}"/>
+                                        </StackLayout>
+                                        <Label Text="{Binding Qty}" Grid.Column="2" Margin="5"/>
+                                    </Grid>
+                                </Border>
+                            </SwipeView>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -22,13 +22,13 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private async Task OnSendData()
         {
-            //await Shell.Current.GoToAsync($"{nameof(DataUploadPage)}");
+            await Shell.Current.GoToAsync($"DataUploadPage");
         }
 
         [RelayCommand]
         private async Task OnReview()
         {
-            //await Shell.Current.GoToAsync($"{nameof(ReviewPage)}");
+            await Shell.Current.GoToAsync($"ReviewPage");
         }
 
         [RelayCommand]
