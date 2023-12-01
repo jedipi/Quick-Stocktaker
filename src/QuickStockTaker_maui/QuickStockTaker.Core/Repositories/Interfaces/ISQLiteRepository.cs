@@ -1,4 +1,5 @@
 ﻿using QuickStockTaker.Core.Models.Sqlite;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace QuickStockTaker.Core.Repositories.Interfaces
 {
     public interface ISQLiteRepository<T> : IDisposable where T : BaseModel, new()
     {
+        public SQLiteAsyncConnection Connection { get; set; }
+
         Task<int> InsertAsync(T entity);
         Task<int> InsertAllAsync(List<T> entities);
         Task<int> DeleteAsync(T entity);
@@ -20,5 +23,7 @@ namespace QuickStockTaker.Core.Repositories.Interfaces
         Task<List<T>> FindAsync(Expression<Func<T, bool>> expression);
 
         Task DropandRecreateTable();
+
+        //Task<int> ExecuteAsync(string query, params object[] objects);
     }
 }
