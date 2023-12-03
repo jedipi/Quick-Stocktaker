@@ -109,7 +109,8 @@ namespace QuickStockTaker.Core.Services
             else
                 bodyBuilder.TextBody = Body;
 
-            bodyBuilder.Attachments.Add(Attachment);
+            if (!string.IsNullOrEmpty(Attachment))
+                bodyBuilder.Attachments.Add(Attachment);
 
             // create attachment for the file located at path
             //var attachment = new MimePart()
@@ -130,7 +131,9 @@ namespace QuickStockTaker.Core.Services
             using var client = new SmtpClient();
             
             // obtain the response from server
-            client.MessageSent += (sender, args) => { Response = args.Response; };
+            client.MessageSent += (sender, args) => { 
+                Response = args.Response; 
+            };
             client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 
             await client.ConnectAsync(Host, Port);

@@ -37,8 +37,17 @@ namespace QuickStockTaker.Core
             autofacBuilder.RegisterAssemblyTypes(typeof(ServiceLocator).Assembly)
                             .Where(t => t.Name.EndsWith("ViewModel"));
 
+            // register view pages
             autofacBuilder.RegisterAssemblyTypes(typeof(ServiceLocator).Assembly)
                            .Where(t => t.Name.EndsWith("Page"));
+
+            // register services
+            autofacBuilder.RegisterAssemblyTypes(typeof(ServiceLocator).Assembly)
+                        .Where(t => t.Name.EndsWith("Service"))
+                        .AsImplementedInterfaces();
+
+            autofacBuilder.RegisterAssemblyTypes(typeof(ServiceLocator).Assembly)
+                .Where(t => t.Name.EndsWith("Validator"));
 
             // register db and repository
             // https://autofac.readthedocs.io/en/latest/best-practices/index.html#register-frequently-used-components-with-lambdas
@@ -50,13 +59,8 @@ namespace QuickStockTaker.Core
                .As(typeof(ISQLiteRepository<>))
                .InstancePerLifetimeScope();
 
-            // register services
-            autofacBuilder.RegisterAssemblyTypes(typeof(ServiceLocator).Assembly)
-                        .Where(t => t.Name.EndsWith("Service"))
-                        .AsImplementedInterfaces();
-
-            autofacBuilder.RegisterAssemblyTypes(typeof(ServiceLocator).Assembly)
-                .Where(t => t.Name.EndsWith("Validator"));
+            autofacBuilder.RegisterType<DataExportFactory>();
+            autofacBuilder.RegisterType<EmailService>();
         }
     }
 }
