@@ -60,7 +60,9 @@ public static class MauiProgram
 
         });
 
+        // register popus
         builder.Services.AddTransientPopup<CameraPopupPage, CameraPopupViewModel>();
+
 
         SetupSerilog();
         builder.Logging.AddSerilog(dispose: true);
