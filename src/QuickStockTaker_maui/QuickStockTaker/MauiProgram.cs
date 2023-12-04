@@ -2,15 +2,10 @@
 using Autofac.Extensions.DependencyInjection;
 using CommunityToolkit.Maui;
 using Controls.UserDialogs.Maui;
-using QuickStockTaker.Core;
-using QuickStockTaker.Core.Models.Sqlite;
 using QuickStockTaker.Core.Popups;
-using QuickStockTaker.Core.Repositories;
-using QuickStockTaker.Core.Repositories.Interfaces;
 using Serilog;
 using Serilog.Events;
 using SkiaSharp.Views.Maui.Controls.Hosting;
-using ZXing.Net.Maui;
 using ZXing.Net.Maui.Controls;
 
 namespace QuickStockTaker;
@@ -30,7 +25,7 @@ public static class MauiProgram
                 //setup your default styles for dialogs
                 //AlertConfig.DefaultBackgroundColor = Colors.Purple;
 #if ANDROID
-        AlertConfig.DefaultMessageFontFamily = "OpenSans-Regular.ttf";
+                AlertConfig.DefaultMessageFontFamily = "OpenSans-Regular.ttf";
 #else
                 AlertConfig.DefaultMessageFontFamily = "OpenSans-Regular";
 #endif
@@ -48,16 +43,10 @@ public static class MauiProgram
                 fonts.AddFont("pro-fa-regular-400.ttf", "FA-Pro");
             });
 
+        // use autofac to register all services
         builder.ConfigureContainer(new AutofacServiceProviderFactory(), autofacBuilder =>
         {
-            // register views
-            autofacBuilder.RegisterAssemblyTypes(typeof(MauiProgram).Assembly)
-                        .Where(t => t.Name.EndsWith("Page"));
-
             ServiceLocator.RegisterType(autofacBuilder);
-
-
-
         });
 
         // register popus
