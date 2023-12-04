@@ -23,12 +23,8 @@ public partial class AboutViewModel : ObservableObject
     [ObservableProperty]
     private string _amount;
 
-    private readonly IUserDialogs _userDialogs;
-
-    public AboutViewModel(IUserDialogs userDialogs)
-    {
-        _userDialogs = userDialogs;
-        
+    public AboutViewModel()
+    {        
         _donationAmounts = new List<DonationAmount>()
         {
             new DonationAmount() { Amount = (decimal)0.99, AmountString = "$0.99" },
@@ -40,20 +36,12 @@ public partial class AboutViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void OnDonation()
+    private async Task OnDonation()
     {
-        var cfg = new ActionSheetConfig()
-            .SetTitle("Select a amount you would like to donate")
-            .SetMessage("Select a amount you would like to donate")
-            .SetUseBottomSheet(false)
-            .SetCancel();
-
-        foreach (var donation in _donationAmounts)
-        {
-            cfg.Add(donation.AmountString, async () => await DoDonation(donation.Amount));
-        }
-
-        _userDialogs.ActionSheet(cfg);
+        var amounts = _donationAmounts.Select(x => x.AmountString).ToArray();
+    
+        var action = await Application.Current.MainPage.DisplayActionSheet("Select a amount you would like to donate", "Cancel", null, amounts);
+        //DoDonation();
     }
 
     /// <summary>
@@ -75,7 +63,6 @@ public partial class AboutViewModel : ObservableObject
         VersionNo = AppInfo.Current.VersionString;
         //DeviceId = Preferences.Get("DeviceId", "");
         //Warehouse = Preferences.Get("DeviceWarehouseId", "");
-        _userDialogs.Alert("This is Alert dialog", "Alert dialog", "Understand", "dotnet_bot.png");
     }
 }
 

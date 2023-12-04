@@ -22,6 +22,32 @@
                 <Label FontSize="Medium">This app is free to use for personal and commercial. If you have any questions, comments, suggestions, or features you'd like to see, I'd appreciate your feedback.</Label>
                 <Label FontSize="Medium">If you'd like to show your support for this project and help me continue development, please consider a donation.</Label>
 
+                <StackLayout Orientation="Vertical" VerticalOptions="Center">
+
+                    <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand" Margin="0,10,0,10" >
+                        <StackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CommentCommand}"></TapGestureRecognizer>
+                        </StackLayout.GestureRecognizers>
+                        <Label Text="{x:Static fa:FontAwesomeFreeReg.Comment}" FontFamily="FA" 
+                                           FontSize="Large" Margin="0,0,30,0" 
+                                           VerticalTextAlignment="Center" />
+                        <Label Text="Send feedback" FontSize="Medium" VerticalTextAlignment="Center" />
+                    </StackLayout>
+                    <Border  Stroke="{StaticResource Primary}" StrokeThickness="1" StrokeShape="Line 0 0 2000 0"/>
+
+                    <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand" Margin="0,10,0,10" IsVisible="false">
+                        <StackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding DonationCommand}"></TapGestureRecognizer>
+                        </StackLayout.GestureRecognizers>
+                        <Label Text="{x:Static fa:FontAwesomeFreeReg.DollarSign}" FontFamily="FA" 
+                                           FontSize="Large" Margin="5,0,30,0" 
+                                           VerticalTextAlignment="Center" />
+                        <Label Text="Buy me cup of coffee" FontSize="Medium" VerticalTextAlignment="Center"/>
+                    </StackLayout>
+                    <Border  Stroke="{StaticResource Primary}" StrokeThickness="1" StrokeShape="Line 0 0 2000 0"/>
+
+                </StackLayout>
+                
                 <TableView Intent="Menu" RowHeight="60" IsVisible="False">
                     <TableRoot>
                         <TableSection TextColor="{StaticResource Primary}">
