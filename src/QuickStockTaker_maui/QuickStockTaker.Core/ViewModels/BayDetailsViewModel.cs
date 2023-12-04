@@ -81,12 +81,14 @@ namespace QuickStockTaker.Core.ViewModels
         {
             if (item == null)
             {
-                await _dialogs.AlertAsync("Please select a bay first");
+                await Application.Current.MainPage.DisplayAlert("Error","Please select a bay first", "OK");
                 return;
             }
 
             // confirm to delete
-            var isConfirmed = await _dialogs.ConfirmAsync("Are you sure want to delete this item?", "Confirm Delete", "Yes", "No");
+            //var isConfirmed = await _dialogs.ConfirmAsync("Are you sure want to delete this item?", "Confirm Delete", "Yes", "No");
+            var isConfirmed = await Application.Current.MainPage.DisplayAlert("Confirm Delete", "Are you sure want to delete this item?", "YES", "NO");
+
             if (!isConfirmed) return;
 
             try
@@ -105,7 +107,7 @@ namespace QuickStockTaker.Core.ViewModels
             catch (Exception e)
             {
                 _logger.LogError(e, $"Cannot delete stocktake item {e.Message}");
-                await _dialogs.AlertAsync($"Error occured while deleting stocktake item.\n{e.Message}", "Error");
+                await Application.Current.MainPage.DisplayAlert("Error", $"Error occured while deleting stocktake item.\n{e.Message}", "OK");
             }
         }
 
@@ -113,16 +115,12 @@ namespace QuickStockTaker.Core.ViewModels
         private async Task OnEdit(StocktakeItem item)
         {
             SelectedItem = item;
-            // go to item details page in modal model
-            //var jsonStr = JsonSerializer.Serialize(item);
 
             var navigationParameter = new Dictionary<string, object>
             {
                 { "SelectedItem", item }
             };
             await Shell.Current.GoToAsync($"ItemDetailPage", navigationParameter);
-
-            //await Shell.Current.GoToAsync($"ItemDetailPage?SelectedItemContent={jsonStr}");
         }
 
         [RelayCommand]
