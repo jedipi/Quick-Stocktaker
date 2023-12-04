@@ -58,7 +58,8 @@ namespace QuickStockTaker.Core.ViewModels
         {
             _repo = repo;
             _popupService = popupService;
-            
+
+            GetData();
             SetInitialDate();
         }
 
@@ -178,7 +179,7 @@ namespace QuickStockTaker.Core.ViewModels
         /// <summary>
         /// Get stocktake setting from Preference
         /// </summary>
-        private void GetInitialData()
+        private void GetData()
         {
             DeviceId = Preferences.Get(Constants.DeviceId, "");
             StocktakeNumber = Preferences.Get(Constants.StocktakeNumber, "");
