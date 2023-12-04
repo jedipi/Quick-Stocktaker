@@ -12,6 +12,9 @@ namespace QuickStockTaker.Core.ViewModels
 {
     public partial class SettingsViewModel : ObservableObject
     {
+        /// <summary>
+        /// set device/scanner id
+        /// </summary>
         public string DeviceId
         {
             get => Preferences.Get(Constants.DeviceId, "");
@@ -24,7 +27,9 @@ namespace QuickStockTaker.Core.ViewModels
             }
         }
 
-
+        /// <summary>
+        /// enable continuous scan mode
+        /// </summary>
         public bool ContinuousMode
         {
             get => Preferences.Get(Constants.ContinuousMode, false);

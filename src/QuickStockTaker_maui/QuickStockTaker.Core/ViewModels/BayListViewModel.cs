@@ -15,12 +15,14 @@ namespace QuickStockTaker.Core.ViewModels
     public partial class BayListViewModel : BaseViewModel
     {
         #region fields
-        private IServiceProvider _serviceProvider;
         private ISQLiteRepository<StocktakeItem> _repo;
         private ObservableCollection<Bay> _unfilteredItems;
         #endregion
 
         #region Properties
+        /// <summary>
+        /// List of scanned bays
+        /// </summary>
         [ObservableProperty]
         private ObservableCollection<Bay> _bays;
 
@@ -46,6 +48,11 @@ namespace QuickStockTaker.Core.ViewModels
         }
 
         #region RelayCommands
+        /// <summary>
+        /// Delete all items from the selected bay
+        /// </summary>
+        /// <param name="bay"></param>
+        /// <returns></returns>
         [RelayCommand]
         private async Task OnDeleteBay(Bay bay)
         {
@@ -80,6 +87,11 @@ namespace QuickStockTaker.Core.ViewModels
             }
         }
 
+        /// <summary>
+        /// Show all scanned item for a selected bay in the bay details page
+        /// </summary>
+        /// <param name="bay"></param>
+        /// <returns></returns>
         [RelayCommand]
         private async Task OnBayDetails(Bay bay)
         {
@@ -88,6 +100,11 @@ namespace QuickStockTaker.Core.ViewModels
             await Shell.Current.GoToAsync($"BayDetailsPage?SelectedBayContent={jsonStr}");
         }
 
+        /// <summary>
+        /// Update the bay number
+        /// </summary>
+        /// <param name="bay"></param>
+        /// <returns></returns>
         [RelayCommand]
         private async Task OnChangeBayNo(Bay bay)
         {
@@ -192,7 +209,7 @@ namespace QuickStockTaker.Core.ViewModels
         }
 
         /// <summary>
-        /// get total number of items and total number of bays
+        /// get total number of scanned items and total number of bays
         /// </summary>
         public void GetCount()
         {

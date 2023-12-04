@@ -35,7 +35,7 @@ namespace QuickStockTaker.Core.ViewModels
         #region
         
         /// <summary>
-        /// Send data via email
+        /// Send stocktake data via email
         /// </summary>
         /// <returns></returns>
         [RelayCommand]

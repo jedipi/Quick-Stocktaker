@@ -219,6 +219,10 @@ namespace QuickStockTaker.Core.ViewModels
             }
         }
 
+        /// <summary>
+        /// Calculate the total number of scanned items for the selected bay/location.
+        /// </summary>
+        /// <returns></returns>
         public async Task GetItemCount()
         {
             try

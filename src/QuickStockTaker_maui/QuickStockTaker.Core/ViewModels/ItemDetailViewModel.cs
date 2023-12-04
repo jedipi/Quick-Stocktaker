@@ -27,6 +27,12 @@ namespace QuickStockTaker.Core.ViewModels
 
         #endregion
 
+        /// <summary>
+        /// Show detail information for a selected item
+        /// </summary>
+        /// <param name="dialogs"></param>
+        /// <param name="logger"></param>
+        /// <param name="repo"></param>
         public ItemDetailViewModel(
             IUserDialogs dialogs, 
             ILogger<ItemDetailViewModel> logger,
@@ -36,11 +42,15 @@ namespace QuickStockTaker.Core.ViewModels
         }
 
         #region RelayCommands
+
+        /// <summary>
+        /// Save all changes to database
+        /// </summary>
+        /// <returns></returns>
         [RelayCommand]
         private async Task OnSave()
         {
-            // save to db
-            // update database
+            
             try
             {
                 var sql = $"UPDATE StocktakeItem SET Barcode= ?, Qty= ? Where Id= ? ";
@@ -59,6 +69,10 @@ namespace QuickStockTaker.Core.ViewModels
         }
         #endregion
 
+        /// <summary>
+        /// keep all orginal values
+        /// </summary>
+        /// <param name="value"></param>
         partial void OnSelectedItemChanged(StocktakeItem value)
         {
             if (_originalItem != null) return;

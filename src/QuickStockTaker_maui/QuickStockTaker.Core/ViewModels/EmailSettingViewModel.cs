@@ -68,6 +68,10 @@ namespace QuickStockTaker.Core.ViewModels
             SmtpFrom = await SecureStorage.GetAsync(Constants.SmtpFrom);
         }
 
+        /// <summary>
+        /// Test the email configation
+        /// </summary>
+        /// <returns></returns>
         [RelayCommand]
         private async Task OnTestEmail()
         {
@@ -79,6 +83,7 @@ namespace QuickStockTaker.Core.ViewModels
             if (string.IsNullOrEmpty(result))
                 return;
 
+            // validat email address
             var emailAddress = result.Trim();
             var validator = _serviceProvider.GetService<EmailValidator>();
             var validateResult = validator.Validate(emailAddress);
@@ -87,6 +92,7 @@ namespace QuickStockTaker.Core.ViewModels
                 await _dialogs.AlertAsync(validateResult.Errors.First().ErrorMessage, "Error", "OK");
                 return;
             }
+
 
             try
             {

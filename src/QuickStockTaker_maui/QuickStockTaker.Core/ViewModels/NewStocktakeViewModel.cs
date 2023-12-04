@@ -18,10 +18,13 @@ namespace QuickStockTaker.Core.ViewModels
 {
     public partial class NewStocktakeViewModel : ObservableObject
     {
+        #region fields
         IUserDialogs _dialogs;
         IServiceProvider _provider;
         readonly ILogger<NewStocktakeViewModel> _logger;
         ISQLiteRepository<StocktakeItem> _repo;
+        #endregion
+
         #region Properties
 
         [ObservableProperty]
@@ -41,11 +44,11 @@ namespace QuickStockTaker.Core.ViewModels
 
         #endregion
 
-        public NewStocktakeViewModel(IUserDialogs dialogs, 
+        public NewStocktakeViewModel(
+            IUserDialogs dialogs, 
             IServiceProvider provider, 
             ILogger<NewStocktakeViewModel> logger,
-            ISQLiteRepository<StocktakeItem> repo
-            ) 
+            ISQLiteRepository<StocktakeItem> repo) 
         {
             Log.Information("Start NewStocktakeViewModel");
             _dialogs = dialogs;
@@ -54,22 +57,23 @@ namespace QuickStockTaker.Core.ViewModels
             _repo = repo;
         }
 
+        /// <summary>
+        /// Save new stocktake setting
+        /// </summary>
+        /// <returns></returns>
         [RelayCommand]
         private async Task OnSave()
         {
-            //var a = _provider.GetService<ISmtpService>();
-            //var b = await a.GetSmtp("");
-
+            // validat all inputs
             var validator = _provider.GetService<StocktakeValidator>();
             var validateResult = validator.Validate(this);
-
             if (!validateResult.IsValid)
             {
                 await _dialogs.AlertAsync(validateResult.Errors.First().ErrorMessage, "Error", "OK");
                 return;
             }
 
-            // clear data by drop table and re - create table
+            // clear data by drop table and re-create table
             await _repo.DropandRecreateTable();
 
             // save values
@@ -95,7 +99,8 @@ namespace QuickStockTaker.Core.ViewModels
             var deviceId = Preferences.Get("DeviceId", "");
             if ( string.IsNullOrEmpty(deviceId))
             {
-                await _dialogs.AlertAsync("Invalid Device ID. Please setup a Device ID before start a new stocktake.",
+                await _dialogs.AlertAsync(
+                    "Invalid Device ID. Please setup a Device ID before start a new stocktake.",
                     "ERROR", "OK");
                 return;
             }

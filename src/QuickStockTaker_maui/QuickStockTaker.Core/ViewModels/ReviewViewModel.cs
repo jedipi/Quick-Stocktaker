@@ -58,14 +58,15 @@ namespace QuickStockTaker.Core.ViewModels
         {
             _repo = repo;
             _popupService = popupService;
-            DeviceId = Preferences.Get(Constants.DeviceId, "");
-            StocktakeNumber = Preferences.Get(Constants.StocktakeNumber, "");
-            Site = Preferences.Get(Constants.Site, "");
-            StocktakeDate = Preferences.Get(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString();
+            
             SetInitialDate();
         }
 
         #region RelayCommands
+        /// <summary>
+        /// Change stocktake number
+        /// </summary>
+        /// <returns></returns>
         [RelayCommand]
         private async Task OnChangeStocktakeNumber()
         {
@@ -100,6 +101,10 @@ namespace QuickStockTaker.Core.ViewModels
             }
         }
 
+        /// <summary>
+        /// Change stocktake site
+        /// </summary>
+        /// <returns></returns>
         [RelayCommand]
         private async Task OnChangeSite()
         {
@@ -134,10 +139,13 @@ namespace QuickStockTaker.Core.ViewModels
             }
         }
 
+        /// <summary>
+        /// Change stocktake date
+        /// </summary>
+        /// <returns></returns>
         [RelayCommand]
         public async Task OnChangeDate()
         {
-
             // keep the original data for logging
             var oldDate = StocktakeDate;
             var newDate = SelectedDate.ToShortDateString();
@@ -167,6 +175,17 @@ namespace QuickStockTaker.Core.ViewModels
         }
         #endregion
 
+        /// <summary>
+        /// Get stocktake setting from Preference
+        /// </summary>
+        private void GetInitialData()
+        {
+            DeviceId = Preferences.Get(Constants.DeviceId, "");
+            StocktakeNumber = Preferences.Get(Constants.StocktakeNumber, "");
+            Site = Preferences.Get(Constants.Site, "");
+            StocktakeDate = Preferences.Get(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString();
+        }
+
         private void SetInitialDate()
         {
             var stocktakeDate = Preferences.Get(Constants.StocktakeDate, DateTime.MinValue);
@@ -176,14 +195,9 @@ namespace QuickStockTaker.Core.ViewModels
             else
                 SelectedDate = stocktakeDate;
         }
+
         partial void OnSelectedDateChanged(DateTime value)
         {
-            //// keep the original data for logging
-            //var oldDate = StocktakeDate;
-            //var newDate = SelectedDate.ToShortDateString();
-
-            //// nothing changed
-            //if (oldDate == newDate) return;
             if (value == DateTime.MinValue || value.ToShortDateString() == "1/1/1900" || value.ToShortDateString() == StocktakeDate)
                 return;
 

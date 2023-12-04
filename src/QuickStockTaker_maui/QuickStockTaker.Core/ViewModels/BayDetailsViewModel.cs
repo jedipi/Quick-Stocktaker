@@ -76,6 +76,11 @@ namespace QuickStockTaker.Core.ViewModels
         }
 
         #region RelayCommands
+        /// <summary>
+        /// Delete an item from a bay
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         [RelayCommand]
         private async Task OnDelete(StocktakeItem item)
         {
@@ -111,6 +116,11 @@ namespace QuickStockTaker.Core.ViewModels
             }
         }
 
+        /// <summary>
+        /// Go to item detail pag for editing
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         [RelayCommand]
         private async Task OnEdit(StocktakeItem item)
         {
@@ -144,6 +154,10 @@ namespace QuickStockTaker.Core.ViewModels
         }
         #endregion
 
+        /// <summary>
+        /// Get all scanned items for a particular bay/location
+        /// </summary>
+        /// <returns></returns>
         public async Task PopulateItems()
         {
             _dialogs.ShowLoading("Loading data...");
