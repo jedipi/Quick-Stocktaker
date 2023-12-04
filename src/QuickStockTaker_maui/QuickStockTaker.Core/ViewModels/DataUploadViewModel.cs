@@ -39,7 +39,7 @@ namespace QuickStockTaker.Core.ViewModels
         /// </summary>
         /// <returns></returns>
         [RelayCommand]
-        public async Task OnEmailCmd()
+        public async Task OnEmail()
         {
 
             // ask for email address
