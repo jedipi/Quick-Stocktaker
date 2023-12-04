@@ -2,6 +2,8 @@
 [![CI](https://github.com/jedipi/Quick-Stocktaker/actions/workflows/main.yml/badge.svg)](https://github.com/jedipi/Quick-Stocktaker/actions/workflows/main.yml)
 [![Build Status](https://dev.azure.com/ThyConsultants/Quick%20Stocktaker/_apis/build/status/jedipi.Quick-Stocktaker?branchName=master)](https://dev.azure.com/ThyConsultants/Quick%20Stocktaker/_apis/build/status/jedipi.Quick-Stocktaker?branchName=master)
 ![GitHub](https://img.shields.io/github/license/jedipi/Quick-Stocktaker)
+<br /><br />
+[![CI](https://healthystadia.eu/wp-content/uploads/2017/02/Download-Google-Play-1-300x150.png)](https://play.google.com/store/apps/details?id=com.thyconsultants.quickstocktakers)
 
 ## Overview
 Quick Stocktaker/Stock Counter is a FREE Stock / Inventory counting & checking app for Android mobile devices.
