@@ -69,7 +69,7 @@
                             <Entry Text="{Binding Barcode}" Placeholder="Barcode..." Keyboard="Text" HorizontalOptions="FillAndExpand"/>
                             <Button Style="{StaticResource SmallButton}"
                                     Command="{Binding ScanBarcodeCommand}"  
-                                    Text="Scan" Clicked="Button_Clicked"/>
+                                    Text="Scan"/>
 
                             <Button Style="{StaticResource SmallButton}" BackgroundColor="LightGray" TextColor="#333333"
                                     Command="{Binding ClearBarcodeCommand}"  

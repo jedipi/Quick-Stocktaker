@@ -8,32 +8,10 @@ namespace QuickStockTaker.Views;
 
 public partial class EnterDatePage : ContentPage
 {
-    EnterDateViewModel _vm;
-    public EnterDatePage(IServiceProvider provider)
+    public EnterDatePage(EnterDateViewModel vm)
 	{
 		InitializeComponent();
-		BindingContext = provider.GetService(typeof(EnterDateViewModel));
-        _vm = BindingContext as EnterDateViewModel;
+		BindingContext = vm;
 
     }
-
-    private void Button_Clicked(object sender, EventArgs e)
-    {
-        //_ = Task.Run(DisplayPopup);
-    }
-
-    public async Task DisplayPopup()
-    {
-        //var popup = new CameraPopupPage();
-
-        //var scanResults = await this.ShowPopupAsync(popup) as BarcodeResult[];
-
-        //var barcode = scanResults.FirstOrDefault();
-        //if (barcode != null)
-        //{
-        //    _vm.Barcode = barcode.Value;
-        //}
-    }
-
-
 }

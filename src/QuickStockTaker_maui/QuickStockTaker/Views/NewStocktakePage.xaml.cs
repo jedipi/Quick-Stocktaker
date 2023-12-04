@@ -4,9 +4,9 @@ namespace QuickStockTaker.Views;
 
 public partial class NewStocktakePage : ContentPage
 {
-	public NewStocktakePage(IServiceProvider provider)
+	public NewStocktakePage(NewStocktakeViewModel vm)
 	{
 		InitializeComponent();
-		BindingContext = provider.GetService<NewStocktakeViewModel>();
+		BindingContext = vm;
 	}
 }
