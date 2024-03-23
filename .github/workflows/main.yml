@@ -13,16 +13,39 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+env:
+    DOTNETVERSION: 8.0.x
+    
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:        
   Android:
-    runs-on: macos-latest
+    runs-on: windows-2022
     steps:
-    - uses: actions/checkout@v1
-    - name: Android
+    - uses: actions/checkout@v2
+    
+    - name: Setup .NET SDK ${{env.DOTNETVERSION}}
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version:  '${{env.DOTNETVERSION}}'
+
+    - name: List installed .NET info
+      shell: pwsh
+      run: dotnet --info
+
+    - name: Install .NET MAUI
+      shell: bash
+      run: |
+        dotnet nuget locals all --clear 
+        dotnet workload install maui
+        dotnet workload install android maui wasm-tools
+
+    - name: Restore nuget packages
       run: |
         cd src
-        nuget restore
-        cd QuickStockTaker
-        cd QuickStockTaker.Android
-        msbuild QuickStockTaker.Android.csproj /verbosity:normal /t:Rebuild /p:Configuration=Debug
+        dotnet restore QuickStockTaker.sln
+
+    - name : Build Android App
+      shell: bash
+      run: |
+        cd src/QuickStockTaker
+        dotnet publish -f:net8.0-android -c:Release
