@@ -3,6 +3,9 @@
 [![Build Status](https://dev.azure.com/ThyConsultants/Quick%20Stocktaker/_apis/build/status/jedipi.Quick-Stocktaker?branchName=master)](https://dev.azure.com/ThyConsultants/Quick%20Stocktaker/_apis/build/status/jedipi.Quick-Stocktaker?branchName=master)
 ![GitHub](https://img.shields.io/github/license/jedipi/Quick-Stocktaker)
 
+# Update!!!
+### Migrated to .NET 8 and MAUI. For the old Xamarin Form version, please check out the xamarin-from branch.
+
 ## Overview
 Quick Stocktaker/Stock Counter is a FREE Stock / Inventory counting & checking app for Android mobile devices.
 

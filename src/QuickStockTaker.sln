@@ -7,7 +7,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickStockTaker", "QuickSto
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickStockTaker.Core", "QuickStockTaker.Core\QuickStockTaker.Core.csproj", "{4F064F71-ACD5-4BE3-978C-1A8C243FDDB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickStockTaker.UnitTest", "QuickStockTaker.UnitTest\QuickStockTaker.UnitTest.csproj", "{0DB010CB-6DF7-46B6-A2F3-E15878D825CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickStockTaker.UnitTest", "QuickStockTaker.UnitTest\QuickStockTaker.UnitTest.csproj", "{0DB010CB-6DF7-46B6-A2F3-E15878D825CC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{73B53EFE-55B6-49FC-B018-BCB57E973D02}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipeline", "Pipeline", "{01A764C6-A1AA-44D3-8049-DBEA75E40353}"
+	ProjectSection(SolutionItems) = preProject
+		..\azure-pipelines.yml = ..\azure-pipelines.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
