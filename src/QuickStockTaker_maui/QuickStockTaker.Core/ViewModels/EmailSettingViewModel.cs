@@ -216,10 +216,11 @@ namespace QuickStockTaker.Core.ViewModels
                     {
                         SmtpHost = "smtp.gmail.com";
                         SmtpPort = "587";
+                        SecureStorage.SetAsync(Constants.SmtpHost, SmtpHost);
+                        SecureStorage.SetAsync(Constants.SmtpPort, SmtpPort);
                     }
 
-                    SecureStorage.SetAsync(Constants.SmtpHost, SmtpHost);
-                    SecureStorage.SetAsync(Constants.SmtpPort, SmtpPort);
+                    
                 });
             }
 
