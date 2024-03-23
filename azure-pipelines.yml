@@ -28,12 +28,13 @@ steps:
       dotnet workload install maui
       dotnet workload install android ios maui wasm-tools
 
-- task: NuGetToolInstaller@1
+- task: Bash@3
+  displayName: Restore nuget
   inputs:
-    versionSpec: 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '**/*.sln'
+    targetType: 'inline'
+    script: |
+        cd src/
+        dotnet restore QuickStockTaker.sln
 
 - task: DotNetCoreCLI@2
   inputs:
