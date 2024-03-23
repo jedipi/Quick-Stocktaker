@@ -5,6 +5,9 @@
 <br /><br />
 [![CI](https://healthystadia.eu/wp-content/uploads/2017/02/Download-Google-Play-1-300x150.png)](https://play.google.com/store/apps/details?id=com.thyconsultants.quickstocktakers)
 
+# Update!!!
+### Migrated to .NET 8 and MAUI. For the old Xamarin Form version, please check out the xamarin-from branch.
+
 ## Overview
 Quick Stocktaker/Stock Counter is a FREE Stock / Inventory counting & checking app for Android mobile devices.
 

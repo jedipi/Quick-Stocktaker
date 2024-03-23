@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QuickStockTaker.Views.EnterDatePage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             Title="EnterDatePage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Button" x:Key="SmallButton" >
+                <Setter Property="WidthRequest" Value="60"></Setter>
+                <Setter Property="HeightRequest" Value="35"></Setter>
+                <Setter Property="Padding" Value="0"></Setter>
+                <Setter Property="HorizontalOptions" Value="End"></Setter>
+                <Setter Property="VerticalOptions" Value="Center"></Setter>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Current Bay Total QTY:"/>
+        <ToolbarItem Text="{Binding BayUnits}"/>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Padding="15">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition  Width="70"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!--bay number-->
+                    <StackLayout Grid.Row="0" Grid.ColumnSpan="3" Orientation="Vertical" Margin="0,0,0,0">
+                        <Label Text="Bay/Location/BIN or Ref No:"/>
+                        <StackLayout Orientation="Horizontal">
+                            <Entry Text="{Binding BayLocation}" Placeholder="Ref No..." HorizontalOptions="FillAndExpand" >
+                                <Entry.Behaviors>
+                                    <toolkit:EventToCommandBehavior
+                                        EventName="TextChanged"
+                                        Command="{Binding BayTextChangedCommand}"/>
+                                </Entry.Behaviors>
+                            </Entry>
+                            <Button Style="{StaticResource SmallButton}"
+                                    Command="{Binding ScanBayNoCommand}"  
+                                    Text="Scan" />
+
+                            <Button Style="{StaticResource SmallButton}" BackgroundColor="LightGray" TextColor="#333333"
+                                    Command="{Binding ClearBayNoCommand}"  
+                                    Text="Clear" />
+                        </StackLayout>
+                    </StackLayout>
+
+                    <!--barcode-->
+                    <StackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Vertical">
+                        <Label Text="Barcode / SKU / Item No:" VerticalOptions="Center"/>
+
+                        <StackLayout Orientation="Horizontal">
+                            <Entry Text="{Binding Barcode}" Placeholder="Barcode..." Keyboard="Text" HorizontalOptions="FillAndExpand"/>
+                            <Button Style="{StaticResource SmallButton}"
+                                    Command="{Binding ScanBarcodeCommand}"  
+                                    Text="Scan"/>
+
+                            <Button Style="{StaticResource SmallButton}" BackgroundColor="LightGray" TextColor="#333333"
+                                    Command="{Binding ClearBarcodeCommand}"  
+                                    Text="Clear" />
+                        </StackLayout>
+                    </StackLayout>
+                   
+                    <!--Qty-->
+                    <Label Text="QTY:" Grid.Row="2" Grid.Column="0" VerticalOptions="Center" VerticalTextAlignment="End"/>
+                    <StackLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                        <Entry Text="{Binding Qty}" Keyboard="Numeric"  WidthRequest="100" IsReadOnly="{Binding AutoQty}" HorizontalTextAlignment="Center"/>
+                        <Stepper Increment="1" Minimum="1" Value="{Binding Qty}" IsEnabled="True">
+                            <!--<Stepper.Behaviors>
+                                <toolkit:EventToCommandBehavior EventName="ValueChanged"
+									Command="{Binding StepperValueChangedCmd}" />
+                            </Stepper.Behaviors>-->
+
+                            <!--<Stepper.Triggers>
+                                <DataTrigger TargetType="Stepper" 
+											 Binding="{Binding AutoQty}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                            </Stepper.Triggers>-->
+                        </Stepper>
+                    </StackLayout>
+
+
+                    <Label Grid.Row="3" Grid.Column="0" Text="Auto Save:" VerticalOptions="Center" VerticalTextAlignment="Center" HorizontalOptions="Start" HorizontalTextAlignment="Start"/>
+                    <Switch Grid.Row="3" Grid.Column="1" HorizontalOptions="Start" IsToggled="{Binding AutoQty,Mode=TwoWay}" x:Name="AutoQty"/>
+                    <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" HorizontalOptions="FillAndExpand"
+                            Command="{Binding AddItemCommand}" IsVisible="False" 
+                            Text="Add Item">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button"
+                                         Binding="{Binding AutoQty}"
+                                         Value="false">
+                                <Setter Property="IsVisible"
+                                        Value="True" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+
+                    <!--Last 5 scanned items-->
+                    <Label Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Text="Last 5 items" Margin="0, 20, 0, 0"/>
+                    <ListView Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" ItemsSource="{Binding LastAddedItems, Mode=TwoWay}"
+								  SelectedItem="{Binding SelectedItem}" HeightRequest="300">
+                        <ListView.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.4*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="0.3*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Text="Bay/Loc" FontAttributes="Bold" Grid.Column="0" Margin="5"/>
+                                <Label Text="Item" FontAttributes="Bold" Grid.Column="1" Margin="5"/>
+                                <Label Text="Qty" FontAttributes="Bold" Grid.Column="2" Margin="5"/>
+                            </Grid>
+                        </ListView.Header>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+
+                                    <SwipeView x:Name="swipeView1" BackgroundColor="#E1E7F1">
+                                        <Grid BackgroundColor="#E1E7F1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="0.4*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="0.3*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Label Text="{Binding BayLocation}" Grid.Column="0" Margin="5"/>
+                                            <StackLayout Orientation="Vertical" Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                                                <Label Text="{Binding Barcode}" />
+                                                <Label Text="{Binding Desc}"/>
+                                            </StackLayout>
+                                            <Label Text="{Binding Qty}" Grid.Column="2" Margin="5"/>
+                                        </Grid>
+                                    </SwipeView>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+
+                    </ListView>
+
+
+                </Grid>
+                <ActivityIndicator IsRunning="{Binding IsCheckingBay}" IsVisible="True" HeightRequest="20"></ActivityIndicator>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

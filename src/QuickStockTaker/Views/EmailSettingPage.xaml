@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QuickStockTaker.Views.EmailSettingPage"
+             xmlns:md="clr-namespace:MaterialDesign"
+             xmlns:vm="clr-namespace:QuickStockTaker.Core.ViewModels;assembly=QuickStockTaker.Core"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit" 
+             Title="EmailSettingPage">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+                EventName="Appearing"
+                Command="{Binding AppearingCommand}" />
+    </ContentPage.Behaviors>
+    <ContentPage.Content>
+        <ScrollView Padding="15" VerticalOptions="FillAndExpand">
+            
+            <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand">
+
+                <StackLayout Orientation="Vertical" VerticalOptions="Start" Padding="20,0,0,5">
+                    <Label Text="SMTP Server Settings" TextColor="{StaticResource Primary}" />
+                </StackLayout>
+                <Border  Stroke="{StaticResource Primary}" StrokeThickness="1" StrokeShape="Line 0 0 2000 0"/>
+
+                <StackLayout Orientation="Vertical" VerticalOptions="Start" Padding="20,20,0,0">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding HostTypeCommand}"></TapGestureRecognizer>
+                    </StackLayout.GestureRecognizers>
+                    <Label Text="Host Type" />
+                    <Label Text="{Binding SmtpProvider}" IsEnabled="False" />
+                </StackLayout>
+                <Border  Stroke="#ccc" StrokeThickness="1" StrokeShape="Line 0 0 2000 0"/>
+
+                <StackLayout Orientation="Vertical" VerticalOptions="Start" Padding="20,20,0,0">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SmtpHostCommand}"></TapGestureRecognizer>
+                    </StackLayout.GestureRecognizers>
+                    <Label Text="Host" VerticalTextAlignment="Center"  VerticalOptions="Center" />
+                    <Label Text="{Binding SmtpHost}" VerticalTextAlignment="Center" VerticalOptions="Center" IsEnabled="False" />
+                </StackLayout>
+                <Border  Stroke="#ccc" StrokeThickness="1" StrokeShape="Line 0 0 2000 0"/>
+
+                <StackLayout Orientation="Vertical" VerticalOptions="Start" Margin="20,20,0,0">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SmtpPortCommand}"></TapGestureRecognizer>
+                    </StackLayout.GestureRecognizers>
+                    <Label Text="Port" VerticalTextAlignment="Center"  VerticalOptions="Center" />
+                    <Label Text="{Binding SmtpPort}" VerticalTextAlignment="Center" VerticalOptions="Center" IsEnabled="False" />
+                </StackLayout>
+                <Border  Stroke="#ccc" StrokeThickness="1" StrokeShape="Line 0 0 2000 0"/>
+
+                <StackLayout Orientation="Vertical" VerticalOptions="Start" Margin="20,20,0,0">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SmtpUsernameCommand}"></TapGestureRecognizer>
+                    </StackLayout.GestureRecognizers>
+                    <Label Text="Username" VerticalTextAlignment="Center"  VerticalOptions="Center" />
+                    <Label Text="{Binding SmtpUsername}" VerticalTextAlignment="Center" VerticalOptions="Center" IsEnabled="False" />
+                </StackLayout>
+                <Border  Stroke="#ccc" StrokeThickness="1" StrokeShape="Line 0 0 2000 0"/>
+
+                <StackLayout Orientation="Vertical" VerticalOptions="Center" Margin="20,20,0,0">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SmtpPasswordCommand}"></TapGestureRecognizer>
+                    </StackLayout.GestureRecognizers>
+                    <Label Text="Password" VerticalTextAlignment="Center"  VerticalOptions="Center" />
+                    <Label Text="******" VerticalTextAlignment="Center" VerticalOptions="Center" IsEnabled="False" />
+                </StackLayout>
+                <Border  Stroke="#ccc" StrokeThickness="1" StrokeShape="Line 0 0 2000 0"/>
+
+                <StackLayout Orientation="Vertical" VerticalOptions="Center" Margin="20,20,0,0"
+                                         IsVisible="{Binding ShowFrom}">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SmtpFromCommand}"></TapGestureRecognizer>
+                    </StackLayout.GestureRecognizers>
+                    <Label Text="From:" VerticalTextAlignment="Center"  VerticalOptions="Center" />
+                    <Label Text="{Binding SmtpFrom}"  VerticalTextAlignment="Center" VerticalOptions="Center" IsEnabled="False" />
+                </StackLayout>
+                <Border  Stroke="#ccc" StrokeThickness="1" StrokeShape="Line 0 0 2000 0" IsVisible="{Binding ShowFrom}"/>
+
+                <StackLayout Orientation="Vertical" VerticalOptions="Center" Margin="20,50,0,0">
+                    <Button Text="Send Test Email" Command="{Binding TestEmailCommand}" HorizontalOptions="Center" WidthRequest="200">
+                        <Button.ImageSource>
+                            <FontImageSource Glyph="{x:Static md:MaterialDesignIcons.Send}" FontFamily="MD-O"></FontImageSource>
+                        </Button.ImageSource>
+                    </Button>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
