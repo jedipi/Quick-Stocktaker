@@ -95,15 +95,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Autofac" Version="7.1.0" />
-	  <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
-	  <PackageReference Include="CommunityToolkit.Maui" Version="7.0.0" />
+	  <PackageReference Include="Autofac" Version="8.0.0" />
+	  <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
+	  <PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
 	  <PackageReference Include="CommunityToolkit.Maui.Markup" Version="4.0.0" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-	  <PackageReference Include="Controls.UserDialogs.Maui" Version="1.5.0" />
-	  <PackageReference Include="CsvHelper" Version="30.0.1" />
-	  <PackageReference Include="MailKit" Version="4.3.0" />
-		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.3" />
+	  <PackageReference Include="Controls.UserDialogs.Maui" Version="1.5.4" />
+	  <PackageReference Include="CsvHelper" Version="31.0.2" />
+	  <PackageReference Include="MailKit" Version="4.4.0" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.14" />
 		<PackageReference Include="Plugin.Maui.Audio" Version="2.1.0" />
 	  <PackageReference Include="Serilog" Version="3.1.1" />
 	  <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
@@ -111,8 +111,8 @@
 	  <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 	  <PackageReference Include="SkiaSharp.Extended.UI.Maui" Version="2.0.0-preview.86" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
-	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.7" />
-	  <PackageReference Include="System.Text.Json" Version="8.0.0" />
+	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.8" />
+	  <PackageReference Include="System.Text.Json" Version="8.0.3" />
 	  <PackageReference Include="ZXing.Net.Maui" Version="0.4.0" />
 	  <PackageReference Include="ZXing.Net.Maui.Controls" Version="0.4.0" />
 	</ItemGroup>
@@ -165,6 +165,10 @@
 
 	<ItemGroup>
 	  <Folder Include="Services\Interfaces\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Update="Microsoft.Maui.Controls.Compatibility" Version="8.0.14" />
 	</ItemGroup>
 
 </Project>
