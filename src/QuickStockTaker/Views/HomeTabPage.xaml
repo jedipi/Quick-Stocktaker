@@ -59,21 +59,26 @@
 
                 </Grid>
 
-                <skia:SKLottieView
-                  Source="2160-get-started-button.json"
-                  RepeatCount="-1"
-                  HeightRequest="250"
-                  HorizontalOptions="Center" />
-                <!--<forms:AnimationView
-                    Command="{Binding GetStartedCommand}"
-                    x:Name="animationView"
-                    Animation="resource://Resources.2160-get-started-button.json?assembly=QuickStockTaker"
-                    AnimationSource="EmbeddedResource"
-                    AutoPlay="True"
-                    RepeatCount="-1"
-                    RepeatMode="Restart"
-                    HeightRequest="250"  Margin="0,-100,0,0" HorizontalOptions="Fill" VerticalOptions="Fill" />-->
-
+                <Frame BorderColor="Transparent">
+                    <skia:SKLottieView
+                      Source="2160-get-started-button.json"
+                      RepeatCount="-1"
+                      HeightRequest="250"
+                      HorizontalOptions="Center" >
+                        <skia:SKLottieView.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GetStartedCommand}"/>
+                        </skia:SKLottieView.GestureRecognizers>
+                    </skia:SKLottieView>
+                    <!--<forms:AnimationView
+                        Command="{Binding GetStartedCommand}"
+                        x:Name="animationView"
+                        Animation="resource://Resources.2160-get-started-button.json?assembly=QuickStockTaker"
+                        AnimationSource="EmbeddedResource"
+                        AutoPlay="True"
+                        RepeatCount="-1"
+                        RepeatMode="Restart"
+                        HeightRequest="250"  Margin="0,-100,0,0" HorizontalOptions="Fill" VerticalOptions="Fill" />-->
+                </Frame>
             </StackLayout>
         </ScrollView>
 

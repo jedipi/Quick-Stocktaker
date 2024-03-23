@@ -68,6 +68,5 @@ namespace QuickStockTaker.Core.ViewModels
             var a = Preferences.Get(Constants.StocktakeDate, DateTime.MinValue);
             StocktakeDate = a.ToShortDateString();
         }
-
     }
 }

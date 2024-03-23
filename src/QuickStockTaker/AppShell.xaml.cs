@@ -12,7 +12,8 @@ public partial class AppShell : Shell
     }
 
 	private void RegisterRoutes()
-	{
+    { 
+        Routing.RegisterRoute(nameof(DashboardPage), typeof(DashboardPage));
         Routing.RegisterRoute(nameof(NewStocktakePage), typeof(NewStocktakePage));
         Routing.RegisterRoute(nameof(EnterDatePage), typeof(EnterDatePage));
         Routing.RegisterRoute(nameof(BayListPage), typeof(BayListPage));
@@ -20,5 +21,6 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(ItemDetailPage), typeof(ItemDetailPage));
         Routing.RegisterRoute(nameof(ReviewPage), typeof(ReviewPage));
         Routing.RegisterRoute(nameof(DataUploadPage), typeof(DataUploadPage));
+        
     }
 }
