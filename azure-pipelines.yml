@@ -14,14 +14,29 @@ variables:
   outputDirectory: '$(build.binariesDirectory)/$(buildConfiguration)'
 
 steps:
-- task: NuGetToolInstaller@1
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '8.0.x'
 
+- task: Bash@3
+  displayName: Install MAUI
+  inputs:
+    targetType: 'inline'
+    script: |
+      dotnet nuget locals all --clear 
+      dotnet workload install maui
+      dotnet workload install android ios maui wasm-tools
+
+- task: NuGetToolInstaller@1
+  inputs:
+    versionSpec: 
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '**/*.sln'
 
-- task: XamarinAndroid@1
+- task: DotNetCoreCLI@2
   inputs:
-    projectFile: '**/*droid*.csproj'
-    outputDirectory: '$(outputDirectory)'
-    configuration: '$(buildConfiguration)'
+    command: 'build'
+    projects: '**/QuickStockTaker.sln'
+    arguments: '-c Release -f net8.0-android'
