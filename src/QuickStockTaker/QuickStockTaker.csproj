@@ -30,27 +30,27 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
-	  <ApplicationId>com.thyconsultants.quickstocktaker</ApplicationId>
-	  <ApplicationDisplayVersion>5.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>5</ApplicationVersion>
+	  <ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
+	  <ApplicationDisplayVersion>14.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>14</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|AnyCPU'">
-	  <ApplicationId>com.thyconsultants.quickstocktaker</ApplicationId>
-	  <ApplicationDisplayVersion>5.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>5</ApplicationVersion>
+	  <ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
+	  <ApplicationDisplayVersion>14.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>14</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-ios|AnyCPU'">
-	  <ApplicationId>com.thyconsultants.quickstocktaker</ApplicationId>
-	  <ApplicationDisplayVersion>5.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>5</ApplicationVersion>
+	  <ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
+	  <ApplicationDisplayVersion>14.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>14</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
-	  <ApplicationId>com.thyconsultants.quickstocktaker</ApplicationId>
-	  <ApplicationDisplayVersion>5.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>5</ApplicationVersion>
+	  <ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
+	  <ApplicationDisplayVersion>14.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>14</ApplicationVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
