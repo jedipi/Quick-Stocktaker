@@ -5,11 +5,12 @@
              xmlns:md="clr-namespace:MaterialDesign"
              xmlns:vm="clr-namespace:QuickStockTaker.Core.ViewModels;assembly=QuickStockTaker.Core"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit" 
-             Title="EmailSettingPage">
+             Title="EmailSettingPage"
+             x:Name="EmailSetting">
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior
                 EventName="Appearing"
-                Command="{Binding AppearingCommand}" />
+                Command="{Binding Source={x:Reference EmailSetting}, Path=BindingContext.AppearingCommand}" />
     </ContentPage.Behaviors>
     <ContentPage.Content>
         <ScrollView Padding="15" VerticalOptions="FillAndExpand">

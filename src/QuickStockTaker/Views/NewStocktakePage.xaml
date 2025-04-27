@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="QuickStockTaker.Views.NewStocktakePage"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Name="NewStocktake"
              Title="NewStocktakePage">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Save" Command="{Binding SaveCommand}"/>
@@ -16,11 +17,14 @@
                         <Label Text="The current stocktake data will be cleared." FontSize="Medium" />
                         <StackLayout Orientation="Horizontal" Spacing="0">
                             <Label Text="Do you want to continue?"  VerticalOptions="Center" FontSize="Medium" />
-                            <Switch IsToggled="{Binding IsToggled}" HorizontalOptions="EndAndExpand" OnColor="Orange" ThumbColor="Green">
+                            <Switch IsToggled="{Binding IsToggled}" HorizontalOptions="EndAndExpand" 
+                                    x:Name="NewToggle"
+                                    OnColor="Orange" ThumbColor="Green">
                                 <Switch.Behaviors>
-                                    <!-- behaviors namespace comes from "Xamarin.Forms Behaviors" nuget  -->
-                                    <toolkit:EventToCommandBehavior EventName="Toggled"
-                                        Command="{Binding ToggledCommand}" />
+                                    <toolkit:EventToCommandBehavior 
+                                        EventName="Toggled"
+                                        Command="{Binding Source={x:Reference NewToggle}, Path=BindingContext.ToggledCommand}"
+                                        />
                                 </Switch.Behaviors>
                             </Switch>
                         </StackLayout>

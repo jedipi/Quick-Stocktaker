@@ -10,7 +10,7 @@
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior
                 EventName="Appearing"
-                Command="{Binding AppearingCommand}" />
+                Command="{Binding Source={x:Reference BayList}, Path=BindingContext.AppearingCommand}" />
     </ContentPage.Behaviors>
     <Shell.TitleView>
         <StackLayout Padding="0,10,0,0">
@@ -30,7 +30,7 @@
                 <SearchBar.Behaviors>
                     <toolkit:EventToCommandBehavior
                         EventName="TextChanged"
-                        Command="{Binding SearchTextCommand}"/>
+                        Command="{Binding Source={x:Reference SearchBarSearch}, Path=BindingContext.SearchTextCommand}" />
                 </SearchBar.Behaviors>
             </SearchBar>
             <ListView ItemsSource="{Binding Bays, Mode=TwoWay}" x:Name="BayListView"

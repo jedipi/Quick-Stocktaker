@@ -10,7 +10,7 @@
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior
                 EventName="Appearing"
-                Command="{Binding AppearingCommand}" />
+                Command="{Binding Source={x:Reference BayDetails}, Path=BindingContext.AppearingCommand}" />
     </ContentPage.Behaviors>
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="PDE QTY:"/>
@@ -23,7 +23,7 @@
                 <SearchBar.Behaviors>
                     <toolkit:EventToCommandBehavior
 						EventName="TextChanged"
-						Command="{Binding SearchTextCommand}"/>
+                        Command="{Binding Source={x:Reference SearchBarSearch}, Path=BindingContext.SearchTextCommand}"/>
                 </SearchBar.Behaviors>
             </SearchBar>
             <ListView ItemsSource="{Binding Items, Mode=TwoWay}" 

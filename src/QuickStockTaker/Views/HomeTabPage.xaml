@@ -4,11 +4,13 @@
              xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit" 
              x:Class="QuickStockTaker.Views.HomeTabPage"
+             x:Name="HomeTab"
              Title="HomeTabPage">
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior
                 EventName="Appearing"
-                Command="{Binding AppearingCommand}" />
+                Command="{Binding AppearingCommand}"
+                                        BindingContext="{Binding Source={x:Reference HomeTab}, Path=BindingContext}" />
         <!--<toolkit:EventToCommandBehavior
                 EventName="Disappearing"
                 Command="{Binding DisappearingCommand}" />-->
