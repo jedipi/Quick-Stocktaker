@@ -13,7 +13,7 @@ public partial class AppShell : Shell
 
 	private void RegisterRoutes()
     { 
-        Routing.RegisterRoute(nameof(DashboardPage), typeof(DashboardPage));
+        //Routing.RegisterRoute(nameof(DashboardPage), typeof(DashboardPage));
         Routing.RegisterRoute(nameof(NewStocktakePage), typeof(NewStocktakePage));
         Routing.RegisterRoute(nameof(EnterDatePage), typeof(EnterDatePage));
         Routing.RegisterRoute(nameof(BayListPage), typeof(BayListPage));
