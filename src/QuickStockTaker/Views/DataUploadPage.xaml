@@ -41,12 +41,7 @@
                        JustifyContent="SpaceAround"  Margin="10">  
 
                    <StackLayout Style="{StaticResource outer}">  
-                       <Border Stroke="#cccccc"  
-                               StrokeThickness="1"  
-                               StrokeShape="RoundRectangle 5,5,5,5"  
-                               Background="Transparent"  
-                               Padding="10"  
-                               HorizontalOptions="Center">  
+                       <Border>  
                            <Grid>  
                                <Grid.RowDefinitions>  
                                    <RowDefinition Height="Auto" />  

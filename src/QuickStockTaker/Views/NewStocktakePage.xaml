@@ -1,50 +1,63 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="QuickStockTaker.Views.NewStocktakePage"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Name="NewStocktake"
-             Title="NewStocktakePage">
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Save" Command="{Binding SaveCommand}"/>
-    </ContentPage.ToolbarItems>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"  
+           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"  
+           x:Class="QuickStockTaker.Views.NewStocktakePage"  
+           xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"  
+           x:Name="NewStocktake"  
+           Title="NewStocktakePage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Border">
+                <Setter Property="Padding" Value="10"></Setter>
+                <Setter Property="Stroke" Value="LightGray"></Setter>
+                <Setter Property="StrokeThickness" Value="1"></Setter>
+                <Setter Property="StrokeShape" Value="RoundRectangle 5,5,5,5"></Setter>
+                <Setter Property="Background" Value="Transparent"></Setter>
+                <Setter Property="HorizontalOptions" Value="Fill"></Setter>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.ToolbarItems>  
+      <ToolbarItem Text="Save" Command="{Binding SaveCommand}"/>  
+  </ContentPage.ToolbarItems>  
 
-    <ContentPage.Content>
-        <ScrollView>
-            <StackLayout Spacing="20" Padding="15">
-                <Frame>
-                    <StackLayout>
-                        <Label Text="The current stocktake data will be cleared." FontSize="Medium" />
-                        <StackLayout Orientation="Horizontal" Spacing="0">
-                            <Label Text="Do you want to continue?"  VerticalOptions="Center" FontSize="Medium" />
-                            <Switch IsToggled="{Binding IsToggled}" HorizontalOptions="EndAndExpand" 
-                                    x:Name="NewToggle"
-                                    OnColor="Orange" ThumbColor="Green">
-                                <Switch.Behaviors>
-                                    <toolkit:EventToCommandBehavior 
-                                        EventName="Toggled"
-                                        Command="{Binding Source={x:Reference NewToggle}, Path=BindingContext.ToggledCommand}"
-                                        />
-                                </Switch.Behaviors>
-                            </Switch>
-                        </StackLayout>
-                    </StackLayout>
-                </Frame>
-                <Frame IsVisible="{Binding IsDetailsVisible}">
-                    <StackLayout >
-                        <Label Text="New Stocktake Number:" />
-                        <Entry Text="{Binding StocktakeNumber}" />
+  <ContentPage.Content>  
+      <ScrollView>  
+          <StackLayout Spacing="20" Padding="15">  
+              <Border>  
+                  <StackLayout>  
+                      <Label Text="The current stocktake data will be cleared." FontSize="Medium" />  
+                      <Grid ColumnDefinitions="Auto, *">  
+                          <Label Text="Do you want to continue?" VerticalOptions="Center" FontSize="Medium" Grid.Column="0" />  
+                          <Switch IsToggled="{Binding IsToggled}"  
+                                  x:Name="NewToggle"  
+                                  OnColor="Orange" ThumbColor="Green"  
+                                  Grid.Column="1">  
+                              <Switch.Behaviors>  
+                                  <toolkit:EventToCommandBehavior   
+                                      EventName="Toggled"  
+                                      Command="{Binding Source={x:Reference NewToggle}, Path=BindingContext.ToggledCommand}"  
+                                      />  
+                              </Switch.Behaviors>  
+                          </Switch>  
+                      </Grid>  
+                  </StackLayout>  
+              </Border>  
+              <Border IsVisible="{Binding IsDetailsVisible}">  
+                  <StackLayout >  
+                      <Label Text="New Stocktake Number:" />  
+                      <Entry Text="{Binding StocktakeNumber}" />  
 
-                        <Label Text="Site/Warehouse:" />
-                        <Entry Text="{Binding Site}" />
+                      <Label Text="Site/Warehouse:" />  
+                      <Entry Text="{Binding Site}" />  
 
-                        <Label Text="Stocktake Date"/>
-                        <DatePicker Date="{Binding StocktakeDate}" />
+                      <Label Text="Stocktake Date"/>  
+                      <DatePicker Date="{Binding StocktakeDate}" />  
 
-                        <Button Text="Save" Command="{Binding SaveCommand}"/>
-                    </StackLayout>
-                </Frame>
-            </StackLayout>
-        </ScrollView>
-    </ContentPage.Content>
+                      <Button Text="Save" Command="{Binding SaveCommand}"/>  
+                  </StackLayout>  
+              </Border>  
+          </StackLayout>  
+      </ScrollView>  
+  </ContentPage.Content>  
 </ContentPage>
