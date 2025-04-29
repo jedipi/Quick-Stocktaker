@@ -23,10 +23,21 @@
             <Style TargetType="StackLayout" x:Key="outer">
                 <Setter Property="Margin" Value="10"></Setter>
                 <Setter Property="Padding" Value="0"></Setter>
-                <Setter Property="VerticalOptions" Value="FillAndExpand"></Setter>
+                <Setter Property="VerticalOptions" Value="Fill"></Setter>
             </Style>
-            <Style TargetType="Frame">
-                <Setter Property="Padding" Value="10"></Setter>
+            <Style TargetType="Border">
+                <Setter Property="Padding"
+                        Value="10"></Setter>
+                <Setter Property="Stroke"
+                        Value="#cccccc"></Setter>
+                <Setter Property="StrokeThickness"
+                        Value="1"></Setter>
+                <Setter Property="StrokeShape"
+                        Value="RoundRectangle 5,5,5,5"></Setter>
+                <Setter Property="Background"
+                        Value="Transparent"></Setter>
+                <Setter Property="HorizontalOptions"
+                        Value="Center"></Setter>
             </Style>
         </ResourceDictionary>
     </ContentPage.Resources>
@@ -37,63 +48,73 @@
                             JustifyContent="SpaceAround"  Margin="10">
 
                     <StackLayout Style="{StaticResource outer}">
-                        <Frame>
+                        <Border>
                             <StackLayout Orientation="Vertical">
                                 <ImageButton Source="ic_stocktake"
                                              Command="{Binding NewStocktakeCommand}"/>
-                                <Label Text="New Stocktake" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                                <Label Text="New Stocktake" HorizontalOptions="Center" VerticalOptions="Center"/>
 
                             </StackLayout>
-                        </Frame>
+                        </Border>
                     </StackLayout>
                     <StackLayout Style="{StaticResource outer}">
-                        <Frame>
+                        <Border>
                             <StackLayout Orientation="Vertical">
                                 <ImageButton Source="ic_scanner"
                                              Command="{Binding EnterDataCommand}"/>
-                                <Label Text="Enter Data" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                                <Label Text="Enter Data"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
 
                             </StackLayout>
-                        </Frame>
+                        </Border>
                     </StackLayout>
                     <StackLayout Style="{StaticResource outer}">
-                        <Frame>
+                        <Border>
                             <StackLayout Orientation="Vertical">
                                 <ImageButton Source="ic_list"
                                              Command="{Binding BayListCommand}"/>
-                                <Label Text="Bay/Location List" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                                <Label Text="Bay/Location List"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
 
                             </StackLayout>
-                        </Frame>
+                        </Border>
                     </StackLayout>
                     <StackLayout Style="{StaticResource outer}">
-                        <Frame>
+                        <Border>
                             <StackLayout Orientation="Vertical">
                                 <ImageButton Source="ic_review" 
                                              Command="{Binding ReviewCommand}"/>
-                                <Label Text="Review/Correction" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                                <Label Text="Review/Correction"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
 
                             </StackLayout>
-                        </Frame>
+                        </Border>
                     </StackLayout>
                     <StackLayout Style="{StaticResource outer}">
-                        <Frame>
+                        <Border>
                             <StackLayout Orientation="Vertical">
                                 <ImageButton Source="ic_upload"  
                                              Command="{Binding SendDataCommand}"/>
-                                <Label Text="Send Data" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                                <Label Text="Send Data"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
 
                             </StackLayout>
-                        </Frame>
+                        </Border>
                     </StackLayout>
                     <StackLayout Style="{StaticResource outer}" IsVisible="False">
-                        <Frame>
+                        <Border>
                             <StackLayout Orientation="Vertical">
                                 <ImageButton Source="ic_bin" 
                                              Command="{Binding EnterDataCommand}"/>
-                                <Label Text="Purge Data" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                                <Label Text="Purge Data"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
                             </StackLayout>
-                        </Frame>
+                        </Border>
                     </StackLayout>
                 </FlexLayout>
             </StackLayout>

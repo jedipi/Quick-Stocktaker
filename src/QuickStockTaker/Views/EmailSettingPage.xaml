@@ -13,9 +13,9 @@
                 Command="{Binding Source={x:Reference EmailSetting}, Path=BindingContext.AppearingCommand}" />
     </ContentPage.Behaviors>
     <ContentPage.Content>
-        <ScrollView Padding="15" VerticalOptions="FillAndExpand">
+        <ScrollView Padding="15">
             
-            <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand">
+            <StackLayout Orientation="Vertical" >
 
                 <StackLayout Orientation="Vertical" VerticalOptions="Start" Padding="20,0,0,5">
                     <Label Text="SMTP Server Settings" TextColor="{StaticResource Primary}" />

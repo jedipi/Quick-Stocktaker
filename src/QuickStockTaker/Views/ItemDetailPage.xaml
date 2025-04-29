@@ -1,29 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="QuickStockTaker.Views.ItemDetailPage"
-             Title="ItemDetailPage">
-    <StackLayout Padding="10">
-        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
-            <Label VerticalOptions="CenterAndExpand">Description:</Label>
-            <Label Text="{Binding SelectedItem.Description}" />
-        </StackLayout>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"  
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"  
+            x:Class="QuickStockTaker.Views.ItemDetailPage"  
+            Title="ItemDetailPage">  
+  <Grid Padding="10" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*">  
+      <Label Grid.Row="0" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Start">Description:</Label>  
+      <Label Grid.Row="0" Grid.Column="1" Text="{Binding SelectedItem.Description}" />  
 
-        <StackLayout Orientation="Horizontal" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
-            <Label VerticalOptions="CenterAndExpand">Bay/Loc/BIN or Ref No.:</Label>
-            <Label Text="{Binding SelectedItem.BayLocation}"  x:Name="BayEntry"/>
-        </StackLayout>
-        <StackLayout Orientation="Horizontal" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
-            <Label VerticalOptions="CenterAndExpand">Barcode:</Label>
-            <Entry Text="{Binding SelectedItem.Barcode}" Placeholder="Barcode..." VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" />
-        </StackLayout>
-        <StackLayout Orientation="Horizontal" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
-            <Label VerticalOptions="CenterAndExpand">Qty:</Label>
-            <Entry Text="{Binding SelectedItem.Qty}" Placeholder="Qty..." x:Name="QtyEntry" Keyboard="Numeric" VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" />
-        </StackLayout>
-        <Button Text="Save"
-                Command="{Binding SaveCommand}"  CornerRadius="5" />
+      <Label Grid.Row="1" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Start">Bay/Loc/BIN or Ref No.:</Label>  
+      <Label Grid.Row="1" Grid.Column="1" Text="{Binding SelectedItem.BayLocation}" x:Name="BayEntry" />  
 
+      <Label Grid.Row="2" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Start">Barcode:</Label>  
+      <Entry Grid.Row="2" Grid.Column="1" Text="{Binding SelectedItem.Barcode}" Placeholder="Barcode..." VerticalOptions="Center" />  
 
-    </StackLayout>
+      <Label Grid.Row="3" Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Start">Qty:</Label>  
+      <Entry Grid.Row="3" Grid.Column="1" Text="{Binding SelectedItem.Qty}" Placeholder="Qty..." x:Name="QtyEntry" Keyboard="Numeric" VerticalOptions="Center" />  
+
+      <Button Grid.Row="4" Grid.ColumnSpan="2" Text="Save" Command="{Binding SaveCommand}" CornerRadius="5" />  
+  </Grid>  
 </ContentPage>

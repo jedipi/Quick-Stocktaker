@@ -45,7 +45,7 @@
                     </Grid>
                 </StackLayout>
 
-                <BoxView HeightRequest="1" HorizontalOptions="FillAndExpand" BackgroundColor="#333"></BoxView>
+                <BoxView HeightRequest="1" HorizontalOptions="Fill" BackgroundColor="#333"></BoxView>
 
                 <StackLayout>
                     <Button Text="Change Stocktake Date" Margin="0,0,0,5"

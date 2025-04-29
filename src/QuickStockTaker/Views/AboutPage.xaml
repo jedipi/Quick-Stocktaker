@@ -20,9 +20,9 @@
             <StackLayout Orientation="Vertical" Padding="16,10,16,40" Spacing="10">
                 <Image Source="ic_stocktake" HeightRequest="100" Margin="0,50,0,20"/>
 
-                <Label FontSize="Medium">Thank you  for trying Quick StockTaker!</Label>
-                <Label FontSize="Medium">This app is free to use for personal and commercial. If you have any questions, comments, suggestions, or features you'd like to see, I'd appreciate your feedback.</Label>
-                <Label FontSize="Medium">If you'd like to show your support for this project and help me continue development, please consider a donation.</Label>
+                <Label>Thank you  for trying Quick StockTaker!</Label>
+                <Label>This app is free to use for personal and commercial. If you have any questions, comments, suggestions, or features you'd like to see, I'd appreciate your feedback.</Label>
+                <Label>If you'd like to show your support for this project and help me continue development, please consider a donation.</Label>
 
                 <StackLayout Orientation="Vertical" VerticalOptions="Center">
 
@@ -37,7 +37,7 @@
                     </StackLayout>
                     <Border  Stroke="{StaticResource Primary}" StrokeThickness="1" StrokeShape="Line 0 0 2000 0"/>
 
-                    <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand" Margin="0,10,0,10" IsVisible="false">
+                    <StackLayout Orientation="Horizontal" Margin="0,10,0,10" IsVisible="false">
                         <StackLayout.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding DonationCommand}"></TapGestureRecognizer>
                         </StackLayout.GestureRecognizers>
@@ -46,15 +46,15 @@
                                            VerticalTextAlignment="Center" />
                         <Label Text="Buy me cup of coffee" FontSize="Medium" VerticalTextAlignment="Center"/>
                     </StackLayout>
-                    <Border  Stroke="{StaticResource Primary}" StrokeThickness="1" StrokeShape="Line 0 0 2000 0"/>
+                    <!--<Border  Stroke="{StaticResource Primary}" StrokeThickness="1" StrokeShape="Line 0 0 2000 0"/>-->
 
                 </StackLayout>
                 
-                <TableView Intent="Menu" RowHeight="60" IsVisible="False">
+                <TableView Intent="Menu" RowHeight="60" IsVisible="Collapse">
                     <TableRoot>
                         <TableSection TextColor="{StaticResource Primary}">
                             <ViewCell>
-                                <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand" >
+                                <StackLayout Orientation="Horizontal" >
                                     <StackLayout.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding CommentCmd}"></TapGestureRecognizer>
                                     </StackLayout.GestureRecognizers>
@@ -66,19 +66,19 @@
                             </ViewCell>
 
                             <ViewCell>
-                                <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand" >
+                                <StackLayout Orientation="Horizontal" >
                                     <StackLayout.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding DonationCommand}"></TapGestureRecognizer>
                                     </StackLayout.GestureRecognizers>
                                     <Label Text="{x:Static fa:FontAwesomeFreeReg.DollarSign}" FontFamily="FA" 
-                                           FontSize="Large" Margin="0,0,30,0" 
+                                           FontSize="Large" Margin="0,0,40,0" 
                                            VerticalTextAlignment="Center" />
                                     <Label Text="Donate" FontSize="Medium" VerticalTextAlignment="Center"/>
                                 </StackLayout>
                             </ViewCell>
 
                             <ViewCell>
-                                <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand">
+                                <StackLayout Orientation="Horizontal" >
                                     <StackLayout.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding VersionCmd}"></TapGestureRecognizer>
                                     </StackLayout.GestureRecognizers>
