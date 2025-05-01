@@ -76,7 +76,7 @@ namespace QuickStockTaker.Core.ViewModels
         private async Task OnTestEmail()
         {
             // ask for email address
-            var result = await Application.Current.MainPage.DisplayPromptAsync(
+            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync(
                 "", "Type in your email address:", accept:"Send", placeholder: "email address",keyboard: Keyboard.Email);
 
             // validate email address
@@ -137,7 +137,7 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private async Task OnSmtpFrom()
         {
-            var result = await Application.Current.MainPage.DisplayPromptAsync("From", "Please type in the From email address:");
+            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync("From", "Please type in the From email address:");
 
             if (string.IsNullOrEmpty(result))
                 return;
@@ -149,7 +149,7 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private async Task OnSmtpPassword()
         {
-            var result = await Application.Current.MainPage.DisplayPromptAsync("Password", "Please type in the password:");
+            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync("Password", "Please type in the password:");
 
             if (string.IsNullOrEmpty(result))
                 return;
@@ -161,7 +161,7 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private async Task OnSmtpUsername()
         {
-            var result = await Application.Current.MainPage.DisplayPromptAsync("Username", "Please type in the username:");
+            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync("Username", "Please type in the username:");
 
             if (string.IsNullOrEmpty(result))
                 return;
@@ -174,7 +174,7 @@ namespace QuickStockTaker.Core.ViewModels
         private async Task OnSmtpPort()
         {
 
-            var result = await Application.Current.MainPage.DisplayPromptAsync("SMTP port", "Please type in the SMTP port:", keyboard:Keyboard.Numeric);
+            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync("SMTP port", "Please type in the SMTP port:", keyboard:Keyboard.Numeric);
 
             if (string.IsNullOrEmpty(result))
                 return;
@@ -187,7 +187,7 @@ namespace QuickStockTaker.Core.ViewModels
         private async Task OnSmtpHost()
         {
             //var result = await _dialogs.("Please type in the SMTP host:", "SMTP HOST");
-            var result = await Application.Current.MainPage.DisplayPromptAsync("SMTP HOST", "Please type in the SMTP host:");
+            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync("SMTP HOST", "Please type in the SMTP host:");
 
             if (string.IsNullOrEmpty(result))
                 return;

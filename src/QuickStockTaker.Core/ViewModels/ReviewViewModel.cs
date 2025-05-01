@@ -73,7 +73,7 @@ namespace QuickStockTaker.Core.ViewModels
         {
             // keep the original data for logging
             var oldStocktakeNo = StocktakeNumber;
-            var result = await Application.Current.MainPage.DisplayPromptAsync("Change Stocktake Number", "Please enter the new Stocktake Number:");
+            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync("Change Stocktake Number", "Please enter the new Stocktake Number:");
 
             if (result == null || string.IsNullOrEmpty(result.Trim()) || oldStocktakeNo == result)
             {
@@ -112,7 +112,7 @@ namespace QuickStockTaker.Core.ViewModels
             // keep the original data for logging
             var oldSite = Site;
 
-            var result = await Application.Current.MainPage.DisplayPromptAsync("Change Site/Warehouse", "Please enter the Site/Warehouse:");
+            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync("Change Site/Warehouse", "Please enter the Site/Warehouse:");
 
             if (result == null || string.IsNullOrEmpty(result.Trim()) || oldSite == result.Trim())
             {

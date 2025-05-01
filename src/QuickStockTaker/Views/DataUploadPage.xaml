@@ -22,7 +22,7 @@
            <Style TargetType="StackLayout" x:Key="outer">  
                <Setter Property="Margin" Value="10"></Setter>  
                <Setter Property="Padding" Value="0"></Setter>  
-               <Setter Property="VerticalOptions" Value="FillAndExpand"></Setter>  
+               <Setter Property="VerticalOptions" Value="Fill"></Setter>  
            </Style>  
            <Style TargetType="Border">  
                <Setter Property="Padding" Value="10"></Setter>  

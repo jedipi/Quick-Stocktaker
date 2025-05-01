@@ -15,7 +15,7 @@ namespace QuickStockTaker.Core.ViewModels
     public partial class HomeTabViewModel : ObservableObject
     {
         #region Fields
-        private bool _shown;
+        //private bool _shown;
         IServiceProvider _provider;
         private readonly ILogger<HomeTabViewModel> _logger;
         #endregion

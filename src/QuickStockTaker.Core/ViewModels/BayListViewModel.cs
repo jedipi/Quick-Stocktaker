@@ -108,7 +108,7 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private async Task OnChangeBayNo(Bay bay)
         {
-            var result = await Application.Current.MainPage.DisplayPromptAsync(
+            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync(
                  "Update Bay/Location", "Enter the new Bay/Location/Bin or Ref No:",
                 "Update", "Cancel", "new Bay/Location/BIN or Ref No");
 
@@ -125,9 +125,8 @@ namespace QuickStockTaker.Core.ViewModels
                 return;
             }
 
-
             // check existing bay number.
-            var isBayNoExist = await _repo.FindAsync(x => x.BayLocation == newBayLocation);//.CountAsync(x => x.BayLocation == newBayLocation);
+            var isBayNoExist = await _repo.FindAsync(x => x.BayLocation == newBayLocation);
 
             if (isBayNoExist.Any())
             {
@@ -146,14 +145,13 @@ namespace QuickStockTaker.Core.ViewModels
                 await _repo.Connection.ExecuteAsync(sql, newBayLocation, bay.BayLocation);
 
                 _logger.LogInformation($"stocktake date changed from {bay.BayLocation} to {newBayLocation}");
-                
 
                 await GetBays();
             }
             catch (Exception e)
             {
                 _logger.LogWarning($"Failed to change bay no. {e.Message}");
-                
+
                 await _dialogs.AlertAsync("Fail to change Bay/Loc/BIN. Please try again", "ERROR");
             }
             finally

@@ -40,7 +40,7 @@ public partial class AboutViewModel : ObservableObject
     {
         var amounts = _donationAmounts.Select(x => x.AmountString).ToArray();
     
-        var action = await Application.Current.MainPage.DisplayActionSheet("Select a amount you would like to donate", "Cancel", null, amounts);
+        var action = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayActionSheet("Select a amount you would like to donate", "Cancel", null, amounts);
         //DoDonation();
     }
 
@@ -49,7 +49,7 @@ public partial class AboutViewModel : ObservableObject
     /// </summary>
     /// <param name="amount">donation amount</param>
     /// <returns></returns>
-    private async Task DoDonation(decimal amount)
+    private void DoDonation(decimal amount)
     {
         new NotImplementedException();
     }

@@ -9,7 +9,7 @@
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior
                 EventName="Appearing"
-                Command="{Binding Source={x:Reference About}, Path=BindingContext.AppearingCommand}"
+                Command="{Binding Source={x:Reference About}, Path=BindingContext.AppearingCommand}" x:DataType="ContentPage"
                  />
         <!--<toolkit:EventToCommandBehavior
                 EventName="Disappearing"
