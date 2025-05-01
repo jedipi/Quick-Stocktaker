@@ -17,7 +17,13 @@ public static class MauiProgram
 		var builder = MauiApp.CreateBuilder();
 		builder
 			.UseMauiApp<App>()
-			.UseMauiCommunityToolkit()
+            .UseAndroidInAppUpdates(static options =>
+            {
+#if DEBUG
+                    options.UseFakeAppUpdateManager = true;
+#endif
+            })
+            .UseMauiCommunityToolkit()
             .UseSkiaSharp()
             .UseBarcodeReader()
             .UseUserDialogs(registerInterface: true, () =>
