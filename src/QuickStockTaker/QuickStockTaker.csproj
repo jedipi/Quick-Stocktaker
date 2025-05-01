@@ -14,7 +14,7 @@
 		<ApplicationTitle>QuickStockTaker</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.quickstocktaker</ApplicationId>
+		<ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
 		<ApplicationIdGuid>3ED6D032-B812-45AE-8F75-FCF29FB457B5</ApplicationIdGuid>
 
 		<!-- Versions -->
@@ -29,28 +29,29 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-ios|AnyCPU'">
+	  <ApplicationDisplayVersion>15.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>15</ApplicationVersion>
 	  <ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
-	  <ApplicationDisplayVersion>14.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>14</ApplicationVersion>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
+	  <ApplicationDisplayVersion>15.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>15</ApplicationVersion>
 	  <ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
-	  <ApplicationDisplayVersion>14.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>14</ApplicationVersion>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-ios|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-ios|AnyCPU'">
+	  <ApplicationDisplayVersion>15.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>15</ApplicationVersion>
 	  <ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
-	  <ApplicationDisplayVersion>14.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>14</ApplicationVersion>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
+	  <ApplicationDisplayVersion>15.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>15</ApplicationVersion>
 	  <ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
-	  <ApplicationDisplayVersion>14.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>14</ApplicationVersion>
+	  <AndroidLinkTool>r8</AndroidLinkTool>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -108,7 +109,7 @@
 	  <PackageReference Include="Serilog" Version="4.2.0" />
 	  <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1" />
 	  <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
-	  <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+	  <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
 	  <PackageReference Include="SkiaSharp.Extended.UI.Maui" Version="2.0.0" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.11" />
