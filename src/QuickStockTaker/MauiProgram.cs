@@ -2,6 +2,7 @@
 using Autofac.Extensions.DependencyInjection;
 using CommunityToolkit.Maui;
 using Controls.UserDialogs.Maui;
+using Maui.Android.InAppUpdates;
 using QuickStockTaker.Core.Popups;
 using Serilog;
 using Serilog.Events;
@@ -20,7 +21,7 @@ public static class MauiProgram
             .UseAndroidInAppUpdates(static options =>
             {
 #if DEBUG
-                    options.UseFakeAppUpdateManager = true;
+                options.UseFakeAppUpdateManager = true;
 #endif
             })
             .UseMauiCommunityToolkit()

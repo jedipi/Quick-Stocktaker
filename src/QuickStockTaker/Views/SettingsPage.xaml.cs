@@ -4,7 +4,7 @@ namespace QuickStockTaker.Views;
 
 public partial class SettingsPage : ContentPage
 {
-	private SettingsViewModel _vm;
+	//private SettingsViewModel _vm;
 	public SettingsPage(SettingsViewModel vm)
 	{
 		InitializeComponent();
