@@ -46,9 +46,9 @@ namespace QuickStockTaker.Core.Services
 
             var site = Preferences.Get(Constants.Site, "");
             var deviceId = Preferences.Get(Constants.DeviceId, "");
-            
-            var dir = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            var filePath = Path.Combine(dir, $"{DateTime.Now.ToString("yyMMdd-HHmmss")}-{site}-{deviceId}-Stocktake.csv");
+
+            var dir = FileSystem.AppDataDirectory;
+            var filePath = Path.Combine(dir, $"Stocktake-{site}-{deviceId}-{DateTime.Now.ToString("yyMMdd-HHmmss")}.csv");
             
             // write data into a csv file using csvhelper
             await using (var textWriter = new StreamWriter(filePath, false))

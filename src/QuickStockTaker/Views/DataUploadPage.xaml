@@ -38,9 +38,26 @@
        <ScrollView Padding="0" Margin="0">  
            <StackLayout>  
                <FlexLayout Wrap="Wrap" VerticalOptions="Start"  
-                       JustifyContent="SpaceAround"  Margin="10">  
+                       JustifyContent="SpaceAround"  Margin="10">
 
-                   <StackLayout Style="{StaticResource outer}">  
+                    <StackLayout Style="{StaticResource outer}">
+                        <Border>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <ImageButton Source="ic_list"
+                                             Command="{Binding CsvCommand}"
+                                             Grid.Row="0" />
+                                <Label Text="CSV File"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       Grid.Row="1" />
+                            </Grid>
+                        </Border>
+                    </StackLayout>
+                    <StackLayout Style="{StaticResource outer}">  
                        <Border>  
                            <Grid>  
                                <Grid.RowDefinitions>  

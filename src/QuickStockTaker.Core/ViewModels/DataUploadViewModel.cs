@@ -6,11 +6,6 @@ using QuickStockTaker.Core.Repositories.Interfaces;
 using QuickStockTaker.Core.Services;
 using QuickStockTaker.Core.Services.Interfaces;
 using QuickStockTaker.Core.Validators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuickStockTaker.Core.ViewModels
 {
@@ -33,7 +28,52 @@ namespace QuickStockTaker.Core.ViewModels
         }
 
         #region
-        
+
+        [RelayCommand]
+        private async Task OnCsv()
+        {
+            await ExportData();
+            if (_exportedFile == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var targetDir = "/storage/emulated/0/Download";
+
+                var filePath = Path.Combine(targetDir, _exportedFile.Name);
+                File.Copy(_exportedFile.FullName, filePath, true);
+
+
+                var config = new ActionSheetConfig()
+                {
+                    Message = "Data exported to Download folder:" + _exportedFile.Name,
+                    UseBottomSheet = true,
+                    Destructive = new ActionSheetOption("Destroy", () => { }, "dotnet_bot.png"),
+                    Cancel = new ActionSheetOption("Close", () =>
+                    {
+
+                    }, "dotnet_bot.png"),
+                    Title = "CSV File",
+                    Icon = "dotnet_bot.png",
+                    Options = new ActionSheetOption[]
+                {
+                    new ActionSheetOption("Share", () => { }, "dotnet_bot.png")
+                }
+                };
+
+
+                _dialogs.ActionSheet(config);
+
+            }
+            catch (Exception ex)
+            {
+                await _dialogs.AlertAsync(ex.Message, "Error", "OK", "ic_error.png");
+            }
+            
+
+        }
         /// <summary>
         /// Send stocktake data via email
         /// </summary>
@@ -56,7 +96,7 @@ namespace QuickStockTaker.Core.ViewModels
             var validateResult = validator.Validate(emailAddress);
             if (!validateResult.IsValid)
             {
-                await _dialogs.AlertAsync(validateResult.Errors.First().ErrorMessage, "Error", "OK");
+                await _dialogs.AlertAsync(validateResult.Errors.First().ErrorMessage, "Error", "OK", "ic_error.png");
                 return;
             }
 
