@@ -30,26 +30,26 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-ios|AnyCPU'">
-	  <ApplicationDisplayVersion>15.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>15</ApplicationVersion>
+	  <ApplicationDisplayVersion>16.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>16</ApplicationVersion>
 	  <ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
-	  <ApplicationDisplayVersion>15.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>15</ApplicationVersion>
+	  <ApplicationDisplayVersion>16.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>16</ApplicationVersion>
 	  <ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-ios|AnyCPU'">
-	  <ApplicationDisplayVersion>15.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>15</ApplicationVersion>
+	  <ApplicationDisplayVersion>16.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>16</ApplicationVersion>
 	  <ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
-	  <ApplicationDisplayVersion>15.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>15</ApplicationVersion>
+	  <ApplicationDisplayVersion>16.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>16</ApplicationVersion>
 	  <ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
 	  <AndroidLinkTool>r8</AndroidLinkTool>
 	</PropertyGroup>
@@ -103,7 +103,7 @@
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 	  <PackageReference Include="Controls.UserDialogs.Maui" Version="1.7.0" />
 	  <PackageReference Include="CsvHelper" Version="33.0.1" />
-	  <PackageReference Include="MailKit" Version="4.12.0" />
+	  <PackageReference Include="MailKit" Version="4.17.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.60" />
 		<PackageReference Include="Oscore.Maui.Android.InAppUpdates" Version="1.2.0" />
 		<PackageReference Include="Plugin.Maui.Audio" Version="3.1.1" />
