@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 env:
-    DOTNETVERSION: 8.0.x
+    DOTNETVERSION: 9.0.x
     
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:        
@@ -48,4 +48,4 @@ jobs:
       shell: bash
       run: |
         cd src/QuickStockTaker
-        dotnet publish -f:net8.0-android -c:Release
+        dotnet publish -f:net9.0-android -c:Release
