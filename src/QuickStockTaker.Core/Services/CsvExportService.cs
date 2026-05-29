@@ -17,7 +17,7 @@ namespace QuickStockTaker.Core.Services
         //private IUserDialogs _dialogs;
         //private readonly NLog.ILogger _logger;
         //private IDBConnection _dbConnection;
-        private static object locker = new object();
+        private static object locker = new();
 
         // the exported file info
         public FileInfo ExportedFile { get; set; }
@@ -47,7 +47,7 @@ namespace QuickStockTaker.Core.Services
             var site = Preferences.Get(Constants.Site, "");
             var deviceId = Preferences.Get(Constants.DeviceId, "");
 
-            var dir = FileSystem.AppDataDirectory;
+            var dir = FileSystem.Current.AppDataDirectory;
             var filePath = Path.Combine(dir, $"Stocktake-{site}-{deviceId}-{DateTime.Now.ToString("yyMMdd-HHmmss")}.csv");
             
             // write data into a csv file using csvhelper

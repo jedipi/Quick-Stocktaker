@@ -91,7 +91,8 @@
                            </Grid>  
                        </Border>  
                    </StackLayout>  
-                   <StackLayout Style="{StaticResource outer}"  
+                   
+                   <!--<StackLayout Style="{StaticResource outer}"  
                                 IsEnabled="False"  
                                 IsVisible="Collapse">  
                        <Border>  
@@ -109,9 +110,9 @@
                                       Grid.Row="1" />  
                            </Grid>  
                        </Border>  
-                   </StackLayout>
+                   </StackLayout>-->
 
-                    <StackLayout Style="{StaticResource outer}"
+                    <!--<StackLayout Style="{StaticResource outer}"
                                  IsEnabled="False"
                                  IsVisible="Collapse">  
                        <Border>  
@@ -129,9 +130,9 @@
                                       Grid.Row="1" />  
                            </Grid>  
                        </Border>  
-                   </StackLayout>  
+                   </StackLayout>-->  
 
-                   <StackLayout Style="{StaticResource outer}"  
+                   <!--<StackLayout Style="{StaticResource outer}"  
                                 IsEnabled="False"  
                                 IsVisible="Collapse">  
                        <Border>  
@@ -149,9 +150,9 @@
                                       Grid.Row="1" />  
                            </Grid>  
                        </Border>  
-                   </StackLayout>  
+                   </StackLayout>-->  
 
-                   <StackLayout Style="{StaticResource outer}"  
+                   <!--<StackLayout Style="{StaticResource outer}"  
                                 IsEnabled="False"  
                                 IsVisible="Collapse">  
                        <Border>  
@@ -169,7 +170,7 @@
                                       Grid.Row="1" />  
                            </Grid>  
                        </Border>  
-                   </StackLayout>  
+                   </StackLayout>-->  
                </FlexLayout>  
            </StackLayout>  
        </ScrollView>  

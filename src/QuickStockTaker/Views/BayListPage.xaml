@@ -34,13 +34,12 @@
                        Command="{Binding Source={x:Reference SearchBarSearch}, Path=BindingContext.SearchTextCommand}" />  
                </SearchBar.Behaviors>  
            </SearchBar>  
-           <ListView ItemsSource="{Binding Bays, Mode=TwoWay}" x:Name="BayListView"  
-      SelectedItem="{Binding SelectedBay}" RowHeight="70"  
-      Grid.Row="1"  
-      CachingStrategy="RecycleElement" SeparatorVisibility="None">  
-               <ListView.ItemTemplate>  
+           <CollectionView ItemsSource="{Binding Bays, Mode=TwoWay}" x:Name="BayListView"  
+      SelectedItem="{Binding SelectedBay}"  
+      Grid.Row="1"  >  
+               <CollectionView.ItemTemplate>  
                    <DataTemplate>  
-                       <ViewCell>  
+                       <ContentView>  
                            <SwipeView x:Name="swipeView1" Background="Transparent">  
                                <SwipeView.LeftItems>  
                                    <SwipeItemView Command="{Binding Source={x:Reference BayList}, Path=BindingContext.DeleteBayCommand}"  
@@ -133,7 +132,7 @@
                                                StrokeThickness="1"  
                                                StrokeShape="RoundRectangle 12,12,12,12"  
                                                Background="#e1eff1"  
-                                               HorizontalOptions="Fill">  
+                                               HorizontalOptions="Fill" HeightRequest="70">  
                                    <StackLayout Orientation="Vertical" VerticalOptions="Center" Padding="10,0,0,0">  
                                        <Label VerticalTextAlignment="Center" FontSize="Medium" VerticalOptions="Center">  
                                            <Label.FormattedText>  
@@ -154,10 +153,10 @@
                                    </StackLayout>  
                                </Border>  
                            </SwipeView>  
-                       </ViewCell>  
+                       </ContentView>  
                    </DataTemplate>  
-               </ListView.ItemTemplate>  
-           </ListView>  
+               </CollectionView.ItemTemplate>  
+           </CollectionView>  
        </Grid>  
    </ContentPage.Content>  
 </ContentPage>

@@ -40,7 +40,7 @@ public partial class AboutViewModel : ObservableObject
     {
         var amounts = _donationAmounts.Select(x => x.AmountString).ToArray();
     
-        var action = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayActionSheet("Select a amount you would like to donate", "Cancel", null, amounts);
+        var action = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayActionSheetAsync("Select a amount you would like to donate", "Cancel", null, amounts);
         //DoDonation();
     }
 

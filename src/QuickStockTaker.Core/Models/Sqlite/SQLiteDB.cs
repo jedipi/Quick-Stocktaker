@@ -42,7 +42,7 @@ namespace QuickStockTaker.Core.Models.Sqlite
             }
             catch(Exception e)
             {
-                var a = e.Message;
+                _ = e.Message;
             }
         }
     }

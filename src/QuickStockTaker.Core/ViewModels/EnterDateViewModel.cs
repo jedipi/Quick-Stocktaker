@@ -166,7 +166,7 @@ namespace QuickStockTaker.Core.ViewModels
             else
             {
                 Barcode = await Scan();
-                if (AutoQty && !string.IsNullOrEmpty(Barcode))
+                if (AutoQty && !string.IsNullOrEmpty(Barcode) && !string.IsNullOrEmpty(BayLocation))
                     AddItemCommand.Execute(null);
             }
             
@@ -174,7 +174,7 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private async Task OnBarcodeReturn()
         {
-            if (AutoQty && !string.IsNullOrEmpty(Barcode))
+            if (AutoQty && !string.IsNullOrEmpty(Barcode) && !string.IsNullOrEmpty(BayLocation))
                 AddItemCommand.Execute(null);
         
         }  

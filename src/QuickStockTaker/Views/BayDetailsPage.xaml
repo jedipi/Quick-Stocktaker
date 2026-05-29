@@ -27,10 +27,9 @@
                        Command="{Binding Source={x:Reference SearchBarSearch}, Path=BindingContext.SearchTextCommand}" x:DataType="SearchBar"/>  
                </SearchBar.Behaviors>  
            </SearchBar>  
-           <ListView ItemsSource="{Binding Items, Mode=TwoWay}"   
-                     Grid.Row="1"  
-                     CachingStrategy="RecycleElement" SeparatorVisibility="None">  
-               <ListView.Header>  
+           <CollectionView ItemsSource="{Binding Items, Mode=TwoWay}"   
+                     Grid.Row="1"  >  
+               <CollectionView.Header>  
                    <Grid>  
                        <Grid.ColumnDefinitions>  
                            <ColumnDefinition Width="0.4*"/>  
@@ -41,10 +40,10 @@
                        <Label Text="Item" FontAttributes="Bold" Grid.Column="1" Margin="5"/>  
                        <Label Text="Qty" FontAttributes="Bold" Grid.Column="2" Margin="5"/>  
                    </Grid>  
-               </ListView.Header>  
-               <ListView.ItemTemplate>  
+               </CollectionView.Header>  
+               <CollectionView.ItemTemplate>  
                    <DataTemplate>  
-                       <ViewCell>  
+                       <ContentView>  
                            <SwipeView x:Name="swipeView1" BackgroundColor="Transparent">  
                                <SwipeView.LeftItems>  
                                    <SwipeItemView Command="{Binding Source={x:Reference BayDetails}, Path=BindingContext.DeleteCommand}"  
@@ -124,10 +123,10 @@
                                    </Grid>  
                                </Border>  
                            </SwipeView>  
-                       </ViewCell>  
+                       </ContentView>  
                    </DataTemplate>  
-               </ListView.ItemTemplate>  
-           </ListView>  
+               </CollectionView.ItemTemplate>  
+           </CollectionView>  
  
        </Grid>  
    </ContentPage.Content>  

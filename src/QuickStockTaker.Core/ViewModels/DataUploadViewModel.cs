@@ -27,7 +27,7 @@ namespace QuickStockTaker.Core.ViewModels
             _provider = provider;
         }
 
-        #region
+        #region Commands
 
         [RelayCommand]
         private async Task OnCsv()
@@ -35,34 +35,48 @@ namespace QuickStockTaker.Core.ViewModels
             await ExportData();
             if (_exportedFile == null)
             {
+                await _dialogs.AlertAsync("No data is exported. Please try again.", "Error", "OK", "ic_error.png");
                 return;
             }
 
             try
             {
-                var targetDir = "/storage/emulated/0/Download";
+                var targetDir = string.Empty;
+#if ANDROID
+                // Requires Storage permissions on older Android versions, or Scoped Storage APIs for Android 13+
+                targetDir = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
+#elif IOS
+                targetDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+#endif
 
-                var filePath = Path.Combine(targetDir, _exportedFile.Name);
-                File.Copy(_exportedFile.FullName, filePath, true);
+                string filePath = Path.Combine(targetDir, _exportedFile.Name);
 
 
                 var config = new ActionSheetConfig()
                 {
-                    Message = "Data exported to Download folder:" + _exportedFile.Name,
+                    Message = "Data exported: " + _exportedFile.Name,
                     UseBottomSheet = true,
-                    Destructive = new ActionSheetOption("Destroy", () => { }, "dotnet_bot.png"),
-                    Cancel = new ActionSheetOption("Close", () =>
+                    Cancel = new ActionSheetOption("Cancel", () =>
                     {
 
-                    }, "dotnet_bot.png"),
+                    }, "ic_error.png"),
                     Title = "CSV File",
-                    Icon = "dotnet_bot.png",
+                    Icon = "ic_csv.png",
                     Options = new ActionSheetOption[]
-                {
-                    new ActionSheetOption("Share", () => { }, "dotnet_bot.png")
-                }
-                };
+                    {
+                        new ActionSheetOption("Share", async () => await Share.Default.RequestAsync(new ShareFileRequest
+                        {
+                            Title = "Sharing file",
+                            File = new ShareFile(_exportedFile.FullName)
+                        }), "ic_ios_share.png"),
 
+                        new ActionSheetOption("Save", async () =>
+                        {
+                            File.Copy(_exportedFile.FullName, filePath, true);
+                            await _dialogs.AlertAsync("File saved to: " + filePath, "Success", "OK", "ic_greentick.png");
+                        }, "ic_download.png")
+                    }
+                };
 
                 _dialogs.ActionSheet(config);
 

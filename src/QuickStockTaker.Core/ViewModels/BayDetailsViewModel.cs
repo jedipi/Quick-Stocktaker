@@ -86,13 +86,13 @@ namespace QuickStockTaker.Core.ViewModels
         {
             if (item == null)
             {
-                await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayAlert("Error","Please select a bay first", "OK");
+                await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayAlertAsync("Error","Please select a bay first", "OK");
                 return;
             }
 
             // confirm to delete
             //var isConfirmed = await _dialogs.ConfirmAsync("Are you sure want to delete this item?", "Confirm Delete", "Yes", "No");
-            var isConfirmed = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayAlert("Confirm Delete", "Are you sure want to delete this item?", "YES", "NO");
+            var isConfirmed = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayAlertAsync("Confirm Delete", "Are you sure want to delete this item?", "YES", "NO");
 
             if (!isConfirmed) return;
 
@@ -112,7 +112,7 @@ namespace QuickStockTaker.Core.ViewModels
             catch (Exception e)
             {
                 _logger.LogError(e, $"Cannot delete stocktake item {e.Message}");
-                await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayAlert("Error", $"Error occured while deleting stocktake item.\n{e.Message}", "OK");
+                await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayAlertAsync("Error", $"Error occured while deleting stocktake item.\n{e.Message}", "OK");
             }
         }
 

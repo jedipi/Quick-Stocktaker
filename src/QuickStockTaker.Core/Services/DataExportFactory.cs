@@ -15,16 +15,12 @@ namespace QuickStockTaker.Core.Services
         }
         public IDataExport CreateExporter(string type)
         {
-            switch (type)
+            return type switch
             {
-                case "csv":
-                    return _provider.GetService<ICsvExportService>();
-                case "json":
-                    return _provider.GetService<IJsonExportService>();
-                default:
-                    return null;
-
-            }
+                "csv" => _provider.GetService<ICsvExportService>(),
+                "json" => _provider.GetService<IJsonExportService>(),
+                _ => null,
+            };
         }
     }
 }
