@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace QuickStockTaker.Core.Popups
 {
-    public partial class CameraPopupViewModel : ObservableObject
+    public partial class CameraPopupViewModel : ObservableObject, IQueryAttributable
     {
         [ObservableProperty]
         private bool _isScanContinuously;
@@ -20,14 +20,13 @@ namespace QuickStockTaker.Core.Popups
             DelayBetweenContinuousScans = 1500;
         }  
 
-        public void SetIsScanContinuously(bool value)
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            IsScanContinuously = value;
-        }
+            if (query.TryGetValue(nameof(IsScanContinuously), out var isScanContinuously))
+                IsScanContinuously = (bool)isScanContinuously;
 
-        public void SetDelayBetweenContinuousScans(int value)
-        {
-            DelayBetweenContinuousScans = value;
+            if (query.TryGetValue(nameof(DelayBetweenContinuousScans), out var delayBetweenContinuousScans))
+                DelayBetweenContinuousScans = (int)delayBetweenContinuousScans;
         }
     }
 }

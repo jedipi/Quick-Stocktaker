@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using ZXing.Net.Maui;
 using QuickStockTaker.Core.Popups;
-using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui;
 using Controls.UserDialogs.Maui;
 using Microsoft.Extensions.Logging;
 using QuickStockTaker.Core.Repositories.Interfaces;
@@ -171,6 +171,13 @@ namespace QuickStockTaker.Core.ViewModels
             }
             
         }
+        [RelayCommand]
+        private async Task OnBarcodeReturn()
+        {
+            if (AutoQty && !string.IsNullOrEmpty(Barcode))
+                AddItemCommand.Execute(null);
+        
+        }  
 
         [RelayCommand]
         private async Task OnBayTextChanged() => await GetItemCount();
@@ -190,10 +197,15 @@ namespace QuickStockTaker.Core.ViewModels
         {
             try
             {
-                var scanResults = await _popupService.ShowPopupAsync<CameraPopupViewModel>() as BarcodeResult[];
-                if (scanResults == null) return null;
+                var popupResult = await _popupService.ShowPopupAsync<CameraPopupViewModel, CameraPopupResult>(
+                    Shell.Current,
+                    options: PopupOptions.Empty,
+                    shellParameters: CreateCameraPopupParameters(isScanContinuously: false));
 
-                var barcode = scanResults.FirstOrDefault();
+                if (popupResult.WasDismissedByTappingOutsideOfPopup || popupResult.Result == null)
+                    return null;
+
+                var barcode = popupResult.Result.Barcodes.FirstOrDefault();
                 
                 return barcode?.Value;
             }
@@ -208,15 +220,24 @@ namespace QuickStockTaker.Core.ViewModels
         {
             try
             {
-                var scanResults = await _popupService.ShowPopupAsync<CameraPopupViewModel>(onPresenting: viewModel => { 
-                    viewModel.SetIsScanContinuously(_isContinuousMode);
-                }) as BarcodeResult[];
+                await _popupService.ShowPopupAsync<CameraPopupViewModel>(
+                    Shell.Current,
+                    options: PopupOptions.Empty,
+                    shellParameters: CreateCameraPopupParameters(_isContinuousMode));
             }
             catch (Exception ex)
             {
                 var a = ex.Message;
                 
             }
+        }
+
+        private static Dictionary<string, object> CreateCameraPopupParameters(bool isScanContinuously)
+        {
+            return new Dictionary<string, object>
+            {
+                [nameof(CameraPopupViewModel.IsScanContinuously)] = isScanContinuously
+            };
         }
 
         /// <summary>

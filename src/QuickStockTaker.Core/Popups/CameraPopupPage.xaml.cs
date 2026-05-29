@@ -1,29 +1,25 @@
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
-using Org.BouncyCastle.Crypto.Engines;
 using Plugin.Maui.Audio;
 using ZXing.Net.Maui;
 
 namespace QuickStockTaker.Core.Popups;
 
-public partial class CameraPopupPage : Popup
+public partial class CameraPopupPage : Popup<CameraPopupResult>
 {
-    ILogger<CameraPopupPage> _logger;
-    private bool _isScanContinuously;
-
-    public BarcodeResult[] BarcodeResult { get; set; }
-    
+    private readonly ILogger<CameraPopupPage> _logger;
 
     public CameraPopupViewModel ViewModel { get; set; }
     public CameraPopupPage(CameraPopupViewModel vm, ILogger<CameraPopupPage> logger)
 	{
 		InitializeComponent();
-        Size = new Size(DeviceDisplay.Current.MainDisplayInfo.Width, DeviceDisplay.Current.MainDisplayInfo.Height);
-		
+        
+        WidthRequest = DeviceDisplay.Current.MainDisplayInfo.Width;
+        HeightRequest = DeviceDisplay.Current.MainDisplayInfo.Height;
+
         BindingContext = ViewModel = vm;
         _logger = logger;
-        _isScanContinuously = vm.IsScanContinuously;
 
         cameraBarcodeReaderView.Options = new BarcodeReaderOptions
         {
@@ -44,15 +40,14 @@ public partial class CameraPopupPage : Popup
 
             if (ViewModel.IsScanContinuously)
             {
-                BarcodeResult = e.Results;
                 // send a broadcast message, receiver is EnterDateViewModel
-                WeakReferenceMessenger.Default.Send(BarcodeResult);
+                await MainThread.InvokeOnMainThreadAsync(() => WeakReferenceMessenger.Default.Send(e.Results));
 
-                Thread.Sleep(ViewModel.DelayBetweenContinuousScans);
+                await Task.Delay(ViewModel.DelayBetweenContinuousScans);
                 return; // this popup stay open 
             }
 
-            await CloseAsync(e.Results); 
+            await MainThread.InvokeOnMainThreadAsync(() => CloseAsync(new CameraPopupResult(e.Results))); 
         } 
         catch (Exception ex) 
         {
@@ -60,3 +55,5 @@ public partial class CameraPopupPage : Popup
         }
     }
 }
+
+public sealed record CameraPopupResult(BarcodeResult[] Barcodes);

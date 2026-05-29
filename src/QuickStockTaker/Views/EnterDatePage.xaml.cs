@@ -1,4 +1,3 @@
-using CommunityToolkit.Maui.Core.Views;
 using CommunityToolkit.Maui.Views;
 using QuickStockTaker.Core.Popups;
 using QuickStockTaker.Core.ViewModels;

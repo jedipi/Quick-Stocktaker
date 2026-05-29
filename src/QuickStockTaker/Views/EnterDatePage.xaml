@@ -75,9 +75,12 @@
                                <ColumnDefinition Width="*"/>  
                                <ColumnDefinition Width="Auto"/>  
                                <ColumnDefinition Width="Auto"/>  
-                           </Grid.ColumnDefinitions>  
-                           <Entry Text="{Binding Barcode}" Placeholder="Barcode..." Keyboard="Text" Grid.Column="0"/>  
-                           <Button Style="{StaticResource SmallButton}"  
+                           </Grid.ColumnDefinitions>
+                            <Entry Text="{Binding Barcode}" Placeholder="Barcode..." x:Name="BarcodeEntry" 
+                                   Keyboard="Text" Grid.Column="0" ReturnCommand="{Binding BarcodeReturnCommand}">
+                                
+                            </Entry>
+                            <Button Style="{StaticResource SmallButton}"  
                                    Command="{Binding ScanBarcodeCommand}"  
                                    Text="Scan" Grid.Column="1"/>  
 
