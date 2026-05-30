@@ -103,6 +103,13 @@
         <ShellContent Route="EmailSettingPage" ContentTemplate="{DataTemplate views:EmailSettingPage}" />
     </FlyoutItem>
 
+    <FlyoutItem Title="FTP/SFTP Config">
+        <FlyoutItem.Icon>
+            <FontImageSource Glyph="{x:Static md:MaterialDesignIcons.Cloud_upload}" FontFamily="MD-O" Color="#333333"></FontImageSource>
+        </FlyoutItem.Icon>
+        <ShellContent Route="FtpSetingPage" ContentTemplate="{DataTemplate views:FtpSetingPage}" />
+    </FlyoutItem>
+
     <FlyoutItem Title="About">
         <FlyoutItem.Icon>
             <FontImageSource Glyph="{x:Static md:MaterialDesignIcons.Info}" FontFamily="MD-O" Color="#333333"></FontImageSource>

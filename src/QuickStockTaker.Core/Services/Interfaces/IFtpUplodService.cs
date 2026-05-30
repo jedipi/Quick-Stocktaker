@@ -3,7 +3,8 @@
     /// <summary>
     /// intermediate interface for uploading file to ftp
     /// </summary>
-    public interface IFtpUplodService:IUploader
+    public interface IFtpUplodService : IUploader
     {
+        Task<(bool, string)> ValidateSettings();
     }
 }

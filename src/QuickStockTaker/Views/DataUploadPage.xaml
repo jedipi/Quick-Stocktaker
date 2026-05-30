@@ -74,15 +74,15 @@
                            </Grid>  
                        </Border>  
                    </StackLayout>  
-                   <StackLayout Style="{StaticResource outer}" IsEnabled="False" IsVisible="Collapse">  
+                   <StackLayout Style="{StaticResource outer}" IsVisible="true">
                        <Border>  
                            <Grid>  
                                <Grid.RowDefinitions>  
                                    <RowDefinition Height="Auto" />  
                                    <RowDefinition Height="Auto" />  
                                </Grid.RowDefinitions>  
-                               <ImageButton Source="ic_ftp.png"  
-                                        Command="{Binding FtpCmd}"  
+                               <ImageButton Source="ic_ftp.png"
+                                        Command="{Binding FTPCommand}"
                                         Grid.Row="0" />  
                                <Label Text="FTP/SFTP"  
                                       HorizontalOptions="Center"  

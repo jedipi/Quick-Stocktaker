@@ -14,16 +14,19 @@ namespace QuickStockTaker.Core.ViewModels
         #region Fields
 
         private FileInfo _exportedFile;
-        private IEmailUploadService _uploader;
+        private IEmailUploadService _emailUploader;
+        private IFtpUplodService _ftpUploader;
         private IServiceProvider _provider;
         #endregion
         public DataUploadViewModel(
             IUserDialogs dialogs,
             IServiceProvider provider,
-            IEmailUploadService uploader,
+            IEmailUploadService emailUploader,
+            IFtpUplodService ftpUploader,
             ILogger<DataUploadViewModel> logger) : base(dialogs, logger)
         {
-            _uploader = uploader;
+            _emailUploader = emailUploader;
+            _ftpUploader = ftpUploader;
             _provider = provider;
         }
 
@@ -85,7 +88,7 @@ namespace QuickStockTaker.Core.ViewModels
             {
                 await _dialogs.AlertAsync(ex.Message, "Error", "OK", "ic_error.png");
             }
-            
+
 
         }
         /// <summary>
@@ -131,19 +134,19 @@ namespace QuickStockTaker.Core.ViewModels
                 var tokenSource = new CancellationTokenSource();
                 string msg;
 
-                using (var progress = _dialogs.Progress(message: "Emailing data",cancelText:"Cancel", cancel:tokenSource.Cancel))
+                using (var progress = _dialogs.Progress(message: "Emailing data", cancelText: "Cancel", cancel: tokenSource.Cancel))
                 {
                     progress.Show();
 
                     // assing email address
-                    _uploader.To = emailAddress;
-                    _uploader.SmtpDetail = smtp;
+                    _emailUploader.To = emailAddress;
+                    _emailUploader.SmtpDetail = smtp;
 
                     // get the from email address
                     var from = await SecureStorage.GetAsync(Constants.SmtpFrom);
-                    _uploader.From = provider != "Other" ? emailAddress : from;
+                    _emailUploader.From = provider != "Other" ? emailAddress : from;
 
-                    (_, msg) = await _uploader.Upload(_exportedFile);
+                    (_, msg) = await _emailUploader.Upload(_exportedFile);
                 }
 
                 await _dialogs.AlertAsync(msg);
@@ -153,6 +156,47 @@ namespace QuickStockTaker.Core.ViewModels
             {
                 await _dialogs.AlertAsync($"{ex.Message}", "ERROR", "OK");
                 _logger.LogError(ex, "Email data fail");
+            }
+        }
+
+        /// <summary>
+        /// Upload stocktake data to the configured FTP/SFTP folder.
+        /// </summary>
+        /// <returns></returns>
+        [RelayCommand]
+        public async Task OnFTP()
+        {
+            var (isConfigured, configurationMessage) = await _ftpUploader.ValidateSettings();
+            if (!isConfigured)
+            {
+                await _dialogs.AlertAsync(configurationMessage, "Error", "OK", "ic_error.png");
+                return;
+            }
+
+            await ExportData();
+            if (_exportedFile == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var tokenSource = new CancellationTokenSource();
+                bool success;
+                string msg;
+
+                using (var progress = _dialogs.Progress(message: "Uploading data", cancelText: "Cancel", cancel: tokenSource.Cancel))
+                {
+                    progress.Show();
+                    (success, msg) = await _ftpUploader.Upload(_exportedFile);
+                }
+
+                await _dialogs.AlertAsync(msg, success ? "Success" : "Error", "OK", success ? "ic_greentick.png" : "ic_error.png");
+            }
+            catch (Exception ex)
+            {
+                await _dialogs.AlertAsync($"{ex.Message}", "ERROR", "OK");
+                _logger.LogError(ex, "FTP/SFTP data upload fail");
             }
         }
         #endregion

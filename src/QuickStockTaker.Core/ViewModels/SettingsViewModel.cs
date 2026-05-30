@@ -1,12 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using QuickStockTaker.Core.Data;
-using Controls.UserDialogs.Maui;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuickStockTaker.Core.ViewModels
 {
@@ -44,7 +38,6 @@ namespace QuickStockTaker.Core.ViewModels
 
         public SettingsViewModel()
         {
-            
             Log.Information("Start SettingsViewModel");
         }
     }

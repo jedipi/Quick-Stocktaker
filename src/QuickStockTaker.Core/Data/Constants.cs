@@ -17,8 +17,14 @@ namespace QuickStockTaker.Core.Data
         public static readonly string SmtpUsername = "SmtpUsername";
         public static readonly string SmtpPassword = "SmtpPassword";
         public static readonly string SmtpFrom = "SmtpFrom";
+        public static readonly string FtpUseSftp = "FtpUseSftp";
+        public static readonly string FtpHost = "FtpHost";
+        public static readonly string FtpPort = "FtpPort";
+        public static readonly string FtpFolder = "FtpFolder";
+        public static readonly string FtpUsername = "FtpUsername";
+        public static readonly string FtpPassword = "FtpPassword";
 
-        public static readonly List<string> SmtpHostProviders = new List<string>(){"Gmail", "Other"};
+        public static readonly List<string> SmtpHostProviders = new List<string>() { "Gmail", "Other" };
 
 
 

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QuickStockTaker.Views.FtpSetingPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             Title="FtpSetingPage"
+             x:Name="FtpSeting">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+                EventName="Appearing"
+                Command="{Binding Source={x:Reference FtpSeting}, Path=BindingContext.AppearingCommand}" />
+    </ContentPage.Behaviors>
+    <ContentPage.Content>
+        <ScrollView Padding="15">
+            <StackLayout Orientation="Vertical">
+
+                <StackLayout Orientation="Vertical" VerticalOptions="Start" Padding="20,0,0,5">
+                    <Label Text="FTP/SFTP Server Settings" TextColor="{StaticResource Primary}" />
+                </StackLayout>
+                <Border Stroke="{StaticResource Primary}" StrokeThickness="1" StrokeShape="Line 0 0 2000 0" />
+
+                <StackLayout Orientation="Horizontal" VerticalOptions="Center" Padding="20,20,20,0">
+                    <Label Text="Use SFTP" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="StartAndExpand" />
+                    <Switch IsToggled="{Binding FtpUseSftp}" OnColor="{StaticResource Primary}" HorizontalOptions="End" />
+                </StackLayout>
+                <Border Stroke="#ccc" StrokeThickness="1" StrokeShape="Line 0 0 2000 0" />
+
+                <StackLayout Orientation="Vertical" VerticalOptions="Start" Padding="20,20,0,0">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding FtpHostCommand}" />
+                    </StackLayout.GestureRecognizers>
+                    <Label Text="Host" VerticalTextAlignment="Center" VerticalOptions="Center" />
+                    <Label Text="{Binding FtpHost}" VerticalTextAlignment="Center" VerticalOptions="Center" IsEnabled="False" />
+                </StackLayout>
+                <Border Stroke="#ccc" StrokeThickness="1" StrokeShape="Line 0 0 2000 0" />
+
+                <StackLayout Orientation="Vertical" VerticalOptions="Start" Margin="20,20,0,0">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding FtpPortCommand}" />
+                    </StackLayout.GestureRecognizers>
+                    <Label Text="Port" VerticalTextAlignment="Center" VerticalOptions="Center" />
+                    <Label Text="{Binding FtpPort}" VerticalTextAlignment="Center" VerticalOptions="Center" IsEnabled="False" />
+                </StackLayout>
+                <Border Stroke="#ccc" StrokeThickness="1" StrokeShape="Line 0 0 2000 0" />
+
+                <StackLayout Orientation="Vertical" VerticalOptions="Start" Margin="20,20,0,0">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding FtpFolderCommand}" />
+                    </StackLayout.GestureRecognizers>
+                    <Label Text="Folder" VerticalTextAlignment="Center" VerticalOptions="Center" />
+                    <Label Text="{Binding FtpFolder}" VerticalTextAlignment="Center" VerticalOptions="Center" IsEnabled="False" />
+                </StackLayout>
+                <Border Stroke="#ccc" StrokeThickness="1" StrokeShape="Line 0 0 2000 0" />
+
+                <StackLayout Orientation="Vertical" VerticalOptions="Start" Margin="20,20,0,0">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding FtpUsernameCommand}" />
+                    </StackLayout.GestureRecognizers>
+                    <Label Text="Username" VerticalTextAlignment="Center" VerticalOptions="Center" />
+                    <Label Text="{Binding FtpUsername}" VerticalTextAlignment="Center" VerticalOptions="Center" IsEnabled="False" />
+                </StackLayout>
+                <Border Stroke="#ccc" StrokeThickness="1" StrokeShape="Line 0 0 2000 0" />
+
+                <StackLayout Orientation="Vertical" VerticalOptions="Center" Margin="20,20,0,0">
+                    <StackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding FtpPasswordCommand}" />
+                    </StackLayout.GestureRecognizers>
+                    <Label Text="Password" VerticalTextAlignment="Center" VerticalOptions="Center" />
+                    <Label Text="{Binding FtpPasswordDisplay}" VerticalTextAlignment="Center" VerticalOptions="Center" IsEnabled="False" />
+                </StackLayout>
+                <Border Stroke="#ccc" StrokeThickness="1" StrokeShape="Line 0 0 2000 0" />
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
