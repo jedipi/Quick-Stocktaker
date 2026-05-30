@@ -6,6 +6,7 @@
     public interface IFtpUplodService : IUploader
     {
         Task<(bool, string)> ValidateSettings();
-        Task<(bool, string)> TestConnection();
+        Task<(bool, string)> TestConnection(CancellationToken cancellationToken = default);
+        Task<(bool, string)> Upload(FileInfo file, CancellationToken cancellationToken);
     }
 }

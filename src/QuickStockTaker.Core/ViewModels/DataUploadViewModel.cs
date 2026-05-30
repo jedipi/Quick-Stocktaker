@@ -166,21 +166,21 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         public async Task OnFTP()
         {
-            var (isConfigured, configurationMessage) = await _ftpUploader.ValidateSettings();
-            if (!isConfigured)
-            {
-                await _dialogs.AlertAsync(configurationMessage, "Error", "OK", "ic_error.png");
-                return;
-            }
-
-            await ExportData();
-            if (_exportedFile == null)
-            {
-                return;
-            }
-
             try
             {
+                var (isConfigured, configurationMessage) = await _ftpUploader.ValidateSettings();
+                if (!isConfigured)
+                {
+                    await _dialogs.AlertAsync(configurationMessage, "Error", "OK", "ic_error.png");
+                    return;
+                }
+
+                await ExportData();
+                if (_exportedFile == null)
+                {
+                    return;
+                }
+
                 var tokenSource = new CancellationTokenSource();
                 bool success;
                 string msg;
@@ -188,7 +188,7 @@ namespace QuickStockTaker.Core.ViewModels
                 using (var progress = _dialogs.Progress(message: "Uploading data", cancelText: "Cancel", cancel: tokenSource.Cancel))
                 {
                     progress.Show();
-                    (success, msg) = await _ftpUploader.Upload(_exportedFile);
+                    (success, msg) = await _ftpUploader.Upload(_exportedFile, tokenSource.Token);
                 }
 
                 await _dialogs.AlertAsync(msg, success ? "Success" : "Error", "OK", success ? "ic_greentick.png" : "ic_error.png");

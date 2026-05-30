@@ -16,13 +16,16 @@ namespace QuickStockTaker.Core.ViewModels
             get => Preferences.Get(Constants.FtpUseSftp, true);
             set
             {
-                if (Preferences.Get(Constants.FtpUseSftp, true) == value)
+                var previousUseSftp = Preferences.Get(Constants.FtpUseSftp, true);
+                if (previousUseSftp == value)
                     return;
+
+                var port = GetPortForProtocolChange(previousUseSftp, value, FtpPort);
 
                 Preferences.Set(Constants.FtpUseSftp, value);
 
-                if (string.IsNullOrWhiteSpace(FtpPort))
-                    FtpPort = value ? "22" : "21";
+                if (port != FtpPort)
+                    FtpPort = port;
 
                 OnPropertyChanged(nameof(FtpPort));
             }
@@ -156,13 +159,14 @@ namespace QuickStockTaker.Core.ViewModels
         {
             try
             {
+                var tokenSource = new CancellationTokenSource();
                 bool success;
                 string msg;
 
-                using (var progress = _dialogs.Progress("Testing FTP/SFTP connection...", cancelText: "Cancel"))
+                using (var progress = _dialogs.Progress("Testing FTP/SFTP connection...", cancelText: "Cancel", cancel: tokenSource.Cancel))
                 {
                     progress.Show();
-                    (success, msg) = await _ftpUploader.TestConnection();
+                    (success, msg) = await _ftpUploader.TestConnection(tokenSource.Token);
                 }
 
                 await _dialogs.AlertAsync(msg, success ? "Success" : "Error", "OK", success ? "ic_greentick.png" : "ic_error.png");
@@ -172,6 +176,16 @@ namespace QuickStockTaker.Core.ViewModels
                 await _dialogs.AlertAsync($"{ex.Message}", "ERROR", "OK");
                 _logger.LogError(ex, "FTP/SFTP connection test fail");
             }
+        }
+
+        internal static string GetPortForProtocolChange(bool previousUseSftp, bool nextUseSftp, string currentPort)
+        {
+            var previousDefaultPort = previousUseSftp ? "22" : "21";
+            var nextDefaultPort = nextUseSftp ? "22" : "21";
+
+            return string.IsNullOrWhiteSpace(currentPort) || currentPort == previousDefaultPort
+                ? nextDefaultPort
+                : currentPort;
         }
     }
 }
