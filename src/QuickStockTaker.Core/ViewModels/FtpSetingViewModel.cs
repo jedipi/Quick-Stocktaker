@@ -1,12 +1,16 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Controls.UserDialogs.Maui;
+using Microsoft.Extensions.Logging;
 using QuickStockTaker.Core.Data;
-using Serilog;
+using QuickStockTaker.Core.Services.Interfaces;
 
 namespace QuickStockTaker.Core.ViewModels
 {
-    public partial class FtpSetingViewModel : ObservableObject
+    public partial class FtpSetingViewModel : BaseViewModel
     {
+        private readonly IFtpUplodService _ftpUploader;
+
         public bool FtpUseSftp
         {
             get => Preferences.Get(Constants.FtpUseSftp, true);
@@ -69,9 +73,13 @@ namespace QuickStockTaker.Core.ViewModels
         [ObservableProperty]
         private string _ftpPasswordDisplay;
 
-        public FtpSetingViewModel()
+        public FtpSetingViewModel(
+            IUserDialogs dialogs,
+            IFtpUplodService ftpUploader,
+            ILogger<FtpSetingViewModel> logger) : base(dialogs, logger)
         {
-            Log.Information("Start FtpSetingViewModel");
+            _ftpUploader = ftpUploader;
+            _logger.LogInformation("Start FtpSetingViewModel");
         }
 
         [RelayCommand]
@@ -141,6 +149,29 @@ namespace QuickStockTaker.Core.ViewModels
 
             await SecureStorage.SetAsync(Constants.FtpPassword, result.Trim());
             FtpPasswordDisplay = "******";
+        }
+
+        [RelayCommand]
+        private async Task OnTestConnection()
+        {
+            try
+            {
+                bool success;
+                string msg;
+
+                using (var progress = _dialogs.Progress("Testing FTP/SFTP connection...", cancelText: "Cancel"))
+                {
+                    progress.Show();
+                    (success, msg) = await _ftpUploader.TestConnection();
+                }
+
+                await _dialogs.AlertAsync(msg, success ? "Success" : "Error", "OK", success ? "ic_greentick.png" : "ic_error.png");
+            }
+            catch (Exception ex)
+            {
+                await _dialogs.AlertAsync($"{ex.Message}", "ERROR", "OK");
+                _logger.LogError(ex, "FTP/SFTP connection test fail");
+            }
         }
     }
 }

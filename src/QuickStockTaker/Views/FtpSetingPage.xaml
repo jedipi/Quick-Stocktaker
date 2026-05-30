@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="QuickStockTaker.Views.FtpSetingPage"
+             xmlns:md="clr-namespace:MaterialDesign"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              Title="FtpSetingPage"
              x:Name="FtpSeting">
@@ -69,6 +70,14 @@
                     <Label Text="{Binding FtpPasswordDisplay}" VerticalTextAlignment="Center" VerticalOptions="Center" IsEnabled="False" />
                 </StackLayout>
                 <Border Stroke="#ccc" StrokeThickness="1" StrokeShape="Line 0 0 2000 0" />
+
+                <StackLayout Orientation="Vertical" VerticalOptions="Center" Margin="20,50,0,0">
+                    <Button Text="Test Connection" Command="{Binding TestConnectionCommand}" HorizontalOptions="Center" WidthRequest="220">
+                        <Button.ImageSource>
+                            <FontImageSource Glyph="{x:Static md:MaterialDesignIcons.Network_check}" FontFamily="MD-O" />
+                        </Button.ImageSource>
+                    </Button>
+                </StackLayout>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

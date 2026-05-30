@@ -6,5 +6,6 @@
     public interface IFtpUplodService : IUploader
     {
         Task<(bool, string)> ValidateSettings();
+        Task<(bool, string)> TestConnection();
     }
 }

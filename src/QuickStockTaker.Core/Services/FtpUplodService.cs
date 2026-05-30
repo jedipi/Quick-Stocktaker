@@ -22,6 +22,28 @@ namespace QuickStockTaker.Core.Services
                 : (false, validationMessage);
         }
 
+        public async Task<(bool, string)> TestConnection()
+        {
+            var settings = await LoadSettings();
+            var validationMessage = Validate(settings);
+            if (!string.IsNullOrEmpty(validationMessage))
+                return (false, validationMessage);
+
+            try
+            {
+                if (settings.UseSftp)
+                    await Task.Run(() => TestSftpConnection(settings));
+                else
+                    await TestFtpConnection(settings);
+
+                return (true, "Connection successful.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Connection failed. {ex.Message}");
+            }
+        }
+
         public async Task<(bool, string)> Upload(FileInfo file)
         {
             if (file == null || !file.Exists)
@@ -77,6 +99,18 @@ namespace QuickStockTaker.Core.Services
             return string.Empty;
         }
 
+        private static async Task TestFtpConnection(FtpUploadSettings settings)
+        {
+            using var client = new AsyncFtpClient(
+                settings.Host.Trim(),
+                settings.Username,
+                settings.Password,
+                int.Parse(settings.Port));
+
+            await client.Connect(CancellationToken.None);
+            await client.Disconnect(CancellationToken.None);
+        }
+
         private static async Task UploadFtp(FileInfo file, FtpUploadSettings settings)
         {
             var remotePath = BuildRemotePath(settings.Folder, file.Name, path => path);
@@ -102,6 +136,13 @@ namespace QuickStockTaker.Core.Services
             {
                 throw new InvalidOperationException($"FTP upload returned status: {status}.");
             }
+        }
+
+        private static void TestSftpConnection(FtpUploadSettings settings)
+        {
+            using var client = new SftpClient(settings.Host.Trim(), int.Parse(settings.Port), settings.Username, settings.Password);
+            client.Connect();
+            client.Disconnect();
         }
 
         private static void UploadSftp(FileInfo file, FtpUploadSettings settings)
