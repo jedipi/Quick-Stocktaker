@@ -47,9 +47,9 @@ namespace QuickStockTaker.Core.ViewModels
             get => _selectedBayContent;
             set
             {
-                _selectedBayContent = Uri.UnescapeDataString(value ?? string.Empty);
-                SetProperty(ref _selectedBayContent, value);
-                GetSelectedBay(_selectedBayContent);
+                var decodedValue = Uri.UnescapeDataString(value ?? string.Empty);
+                SetProperty(ref _selectedBayContent, decodedValue);
+                GetSelectedBay(decodedValue);
             }
         }
 
@@ -59,9 +59,9 @@ namespace QuickStockTaker.Core.ViewModels
             get => _selectedItemContent;
             set
             {
-                _selectedItemContent = Uri.UnescapeDataString(value ?? string.Empty);
-                SetProperty(ref _selectedItemContent, value);
-                GetSelectedItem(_selectedItemContent);
+                var decodedValue = Uri.UnescapeDataString(value ?? string.Empty);
+                SetProperty(ref _selectedItemContent, decodedValue);
+                GetSelectedItem(decodedValue);
             }
         }
 

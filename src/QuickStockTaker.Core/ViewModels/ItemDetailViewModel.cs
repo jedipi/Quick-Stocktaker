@@ -58,7 +58,8 @@ namespace QuickStockTaker.Core.ViewModels
                     _originalItem.Id);
 
                 var jsonStr = JsonSerializer.Serialize(SelectedItem);
-                await Shell.Current.GoToAsync($"..?SelectedItemContent={jsonStr}");
+                var encodedJson = Uri.EscapeDataString(jsonStr);
+                await Shell.Current.GoToAsync($"..?SelectedItemContent={encodedJson}");
             }
             catch(Exception ex)
             {

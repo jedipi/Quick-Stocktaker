@@ -96,8 +96,9 @@ namespace QuickStockTaker.Core.ViewModels
         private async Task OnBayDetails(Bay bay)
         {
             var jsonStr = JsonSerializer.Serialize(bay);
+            var encodedJson = Uri.EscapeDataString(jsonStr);
 
-            await Shell.Current.GoToAsync($"BayDetailsPage?SelectedBayContent={jsonStr}");
+            await Shell.Current.GoToAsync($"BayDetailsPage?SelectedBayContent={encodedJson}");
         }
 
         /// <summary>
