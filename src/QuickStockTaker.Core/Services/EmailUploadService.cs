@@ -78,7 +78,7 @@ namespace QuickStockTaker.Core.Services
             catch (Exception)
             {
                 //_logger.Error(e, $"Fail to email stocktake data file. {e.Message}");
-                return (true, "Data send fail.");
+                return (false, "Data send fail.");
             }
 
         }

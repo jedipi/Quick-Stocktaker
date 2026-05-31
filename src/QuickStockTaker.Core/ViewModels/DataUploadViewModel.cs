@@ -207,8 +207,7 @@ namespace QuickStockTaker.Core.ViewModels
         /// <returns></returns>
         private async Task ExportData()
         {
-            if (_exportedFile != null)
-                return;
+            _exportedFile = null;
 
             var exporterFactory = _provider.GetService<DataExportFactory>();
 
