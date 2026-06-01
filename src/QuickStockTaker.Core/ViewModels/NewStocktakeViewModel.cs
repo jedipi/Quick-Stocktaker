@@ -13,16 +13,20 @@ using Serilog;
 using QuickStockTaker.Core.Validators;
 using QuickStockTaker.Core.Repositories.Interfaces;
 using QuickStockTaker.Core.Models.Sqlite;
+using QuickStockTaker.Core.Services;
+using QuickStockTaker.Core.Services.Interfaces;
 
 namespace QuickStockTaker.Core.ViewModels
 {
     public partial class NewStocktakeViewModel : ObservableObject
     {
         #region fields
-        IUserDialogs _dialogs;
-        IServiceProvider _provider;
-        readonly ILogger<NewStocktakeViewModel> _logger;
-        ISQLiteRepository<StocktakeItem> _repo;
+        private readonly IUserDialogs _dialogs;
+        private readonly StocktakeValidator _validator;
+        private readonly ILogger<NewStocktakeViewModel> _logger;
+        private readonly ISQLiteRepository<StocktakeItem> _repo;
+        private readonly IAppPreferences _preferences;
+        private readonly INavigationService _navigationService;
         #endregion
 
         #region Properties
@@ -45,16 +49,20 @@ namespace QuickStockTaker.Core.ViewModels
         #endregion
 
         public NewStocktakeViewModel(
-            IUserDialogs dialogs, 
-            IServiceProvider provider, 
+            IUserDialogs dialogs,
+            StocktakeValidator validator,
             ILogger<NewStocktakeViewModel> logger,
-            ISQLiteRepository<StocktakeItem> repo) 
+            ISQLiteRepository<StocktakeItem> repo,
+            IAppPreferences preferences,
+            INavigationService navigationService)
         {
             Log.Information("Start NewStocktakeViewModel");
             _dialogs = dialogs;
-            _provider = provider;
+            _validator = validator;
             _logger = logger;
             _repo = repo;
+            _preferences = preferences;
+            _navigationService = navigationService;
         }
 
         /// <summary>
@@ -65,8 +73,7 @@ namespace QuickStockTaker.Core.ViewModels
         private async Task OnSave()
         {
             // validat all inputs
-            var validator = _provider.GetService<StocktakeValidator>();
-            var validateResult = validator.Validate(this);
+            var validateResult = _validator.Validate(this);
             if (!validateResult.IsValid)
             {
                 await _dialogs.AlertAsync(validateResult.Errors.First().ErrorMessage, "Error", "OK");
@@ -77,12 +84,12 @@ namespace QuickStockTaker.Core.ViewModels
             await _repo.DropandRecreateTable();
 
             // save values
-            Preferences.Set(Constants.StocktakeNumber, StocktakeNumber);
-            Preferences.Set(Constants.Site, Site);
-            Preferences.Set(Constants.StocktakeDate, StocktakeDate);
+            _preferences.Set(Constants.StocktakeNumber, StocktakeNumber);
+            _preferences.Set(Constants.Site, Site);
+            _preferences.Set(Constants.StocktakeDate, StocktakeDate);
 
             // go back to previous page
-            await Shell.Current.GoToAsync("..");
+            await _navigationService.GoToAsync(NavigationRoutes.Back);
         }
 
 
@@ -96,8 +103,8 @@ namespace QuickStockTaker.Core.ViewModels
             }
 
             // check device id
-            var deviceId = Preferences.Get("DeviceId", "");
-            if ( string.IsNullOrEmpty(deviceId))
+            var deviceId = _preferences.GetString(Constants.DeviceId, "");
+            if (string.IsNullOrEmpty(deviceId))
             {
                 await _dialogs.AlertAsync(
                     "Invalid Device ID. Please setup a Device ID before start a new stocktake.",

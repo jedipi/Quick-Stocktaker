@@ -7,6 +7,7 @@ using QuickStockTaker.Core.Data;
 using QuickStockTaker.Core.Models.Sqlite;
 using QuickStockTaker.Core.Repositories.Interfaces;
 using QuickStockTaker.Core.Popups;
+using QuickStockTaker.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -21,8 +22,10 @@ namespace QuickStockTaker.Core.ViewModels
     {
         #region Fields
 
-        private ISQLiteRepository<StocktakeItem> _repo;
         private IPopupService _popupService;
+        private readonly IAppPreferences _preferences;
+        private readonly IStocktakeOperationsService _stocktakeOperations;
+        private readonly IPageDialogService _pageDialogService;
         #endregion
 
         #region Properties
@@ -37,7 +40,7 @@ namespace QuickStockTaker.Core.ViewModels
 
         [ObservableProperty]
         private string _stocktakeDate;
-        
+
         [ObservableProperty]
         private DateTime _selectedDate;
 
@@ -53,10 +56,14 @@ namespace QuickStockTaker.Core.ViewModels
             IUserDialogs dialogs,
             IPopupService popupService,
             ILogger<ReviewViewModel> logger,
-            ISQLiteRepository<StocktakeItem> repo) : base(dialogs, logger)
+            IAppPreferences preferences,
+            IStocktakeOperationsService stocktakeOperations,
+            IPageDialogService pageDialogService) : base(dialogs, logger)
         {
-            _repo = repo;
             _popupService = popupService;
+            _preferences = preferences;
+            _stocktakeOperations = stocktakeOperations;
+            _pageDialogService = pageDialogService;
 
             GetData();
             SetInitialDate();
@@ -72,7 +79,7 @@ namespace QuickStockTaker.Core.ViewModels
         {
             // keep the original data for logging
             var oldStocktakeNo = StocktakeNumber;
-            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync("Change Stocktake Number", "Please enter the new Stocktake Number:");
+            var result = await _pageDialogService.DisplayPromptAsync("Change Stocktake Number", "Please enter the new Stocktake Number:");
 
             if (result == null || string.IsNullOrEmpty(result.Trim()) || oldStocktakeNo == result)
             {
@@ -83,11 +90,10 @@ namespace QuickStockTaker.Core.ViewModels
 
             try
             {
-                var sql = "UPDATE StocktakeItem SET StocktakeNumber=?";
-                await _repo.ExecuteAsync(sql, newStocktakeNo);
-               
+                await _stocktakeOperations.UpdateStocktakeNumberAsync(newStocktakeNo);
 
-                Preferences.Set(Constants.StocktakeNumber, newStocktakeNo);
+
+                _preferences.Set(Constants.StocktakeNumber, newStocktakeNo);
                 StocktakeNumber = newStocktakeNo;
 
                 await _dialogs.AlertAsync($"Stocktake number changed to {newStocktakeNo}", "SUCCESS");
@@ -111,7 +117,7 @@ namespace QuickStockTaker.Core.ViewModels
             // keep the original data for logging
             var oldSite = Site;
 
-            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync("Change Site/Warehouse", "Please enter the Site/Warehouse:");
+            var result = await _pageDialogService.DisplayPromptAsync("Change Site/Warehouse", "Please enter the Site/Warehouse:");
 
             if (result == null || string.IsNullOrEmpty(result.Trim()) || oldSite == result.Trim())
             {
@@ -122,10 +128,9 @@ namespace QuickStockTaker.Core.ViewModels
 
             try
             {
-                var sql = "UPDATE StocktakeItem SET Site=?";
-                await _repo.ExecuteAsync(sql, newSite);
+                await _stocktakeOperations.UpdateSiteAsync(newSite);
 
-                Preferences.Set(Constants.Site, newSite);
+                _preferences.Set(Constants.Site, newSite);
                 Site = newSite;
 
                 await _dialogs.AlertAsync($"Site/Warehouse changed to {newSite}", "SUCCESS");
@@ -155,10 +160,9 @@ namespace QuickStockTaker.Core.ViewModels
 
             try
             {
-                var sql = "UPDATE StocktakeItem SET StocktakeDate=?";
-                await _repo.ExecuteAsync(sql, newDate);
+                await _stocktakeOperations.UpdateStocktakeDateAsync(newDate);
 
-                Preferences.Set(Constants.StocktakeDate, SelectedDate);
+                _preferences.Set(Constants.StocktakeDate, SelectedDate);
                 StocktakeDate = newDate;
 
                 await _dialogs.AlertAsync($"stocktake date changed to {StocktakeDate}", "SUCCESS");
@@ -180,15 +184,15 @@ namespace QuickStockTaker.Core.ViewModels
         /// </summary>
         private void GetData()
         {
-            DeviceId = Preferences.Get(Constants.DeviceId, "");
-            StocktakeNumber = Preferences.Get(Constants.StocktakeNumber, "");
-            Site = Preferences.Get(Constants.Site, "");
-            StocktakeDate = Preferences.Get(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString();
+            DeviceId = _preferences.GetString(Constants.DeviceId, "");
+            StocktakeNumber = _preferences.GetString(Constants.StocktakeNumber, "");
+            Site = _preferences.GetString(Constants.Site, "");
+            StocktakeDate = _preferences.GetDateTime(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString();
         }
 
         private void SetInitialDate()
         {
-            var stocktakeDate = Preferences.Get(Constants.StocktakeDate, DateTime.MinValue);
+            var stocktakeDate = _preferences.GetDateTime(Constants.StocktakeDate, DateTime.MinValue);
 
             if (stocktakeDate == DateTime.MinValue || stocktakeDate.ToShortDateString() == "1/1/1900")
                 SelectedDate = DateTime.Now;

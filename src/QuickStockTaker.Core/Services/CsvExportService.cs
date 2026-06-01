@@ -22,19 +22,26 @@ namespace QuickStockTaker.Core.Services
         // the exported file info
         public FileInfo ExportedFile { get; set; }
 
-        private ISQLiteRepository<StocktakeItem> _stocktakeItemRepo;
+        private readonly ISQLiteRepository<StocktakeItem> _stocktakeItemRepo;
+        private readonly IAppPreferences _preferences;
+        private readonly IAppFileSystem _fileSystem;
 
         /// <summary>
         /// Export stocktake data as a CSV file
         /// </summary>
-        public CsvExportService(ISQLiteRepository<StocktakeItem> stocktakeItemRepo)
+        public CsvExportService(
+            ISQLiteRepository<StocktakeItem> stocktakeItemRepo,
+            IAppPreferences preferences,
+            IAppFileSystem fileSystem)
         {
             //_dialogs = dialogs;
             //_logger = logger;
             _stocktakeItemRepo = stocktakeItemRepo;
+            _preferences = preferences;
+            _fileSystem = fileSystem;
         }
-        
-        
+
+
         public async Task Export()
         {
             // get all stocktake data
@@ -44,12 +51,12 @@ namespace QuickStockTaker.Core.Services
             if (data.Count == 0)
                 return;
 
-            var site = Preferences.Get(Constants.Site, "");
-            var deviceId = Preferences.Get(Constants.DeviceId, "");
+            var site = _preferences.GetString(Constants.Site, "");
+            var deviceId = _preferences.GetString(Constants.DeviceId, "");
 
-            var dir = FileSystem.Current.AppDataDirectory;
+            var dir = _fileSystem.AppDataDirectory;
             var filePath = Path.Combine(dir, $"Stocktake-{site}-{deviceId}-{DateTime.Now.ToString("yyMMdd-HHmmss")}.csv");
-            
+
             // write data into a csv file using csvhelper
             await using (var textWriter = new StreamWriter(filePath, false))
             {
@@ -58,16 +65,16 @@ namespace QuickStockTaker.Core.Services
                     var csv = new CsvWriter(textWriter, CultureInfo.CurrentCulture);
                     csv.WriteRecords(data);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     //_logger.Error(e, "csv export fail.");
                     return;
                 }
             }
-            
+
             ExportedFile = new FileInfo(filePath);
         }
 
-        
+
     }
 }

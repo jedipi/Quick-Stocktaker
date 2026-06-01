@@ -9,7 +9,6 @@ namespace QuickStockTaker.Core.Models.Sqlite
 {
     public class SQLiteDB
     {
-        SQLiteAsyncConnection database;
         public SQLiteAsyncConnection Database
         {
             get;
@@ -40,7 +39,7 @@ namespace QuickStockTaker.Core.Models.Sqlite
             {
                 Database = new SQLiteAsyncConnection(DatabasePath, Flags);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _ = e.Message;
             }

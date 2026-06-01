@@ -12,31 +12,33 @@ namespace QuickStockTaker.Core.Services
     /// <summary>
     /// Send stocktake data via email.
     /// </summary>
-    public class EmailUploadService:IEmailUploadService
+    public class EmailUploadService : IEmailUploadService
     {
         //private readonly NLog.ILogger _logger;
-        IServiceProvider _provider;
+        private readonly EmailService _emailService;
+        private readonly IAppPreferences _preferences;
 
         public string Name { get; }
         public string To { get; set; }
         public Smtp SmtpDetail { get; set; }
         public string From { get; set; }
 
-        public EmailUploadService(IServiceProvider provider)
+        public EmailUploadService(EmailService emailService, IAppPreferences preferences)
         {
             //_logger = logger;
-            _provider = provider;
+            _emailService = emailService;
+            _preferences = preferences;
             Name = nameof(EmailUploadService);
         }
 
         public async Task<(bool, string)> Upload(FileInfo file)
         {
             try
-            { 
-                var deviceId = Preferences.Get(Constants.DeviceId, "");
-                var site = Preferences.Get(Constants.Site, "");
-                var stocktakeDate = (Preferences.Get(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString());
-                var stocktakeNumber = Preferences.Get(Constants.StocktakeNumber, 0);
+            {
+                var deviceId = _preferences.GetString(Constants.DeviceId, "");
+                var site = _preferences.GetString(Constants.Site, "");
+                var stocktakeDate = _preferences.GetDateTime(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString();
+                var stocktakeNumber = _preferences.GetInt(Constants.StocktakeNumber, 0);
 
                 var body = new StringBuilder();
                 body.AppendLine(@"<html><body>");
@@ -48,21 +50,16 @@ namespace QuickStockTaker.Core.Services
                 body.AppendLine($"Stocktake Date:{stocktakeDate}<br>");
                 body.AppendLine(@"</body></html>");
 
-                //var username = await SecureStorage.GetAsync("SmtpUsername");
-                //var password = await SecureStorage.GetAsync("SmtpPassword");
-                //var host = await SecureStorage.GetAsync("SmtpHost");
-                //var port = Convert.ToInt32(await SecureStorage.GetAsync("SmtpPort"));
-
-                var sender = _provider.GetService<EmailService>();
+                var sender = _emailService;
                 sender.Username = SmtpDetail.Username;
                 sender.Password = SmtpDetail.Password;
                 sender.Host = SmtpDetail.Host;
                 sender.Port = SmtpDetail.Port;
-                
-                    //new NamedParameter("username", SmtpDetail.Username), 
-                    //new NamedParameter("password", SmtpDetail.Password),
-                    //new NamedParameter("host", SmtpDetail.Host),
-                    //new NamedParameter("port", SmtpDetail.Port));
+
+                //new NamedParameter("username", SmtpDetail.Username), 
+                //new NamedParameter("password", SmtpDetail.Password),
+                //new NamedParameter("host", SmtpDetail.Host),
+                //new NamedParameter("port", SmtpDetail.Port));
 
                 sender.AddRecipient(To)
                     .AddFrom(From)

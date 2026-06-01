@@ -5,6 +5,8 @@ using Microsoft.Extensions.Logging;
 using QuickStockTaker.Core.Models;
 using QuickStockTaker.Core.Models.Sqlite;
 using QuickStockTaker.Core.Repositories.Interfaces;
+using QuickStockTaker.Core.Services;
+using QuickStockTaker.Core.Services.Interfaces;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.Json;
@@ -16,6 +18,9 @@ namespace QuickStockTaker.Core.ViewModels
     {
         #region fields
         private ISQLiteRepository<StocktakeItem> _repo;
+        private readonly IStocktakeOperationsService _stocktakeOperations;
+        private readonly INavigationService _navigationService;
+        private readonly IPageDialogService _pageDialogService;
         private ObservableCollection<Bay> _unfilteredItems;
         #endregion
 
@@ -42,9 +47,15 @@ namespace QuickStockTaker.Core.ViewModels
         public BayListViewModel(
             IUserDialogs dialogs,
             ILogger<BayListViewModel> logger,
-            ISQLiteRepository<StocktakeItem> repo) : base(dialogs, logger)
+            ISQLiteRepository<StocktakeItem> repo,
+            IStocktakeOperationsService stocktakeOperations,
+            INavigationService navigationService,
+            IPageDialogService pageDialogService) : base(dialogs, logger)
         {
             _repo = repo;
+            _stocktakeOperations = stocktakeOperations;
+            _navigationService = navigationService;
+            _pageDialogService = pageDialogService;
         }
 
         #region RelayCommands
@@ -71,8 +82,7 @@ namespace QuickStockTaker.Core.ViewModels
                 return;
             }
 
-            var sql = "DELETE FROM StocktakeItem WHERE BayLocation = ?";
-            var affectedRows = await _repo.ExecuteAsync(sql, bay.BayLocation);
+            var affectedRows = await _stocktakeOperations.DeleteBayAsync(bay.BayLocation);
             if (affectedRows == 0)
                 await _dialogs.AlertAsync("No data is deleted.");
             else
@@ -98,7 +108,7 @@ namespace QuickStockTaker.Core.ViewModels
             var jsonStr = JsonSerializer.Serialize(bay);
             var encodedJson = Uri.EscapeDataString(jsonStr);
 
-            await Shell.Current.GoToAsync($"BayDetailsPage?SelectedBayContent={encodedJson}");
+            await _navigationService.GoToAsync(NavigationRoutes.BayDetailsWithSelectedBay(encodedJson));
         }
 
         /// <summary>
@@ -109,7 +119,7 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private async Task OnChangeBayNo(Bay bay)
         {
-            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync(
+            var result = await _pageDialogService.DisplayPromptAsync(
                  "Update Bay/Location", "Enter the new Bay/Location/Bin or Ref No:",
                 "Update", "Cancel", "new Bay/Location/BIN or Ref No");
 
@@ -142,8 +152,7 @@ namespace QuickStockTaker.Core.ViewModels
             try
             {
                 // update database
-                var sql = $"UPDATE StocktakeItem SET BayLocation = ? Where BayLocation = ? ";
-                await _repo.ExecuteAsync(sql, newBayLocation, bay.BayLocation);
+                await _stocktakeOperations.RenameBayAsync(bay.BayLocation, newBayLocation);
 
                 _logger.LogInformation($"stocktake date changed from {bay.BayLocation} to {newBayLocation}");
 
@@ -188,7 +197,7 @@ namespace QuickStockTaker.Core.ViewModels
             Bays = new ObservableCollection<Bay>();
 
             var items = await _repo.GetAllAsync();
-            
+
             var bays = items.GroupBy(x => x.BayLocation).Select(l => new Bay
             {
                 BayLocation = l.Key,

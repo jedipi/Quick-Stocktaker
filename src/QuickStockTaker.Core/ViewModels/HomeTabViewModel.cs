@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using QuickStockTaker.Core.Services;
+using QuickStockTaker.Core.Services.Interfaces;
 
 namespace QuickStockTaker.Core.ViewModels
 {
@@ -16,8 +18,9 @@ namespace QuickStockTaker.Core.ViewModels
     {
         #region Fields
         //private bool _shown;
-        IServiceProvider _provider;
         private readonly ILogger<HomeTabViewModel> _logger;
+        private readonly IAppPreferences _preferences;
+        private readonly INavigationService _navigationService;
         #endregion
 
         #region Properties
@@ -39,20 +42,24 @@ namespace QuickStockTaker.Core.ViewModels
         [ObservableProperty]
         private string _stocktakeDate;
         //public string StocktakeDate { get; set; }
-        
+
         #endregion
 
-        public HomeTabViewModel(IServiceProvider provider, ILogger<HomeTabViewModel> logger) 
+        public HomeTabViewModel(
+            IAppPreferences preferences,
+            INavigationService navigationService,
+            ILogger<HomeTabViewModel> logger)
         {
             Log.Information("Start HomeTabViewModel");
-            _provider = provider;
+            _preferences = preferences;
+            _navigationService = navigationService;
             _logger = logger;
         }
 
         [RelayCommand]
         private async Task OnGetStarted()
         {
-            await Shell.Current.GoToAsync($"//DashboardPage");
+            await _navigationService.GoToAsync(NavigationRoutes.DashboardRoot);
         }
 
 
@@ -62,10 +69,10 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private void OnAppearing()
         {
-            DeviceId = Preferences.Get(Constants.DeviceId, "");
-            StocktakeNumber = Preferences.Get(Constants.StocktakeNumber, "");
-            Site = Preferences.Get(Constants.Site, "");
-            var a = Preferences.Get(Constants.StocktakeDate, DateTime.MinValue);
+            DeviceId = _preferences.GetString(Constants.DeviceId, "");
+            StocktakeNumber = _preferences.GetString(Constants.StocktakeNumber, "");
+            Site = _preferences.GetString(Constants.Site, "");
+            var a = _preferences.GetDateTime(Constants.StocktakeDate, DateTime.MinValue);
             StocktakeDate = a.ToShortDateString();
         }
     }

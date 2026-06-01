@@ -1,26 +1,26 @@
-﻿using QuickStockTaker.Views;
+using QuickStockTaker.Core.Services;
+using QuickStockTaker.Views;
 
 namespace QuickStockTaker;
 
 public partial class AppShell : Shell
 {
-	public AppShell()
-	{
-		InitializeComponent();
-		RegisterRoutes();
+    public AppShell()
+    {
+        InitializeComponent();
+        RegisterRoutes();
 
     }
 
-	private void RegisterRoutes()
-    { 
-        //Routing.RegisterRoute(nameof(DashboardPage), typeof(DashboardPage));
-        Routing.RegisterRoute(nameof(NewStocktakePage), typeof(NewStocktakePage));
-        Routing.RegisterRoute(nameof(EnterDatePage), typeof(EnterDatePage));
-        Routing.RegisterRoute(nameof(BayListPage), typeof(BayListPage));
-        Routing.RegisterRoute(nameof(BayDetailsPage), typeof(BayDetailsPage));
-        Routing.RegisterRoute(nameof(ItemDetailPage), typeof(ItemDetailPage));
-        Routing.RegisterRoute(nameof(ReviewPage), typeof(ReviewPage));
-        Routing.RegisterRoute(nameof(DataUploadPage), typeof(DataUploadPage));
-        
+    private void RegisterRoutes()
+    {
+        Routing.RegisterRoute(NavigationRoutes.NewStocktakePage, typeof(NewStocktakePage));
+        Routing.RegisterRoute(NavigationRoutes.EnterDatePage, typeof(EnterDatePage));
+        Routing.RegisterRoute(NavigationRoutes.BayListPage, typeof(BayListPage));
+        Routing.RegisterRoute(NavigationRoutes.BayDetailsPage, typeof(BayDetailsPage));
+        Routing.RegisterRoute(NavigationRoutes.ItemDetailPage, typeof(ItemDetailPage));
+        Routing.RegisterRoute(NavigationRoutes.ReviewPage, typeof(ReviewPage));
+        Routing.RegisterRoute(NavigationRoutes.DataUploadPage, typeof(DataUploadPage));
+
     }
 }

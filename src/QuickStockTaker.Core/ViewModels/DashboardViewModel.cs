@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using QuickStockTaker.Core.Data;
 using CommunityToolkit.Mvvm.Input;
 using Controls.UserDialogs.Maui;
+using QuickStockTaker.Core.Services;
+using QuickStockTaker.Core.Services.Interfaces;
 
 
 namespace QuickStockTaker.Core.ViewModels
@@ -14,40 +16,48 @@ namespace QuickStockTaker.Core.ViewModels
     public partial class DashboardViewModel : ObservableObject
     {
         IUserDialogs _dialogs;
-        public DashboardViewModel(IUserDialogs dialogs) 
+        private readonly IAppPreferences _preferences;
+        private readonly INavigationService _navigationService;
+
+        public DashboardViewModel(
+            IUserDialogs dialogs,
+            IAppPreferences preferences,
+            INavigationService navigationService)
         {
             _dialogs = dialogs;
+            _preferences = preferences;
+            _navigationService = navigationService;
         }
 
         [RelayCommand]
         private async Task OnSendData()
         {
-            await Shell.Current.GoToAsync($"DataUploadPage");
+            await _navigationService.GoToAsync(NavigationRoutes.DataUploadPage);
         }
 
         [RelayCommand]
         private async Task OnReview()
         {
-            await Shell.Current.GoToAsync($"ReviewPage");
+            await _navigationService.GoToAsync(NavigationRoutes.ReviewPage);
         }
 
         [RelayCommand]
         private async Task OnBayList()
         {
-            await Shell.Current.GoToAsync("BayListPage");
+            await _navigationService.GoToAsync(NavigationRoutes.BayListPage);
 
         }
 
         [RelayCommand]
         private async Task OnEnterData()
         {
-            if (Preferences.Get(Constants.StocktakeNumber, "") == "")
+            if (_preferences.GetString(Constants.StocktakeNumber, "") == "")
             {
                 await _dialogs.AlertAsync("Please specify a stocktake number before scanning any item", "Error");
                 return;
             }
 
-            await Shell.Current.GoToAsync($"EnterDatePage");
+            await _navigationService.GoToAsync(NavigationRoutes.EnterDatePage);
 
         }
 
@@ -55,7 +65,7 @@ namespace QuickStockTaker.Core.ViewModels
         private async Task OnNewStocktake()
         {
 
-            await Shell.Current.GoToAsync($"NewStocktakePage");
+            await _navigationService.GoToAsync(NavigationRoutes.NewStocktakePage);
 
         }
     }

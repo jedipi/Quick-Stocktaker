@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using QuickStockTaker.Core.Data;
 using QuickStockTaker.Core.Repositories.Interfaces;
 using QuickStockTaker.Core.Services;
+using QuickStockTaker.Core.Services.Interfaces;
 using QuickStockTaker.Core.Validators;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,12 @@ namespace QuickStockTaker.Core.ViewModels
     public partial class EmailSettingViewModel : BaseViewModel
     {
         #region fields
-        private IServiceProvider _serviceProvider;
+        private readonly EmailValidator _emailValidator;
+        private readonly ISmtpService _smtpService;
+        private readonly EmailService _emailService;
+        private readonly IAppPreferences _preferences;
+        private readonly ISecureStorageService _secureStorage;
+        private readonly IPageDialogService _pageDialogService;
         #endregion
 
         #region Properties
@@ -50,22 +56,32 @@ namespace QuickStockTaker.Core.ViewModels
 
         public EmailSettingViewModel(
             IUserDialogs dialogs,
-            IServiceProvider serviceProvider,
+            EmailValidator emailValidator,
+            ISmtpService smtpService,
+            EmailService emailService,
+            IAppPreferences preferences,
+            ISecureStorageService secureStorage,
+            IPageDialogService pageDialogService,
             ILogger<EmailSettingViewModel> logger) : base(dialogs, logger)
         {
             _logger.LogInformation("test");
-            _serviceProvider = serviceProvider;
+            _emailValidator = emailValidator;
+            _smtpService = smtpService;
+            _emailService = emailService;
+            _preferences = preferences;
+            _secureStorage = secureStorage;
+            _pageDialogService = pageDialogService;
         }
 
         #region RelayCommands
         [RelayCommand]
         private async Task OnAppearing()
         {
-            SmtpProvider = Preferences.Get(Constants.SmtpProvider, "Other");
-            SmtpHost = await SecureStorage.GetAsync(Constants.SmtpHost);
-            SmtpPort = await SecureStorage.GetAsync(Constants.SmtpPort);
-            SmtpUsername = await SecureStorage.GetAsync(Constants.SmtpUsername);
-            SmtpFrom = await SecureStorage.GetAsync(Constants.SmtpFrom);
+            SmtpProvider = _preferences.GetString(Constants.SmtpProvider, "Other");
+            SmtpHost = await _secureStorage.GetAsync(Constants.SmtpHost);
+            SmtpPort = await _secureStorage.GetAsync(Constants.SmtpPort);
+            SmtpUsername = await _secureStorage.GetAsync(Constants.SmtpUsername);
+            SmtpFrom = await _secureStorage.GetAsync(Constants.SmtpFrom);
         }
 
         /// <summary>
@@ -76,8 +92,8 @@ namespace QuickStockTaker.Core.ViewModels
         private async Task OnTestEmail()
         {
             // ask for email address
-            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync(
-                "", "Type in your email address:", accept:"Send", placeholder: "email address",keyboard: Keyboard.Email);
+            var result = await _pageDialogService.DisplayPromptAsync(
+                "", "Type in your email address:", accept: "Send", placeholder: "email address", keyboard: Keyboard.Email);
 
             // validate email address
             if (string.IsNullOrEmpty(result))
@@ -85,8 +101,7 @@ namespace QuickStockTaker.Core.ViewModels
 
             // validat email address
             var emailAddress = result.Trim();
-            var validator = _serviceProvider.GetService<EmailValidator>();
-            var validateResult = validator.Validate(emailAddress);
+            var validateResult = _emailValidator.Validate(emailAddress);
             if (!validateResult.IsValid)
             {
                 await _dialogs.AlertAsync(validateResult.Errors.First().ErrorMessage, "Error", "OK");
@@ -103,15 +118,14 @@ namespace QuickStockTaker.Core.ViewModels
                     progress.Show();
 
                     // get smtp details.
-                    var provider = Preferences.Get(Constants.SmtpProvider, "Other");
-                    var smtpService = _serviceProvider.GetService<ISmtpService>();
-                    var smtp = await smtpService.GetSmtp(provider);
+                    var provider = _preferences.GetString(Constants.SmtpProvider, "Other");
+                    var smtp = await _smtpService.GetSmtp(provider);
 
                     // get the from email address
-                    var from = await SecureStorage.GetAsync(Constants.SmtpFrom);
+                    var from = await _secureStorage.GetAsync(Constants.SmtpFrom);
                     from = provider != "Other" ? emailAddress : from;
 
-                    var sender = _serviceProvider.GetService<EmailService>();
+                    var sender = _emailService;
                     sender.Username = smtp.Username;
                     sender.Password = smtp.Password;
                     sender.Host = smtp.Host;
@@ -137,63 +151,63 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private async Task OnSmtpFrom()
         {
-            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync("From", "Please type in the From email address:");
+            var result = await _pageDialogService.DisplayPromptAsync("From", "Please type in the From email address:");
 
             if (string.IsNullOrEmpty(result))
                 return;
 
             SmtpFrom = result.Trim();
-            await SecureStorage.SetAsync(Constants.SmtpFrom, SmtpFrom);
+            await _secureStorage.SetAsync(Constants.SmtpFrom, SmtpFrom);
         }
 
         [RelayCommand]
         private async Task OnSmtpPassword()
         {
-            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync("Password", "Please type in the password:");
+            var result = await _pageDialogService.DisplayPromptAsync("Password", "Please type in the password:");
 
             if (string.IsNullOrEmpty(result))
                 return;
 
             SmtpPassword = result.Trim();
-            await SecureStorage.SetAsync(Constants.SmtpPassword, SmtpPassword);
+            await _secureStorage.SetAsync(Constants.SmtpPassword, SmtpPassword);
         }
 
         [RelayCommand]
         private async Task OnSmtpUsername()
         {
-            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync("Username", "Please type in the username:");
+            var result = await _pageDialogService.DisplayPromptAsync("Username", "Please type in the username:");
 
             if (string.IsNullOrEmpty(result))
                 return;
 
             SmtpUsername = result.Trim();
-            await SecureStorage.SetAsync(Constants.SmtpUsername, SmtpUsername);
+            await _secureStorage.SetAsync(Constants.SmtpUsername, SmtpUsername);
         }
 
         [RelayCommand]
         private async Task OnSmtpPort()
         {
 
-            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync("SMTP port", "Please type in the SMTP port:", keyboard:Keyboard.Numeric);
+            var result = await _pageDialogService.DisplayPromptAsync("SMTP port", "Please type in the SMTP port:", keyboard: Keyboard.Numeric);
 
             if (string.IsNullOrEmpty(result))
                 return;
 
             SmtpPort = result.Trim();
-            await SecureStorage.SetAsync(Constants.SmtpPort, SmtpPort);
+            await _secureStorage.SetAsync(Constants.SmtpPort, SmtpPort);
         }
 
         [RelayCommand]
         private async Task OnSmtpHost()
         {
             //var result = await _dialogs.("Please type in the SMTP host:", "SMTP HOST");
-            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync("SMTP HOST", "Please type in the SMTP host:");
+            var result = await _pageDialogService.DisplayPromptAsync("SMTP HOST", "Please type in the SMTP host:");
 
             if (string.IsNullOrEmpty(result))
                 return;
 
             SmtpHost = result.Trim();
-            await SecureStorage.SetAsync(Constants.SmtpHost, SmtpHost);
+            await _secureStorage.SetAsync(Constants.SmtpHost, SmtpHost);
         }
 
         [RelayCommand]
@@ -210,17 +224,16 @@ namespace QuickStockTaker.Core.ViewModels
                 cfg.Add(provider, () =>
                 {
                     SmtpProvider = provider;
-                    //await SecureStorage.SetAsync(Constants.SmptProvider, SmtpProvider);
-                    Preferences.Set(Constants.SmtpProvider, SmtpProvider);
+                    _preferences.Set(Constants.SmtpProvider, SmtpProvider);
                     if (SmtpProvider == "Gmail")
                     {
                         SmtpHost = "smtp.gmail.com";
                         SmtpPort = "587";
-                        SecureStorage.SetAsync(Constants.SmtpHost, SmtpHost);
-                        SecureStorage.SetAsync(Constants.SmtpPort, SmtpPort);
+                        _ = _secureStorage.SetAsync(Constants.SmtpHost, SmtpHost);
+                        _ = _secureStorage.SetAsync(Constants.SmtpPort, SmtpPort);
                     }
 
-                    
+
                 });
             }
 

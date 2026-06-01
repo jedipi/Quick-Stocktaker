@@ -10,6 +10,15 @@ namespace QuickStockTaker.Core.Services
     /// </summary>
     public class FtpUplodService : IFtpUplodService
     {
+        private readonly IAppPreferences _preferences;
+        private readonly ISecureStorageService _secureStorage;
+
+        public FtpUplodService(IAppPreferences preferences, ISecureStorageService secureStorage)
+        {
+            _preferences = preferences;
+            _secureStorage = secureStorage;
+        }
+
         public string Name { get; } = nameof(FtpUplodService);
 
         public async Task<(bool, string)> ValidateSettings()
@@ -85,17 +94,17 @@ namespace QuickStockTaker.Core.Services
             }
         }
 
-        private static async Task<FtpUploadSettings> LoadSettings()
+        private async Task<FtpUploadSettings> LoadSettings()
         {
-            var useSftp = Preferences.Get(Constants.FtpUseSftp, true);
+            var useSftp = _preferences.GetBool(Constants.FtpUseSftp, true);
 
             return new FtpUploadSettings(
                 useSftp,
-                Preferences.Get(Constants.FtpHost, string.Empty),
-                Preferences.Get(Constants.FtpPort, useSftp ? "22" : "21"),
-                Preferences.Get(Constants.FtpFolder, string.Empty),
-                await SecureStorage.GetAsync(Constants.FtpUsername) ?? string.Empty,
-                await SecureStorage.GetAsync(Constants.FtpPassword) ?? string.Empty);
+                _preferences.GetString(Constants.FtpHost, string.Empty),
+                _preferences.GetString(Constants.FtpPort, useSftp ? "22" : "21"),
+                _preferences.GetString(Constants.FtpFolder, string.Empty),
+                await _secureStorage.GetAsync(Constants.FtpUsername) ?? string.Empty,
+                await _secureStorage.GetAsync(Constants.FtpPassword) ?? string.Empty);
         }
 
         private static string Validate(FtpUploadSettings settings)

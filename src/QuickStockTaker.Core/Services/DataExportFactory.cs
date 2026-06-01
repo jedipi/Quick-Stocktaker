@@ -1,4 +1,3 @@
-﻿using Autofac;
 using QuickStockTaker.Core.Services.Interfaces;
 
 namespace QuickStockTaker.Core.Services
@@ -8,17 +7,19 @@ namespace QuickStockTaker.Core.Services
     /// </summary>
     public class DataExportFactory
     {
-        IServiceProvider _provider;
-        public DataExportFactory(IServiceProvider provider) 
+        private readonly ICsvExportService _csvExportService;
+
+        public DataExportFactory(ICsvExportService csvExportService)
         {
-            _provider = provider;
+            _csvExportService = csvExportService;
         }
+
         public IDataExport CreateExporter(string type)
         {
             return type switch
             {
-                "csv" => _provider.GetService<ICsvExportService>(),
-                "json" => _provider.GetService<IJsonExportService>(),
+                "csv" => _csvExportService,
+                "json" => null,
                 _ => null,
             };
         }

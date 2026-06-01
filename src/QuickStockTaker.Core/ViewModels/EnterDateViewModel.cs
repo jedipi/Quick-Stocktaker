@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using QuickStockTaker.Core.Repositories.Interfaces;
 using CommunityToolkit.Mvvm.Messaging;
 using Serilog;
+using QuickStockTaker.Core.Services.Interfaces;
 
 
 namespace QuickStockTaker.Core.ViewModels
@@ -23,16 +24,16 @@ namespace QuickStockTaker.Core.ViewModels
     public partial class EnterDateViewModel : ObservableObject, IRecipient<BarcodeResult[]>
     {
         #region fields
-        private bool _isContinuousMode = Preferences.Get(Constants.ContinuousMode, false);
-        private string _deviceId = Preferences.Get(Constants.DeviceId, "");
-        private string _stocktakeNumber = Preferences.Get(Constants.StocktakeNumber, "");
-        private string _site = Preferences.Get(Constants.Site, "");
-        private string _stocktakeDate = Preferences.Get(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString();
+        private bool _isContinuousMode;
+        private string _deviceId;
+        private string _stocktakeNumber;
+        private string _site;
+        private string _stocktakeDate;
 
-        private readonly IServiceProvider _provider;
-        private readonly IPopupService _popupService;
+        private readonly ICameraPopupService _cameraPopupService;
         private readonly IUserDialogs _dialogs;
         private readonly ILogger<EnterDateViewModel> _logger;
+        private readonly IAppPreferences _preferences;
 
         private ISQLiteRepository<StocktakeItem> _repo;
         #endregion
@@ -64,16 +65,22 @@ namespace QuickStockTaker.Core.ViewModels
 
         public EnterDateViewModel(
             IUserDialogs dialogs,
-            IServiceProvider provider,
-            IPopupService popupService,
+            ICameraPopupService cameraPopupService,
             ILogger<EnterDateViewModel> logger,
-            ISQLiteRepository<StocktakeItem> repo)
+            ISQLiteRepository<StocktakeItem> repo,
+            IAppPreferences preferences)
         {
             _repo = repo;
             _logger = logger;
-            _provider = provider;
             _dialogs = dialogs;
-            _popupService = popupService;
+            _cameraPopupService = cameraPopupService;
+            _preferences = preferences;
+
+            _isContinuousMode = _preferences.GetBool(Constants.ContinuousMode, false);
+            _deviceId = _preferences.GetString(Constants.DeviceId, "");
+            _stocktakeNumber = _preferences.GetString(Constants.StocktakeNumber, "");
+            _site = _preferences.GetString(Constants.Site, "");
+            _stocktakeDate = _preferences.GetDateTime(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString();
 
             AutoQty = true;
             LastAddedItems = new ObservableCollection<StocktakeItem>();
@@ -103,7 +110,7 @@ namespace QuickStockTaker.Core.ViewModels
             {
                 Vibration.Vibrate(TimeSpan.FromSeconds(2));
                 await _dialogs.AlertAsync("Please enter the Bay/Location/BIN or Ref No.");
-               
+
                 return;
             }
 
@@ -169,15 +176,15 @@ namespace QuickStockTaker.Core.ViewModels
                 if (AutoQty && !string.IsNullOrEmpty(Barcode) && !string.IsNullOrEmpty(BayLocation))
                     AddItemCommand.Execute(null);
             }
-            
+
         }
         [RelayCommand]
         private async Task OnBarcodeReturn()
         {
             if (AutoQty && !string.IsNullOrEmpty(Barcode) && !string.IsNullOrEmpty(BayLocation))
                 AddItemCommand.Execute(null);
-        
-        }  
+
+        }
 
         [RelayCommand]
         private async Task OnBayTextChanged() => await GetItemCount();
@@ -197,16 +204,13 @@ namespace QuickStockTaker.Core.ViewModels
         {
             try
             {
-                var popupResult = await _popupService.ShowPopupAsync<CameraPopupViewModel, CameraPopupResult>(
-                    Shell.Current,
-                    options: PopupOptions.Empty,
-                    shellParameters: CreateCameraPopupParameters(isScanContinuously: false));
+                var popupResult = await _cameraPopupService.ShowForResultAsync(isScanContinuously: false);
 
-                if (popupResult.WasDismissedByTappingOutsideOfPopup || popupResult.Result == null)
+                if (popupResult == null)
                     return null;
 
-                var barcode = popupResult.Result.Barcodes.FirstOrDefault();
-                
+                var barcode = popupResult.Barcodes.FirstOrDefault();
+
                 return barcode?.Value;
             }
             catch (Exception ex)
@@ -220,24 +224,13 @@ namespace QuickStockTaker.Core.ViewModels
         {
             try
             {
-                await _popupService.ShowPopupAsync<CameraPopupViewModel>(
-                    Shell.Current,
-                    options: PopupOptions.Empty,
-                    shellParameters: CreateCameraPopupParameters(_isContinuousMode));
+                await _cameraPopupService.ShowAsync(_isContinuousMode);
             }
             catch (Exception ex)
             {
                 var a = ex.Message;
-                
-            }
-        }
 
-        private static Dictionary<string, object> CreateCameraPopupParameters(bool isScanContinuously)
-        {
-            return new Dictionary<string, object>
-            {
-                [nameof(CameraPopupViewModel.IsScanContinuously)] = isScanContinuously
-            };
+            }
         }
 
         /// <summary>
@@ -256,7 +249,7 @@ namespace QuickStockTaker.Core.ViewModels
                 _logger.LogError(e, $"Calculate total units failed. {e.Message}");
             }
         }
-        
+
         partial void OnAutoQtyChanged(bool value)
         {
             // update the Qty to 1 
@@ -266,7 +259,7 @@ namespace QuickStockTaker.Core.ViewModels
 
         partial void OnBayLocationChanged(string value)
         {
-                CanScanSkuBarcode = !string.IsNullOrEmpty(value);
+            CanScanSkuBarcode = !string.IsNullOrEmpty(value);
         }
     }
 }

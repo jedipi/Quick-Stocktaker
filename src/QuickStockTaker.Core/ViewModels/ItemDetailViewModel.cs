@@ -4,6 +4,8 @@ using Controls.UserDialogs.Maui;
 using Microsoft.Extensions.Logging;
 using QuickStockTaker.Core.Models.Sqlite;
 using QuickStockTaker.Core.Repositories.Interfaces;
+using QuickStockTaker.Core.Services;
+using QuickStockTaker.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +19,8 @@ namespace QuickStockTaker.Core.ViewModels
     public partial class ItemDetailViewModel : BaseViewModel
     {
         #region fields
-        private ISQLiteRepository<StocktakeItem> _repo;
+        private readonly IStocktakeOperationsService _stocktakeOperations;
+        private readonly INavigationService _navigationService;
         private StocktakeItem _originalItem;
         #endregion
 
@@ -32,13 +35,14 @@ namespace QuickStockTaker.Core.ViewModels
         /// </summary>
         /// <param name="dialogs"></param>
         /// <param name="logger"></param>
-        /// <param name="repo"></param>
         public ItemDetailViewModel(
-            IUserDialogs dialogs, 
+            IUserDialogs dialogs,
             ILogger<ItemDetailViewModel> logger,
-            ISQLiteRepository<StocktakeItem> repo) : base(dialogs, logger)
+            IStocktakeOperationsService stocktakeOperations,
+            INavigationService navigationService) : base(dialogs, logger)
         {
-            _repo = repo;
+            _stocktakeOperations = stocktakeOperations;
+            _navigationService = navigationService;
         }
 
         #region RelayCommands
@@ -50,22 +54,21 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private async Task OnSave()
         {
-            
+
             try
             {
-                var sql = $"UPDATE StocktakeItem SET Barcode= ?, Qty= ? Where Id= ? ";
-                await _repo.ExecuteAsync(sql, SelectedItem.Barcode, SelectedItem.Qty,
-                    _originalItem.Id);
+                SelectedItem.Id = _originalItem.Id;
+                await _stocktakeOperations.UpdateItemAsync(SelectedItem);
 
                 var jsonStr = JsonSerializer.Serialize(SelectedItem);
                 var encodedJson = Uri.EscapeDataString(jsonStr);
-                await Shell.Current.GoToAsync($"..?SelectedItemContent={encodedJson}");
+                await _navigationService.GoToAsync(NavigationRoutes.BackWithSelectedItem(encodedJson));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 var a = ex.Message;
             }
-            
+
 
         }
         #endregion

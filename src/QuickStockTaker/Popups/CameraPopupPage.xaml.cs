@@ -12,9 +12,9 @@ public partial class CameraPopupPage : Popup<CameraPopupResult>
 
     public CameraPopupViewModel ViewModel { get; set; }
     public CameraPopupPage(CameraPopupViewModel vm, ILogger<CameraPopupPage> logger)
-	{
-		InitializeComponent();
-        
+    {
+        InitializeComponent();
+
         WidthRequest = DeviceDisplay.Current.MainDisplayInfo.Width;
         HeightRequest = DeviceDisplay.Current.MainDisplayInfo.Height;
 
@@ -31,9 +31,9 @@ public partial class CameraPopupPage : Popup<CameraPopupResult>
 
     protected async void BarcodesDetected(object sender, BarcodeDetectionEventArgs e)
     {
-        try 
+        try
         {
-            
+
             var audioPlayer = AudioManager.Current.CreatePlayer(await FileSystem.OpenAppPackageFileAsync("beep.mp3"));
             audioPlayer.Play();
             Vibration.Default.Vibrate(TimeSpan.FromSeconds(1));
@@ -47,13 +47,11 @@ public partial class CameraPopupPage : Popup<CameraPopupResult>
                 return; // this popup stay open 
             }
 
-            await MainThread.InvokeOnMainThreadAsync(() => CloseAsync(new CameraPopupResult(e.Results))); 
-        } 
-        catch (Exception ex) 
+            await MainThread.InvokeOnMainThreadAsync(() => CloseAsync(new CameraPopupResult(e.Results)));
+        }
+        catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message, ex.StackTrace);
         }
     }
 }
-
-public sealed record CameraPopupResult(BarcodeResult[] Barcodes);

@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Controls.UserDialogs.Maui;
 using QuickStockTaker.Models;
+using QuickStockTaker.Core.Services.Interfaces;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ public partial class AboutViewModel : ObservableObject
 {
     #region Fields
     private List<DonationAmount> _donationAmounts;
+    private readonly IPageDialogService _pageDialogService;
     #endregion
 
     [ObservableProperty]
@@ -23,8 +25,9 @@ public partial class AboutViewModel : ObservableObject
     [ObservableProperty]
     private string _amount;
 
-    public AboutViewModel()
-    {        
+    public AboutViewModel(IPageDialogService pageDialogService)
+    {
+        _pageDialogService = pageDialogService;
         _donationAmounts = new List<DonationAmount>()
         {
             new DonationAmount() { Amount = (decimal)0.99, AmountString = "$0.99" },
@@ -39,8 +42,8 @@ public partial class AboutViewModel : ObservableObject
     private async Task OnDonation()
     {
         var amounts = _donationAmounts.Select(x => x.AmountString).ToArray();
-    
-        var action = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayActionSheetAsync("Select a amount you would like to donate", "Cancel", null, amounts);
+
+        var action = await _pageDialogService.DisplayActionSheetAsync("Select a amount you would like to donate", "Cancel", null, amounts);
         //DoDonation();
     }
 
@@ -68,8 +71,6 @@ public partial class AboutViewModel : ObservableObject
     private void OnAppearing()
     {
         VersionNo = AppInfo.Current.VersionString;
-        //DeviceId = Preferences.Get("DeviceId", "");
-        //Warehouse = Preferences.Get("DeviceWarehouseId", "");
     }
 }
 

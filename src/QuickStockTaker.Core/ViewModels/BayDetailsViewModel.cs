@@ -5,6 +5,8 @@ using Microsoft.Extensions.Logging;
 using QuickStockTaker.Core.Models;
 using QuickStockTaker.Core.Models.Sqlite;
 using QuickStockTaker.Core.Repositories.Interfaces;
+using QuickStockTaker.Core.Services;
+using QuickStockTaker.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,22 +23,24 @@ namespace QuickStockTaker.Core.ViewModels
         #region fields
         private ObservableCollection<StocktakeItem> _unfilteredItems;
         private ISQLiteRepository<StocktakeItem> _repo;
+        private readonly INavigationService _navigationService;
+        private readonly IPageDialogService _pageDialogService;
 
         #endregion
 
         #region properties
         [ObservableProperty]
         private ObservableCollection<StocktakeItem> _items;
-        
-        [ObservableProperty] 
+
+        [ObservableProperty]
         private string _searchText;
-        
+
         [ObservableProperty]
         private int _totalQty;
-        
+
         [ObservableProperty]
         private Bay _selectedBay;
-        
+
         [ObservableProperty]
         private StocktakeItem _selectedItem;
 
@@ -68,11 +72,15 @@ namespace QuickStockTaker.Core.ViewModels
         #endregion
 
         public BayDetailsViewModel(
-            IUserDialogs dialogs, 
+            IUserDialogs dialogs,
             ILogger<BayDetailsViewModel> logger,
-            ISQLiteRepository<StocktakeItem> repo) : base(dialogs, logger)
+            ISQLiteRepository<StocktakeItem> repo,
+            INavigationService navigationService,
+            IPageDialogService pageDialogService) : base(dialogs, logger)
         {
-            _repo = repo;   
+            _repo = repo;
+            _navigationService = navigationService;
+            _pageDialogService = pageDialogService;
         }
 
         #region RelayCommands
@@ -86,13 +94,13 @@ namespace QuickStockTaker.Core.ViewModels
         {
             if (item == null)
             {
-                await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayAlertAsync("Error","Please select a bay first", "OK");
+                await _pageDialogService.DisplayAlertAsync("Error", "Please select a bay first", "OK");
                 return;
             }
 
             // confirm to delete
             //var isConfirmed = await _dialogs.ConfirmAsync("Are you sure want to delete this item?", "Confirm Delete", "Yes", "No");
-            var isConfirmed = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayAlertAsync("Confirm Delete", "Are you sure want to delete this item?", "YES", "NO");
+            var isConfirmed = await _pageDialogService.DisplayConfirmationAsync("Confirm Delete", "Are you sure want to delete this item?", "YES", "NO");
 
             if (!isConfirmed) return;
 
@@ -112,7 +120,7 @@ namespace QuickStockTaker.Core.ViewModels
             catch (Exception e)
             {
                 _logger.LogError(e, $"Cannot delete stocktake item {e.Message}");
-                await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayAlertAsync("Error", $"Error occured while deleting stocktake item.\n{e.Message}", "OK");
+                await _pageDialogService.DisplayAlertAsync("Error", $"Error occured while deleting stocktake item.\n{e.Message}", "OK");
             }
         }
 
@@ -130,7 +138,7 @@ namespace QuickStockTaker.Core.ViewModels
             {
                 { "SelectedItem", item }
             };
-            await Shell.Current.GoToAsync($"ItemDetailPage", navigationParameter);
+            await _navigationService.GoToAsync(NavigationRoutes.ItemDetailPage, navigationParameter);
         }
 
         [RelayCommand]

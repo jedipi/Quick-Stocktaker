@@ -34,6 +34,11 @@ namespace QuickStockTaker
             autofacBuilder.RegisterAssemblyTypes(typeof(MauiProgram).Assembly)
                         .Where(t => t.Name.EndsWith("Page"));
 
+            // register app/runtime services
+            autofacBuilder.RegisterAssemblyTypes(typeof(MauiProgram).Assembly)
+                        .Where(t => t.Name.EndsWith("Service") || t.Name.EndsWith("Preferences") || t.Name.EndsWith("FileSystem"))
+                        .AsImplementedInterfaces();
+
             // register view models
             autofacBuilder.RegisterAssemblyTypes(typeof(Constants).Assembly)
                             .Where(t => t.Name.EndsWith("ViewModel"));

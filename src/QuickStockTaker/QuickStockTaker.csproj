@@ -129,6 +129,9 @@
 	  <MauiXaml Update="Views\BayDetailsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Popups\CameraPopupPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\BayListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

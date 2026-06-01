@@ -14,20 +14,38 @@ namespace QuickStockTaker.Core.ViewModels
         #region Fields
 
         private FileInfo _exportedFile;
-        private IEmailUploadService _emailUploader;
-        private IFtpUplodService _ftpUploader;
-        private IServiceProvider _provider;
+        private readonly IEmailUploadService _emailUploader;
+        private readonly IFtpUplodService _ftpUploader;
+        private readonly EmailValidator _emailValidator;
+        private readonly ISmtpService _smtpService;
+        private readonly DataExportFactory _exporterFactory;
+        private readonly IAppPreferences _preferences;
+        private readonly ISecureStorageService _secureStorage;
+        private readonly IAppFileSystem _fileSystem;
+        private readonly IPageDialogService _pageDialogService;
         #endregion
         public DataUploadViewModel(
             IUserDialogs dialogs,
-            IServiceProvider provider,
             IEmailUploadService emailUploader,
             IFtpUplodService ftpUploader,
+            EmailValidator emailValidator,
+            ISmtpService smtpService,
+            DataExportFactory exporterFactory,
+            IAppPreferences preferences,
+            ISecureStorageService secureStorage,
+            IAppFileSystem fileSystem,
+            IPageDialogService pageDialogService,
             ILogger<DataUploadViewModel> logger) : base(dialogs, logger)
         {
             _emailUploader = emailUploader;
             _ftpUploader = ftpUploader;
-            _provider = provider;
+            _emailValidator = emailValidator;
+            _smtpService = smtpService;
+            _exporterFactory = exporterFactory;
+            _preferences = preferences;
+            _secureStorage = secureStorage;
+            _fileSystem = fileSystem;
+            _pageDialogService = pageDialogService;
         }
 
         #region Commands
@@ -44,16 +62,7 @@ namespace QuickStockTaker.Core.ViewModels
 
             try
             {
-                var targetDir = string.Empty;
-#if ANDROID
-                // Requires Storage permissions on older Android versions, or Scoped Storage APIs for Android 13+
-                targetDir = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
-#elif IOS
-                targetDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-#endif
-
-                string filePath = Path.Combine(targetDir, _exportedFile.Name);
-
+                string filePath = _fileSystem.GetDownloadFilePath(_exportedFile.Name);
 
                 var config = new ActionSheetConfig()
                 {
@@ -100,7 +109,7 @@ namespace QuickStockTaker.Core.ViewModels
         {
 
             // ask for email address
-            var result = await Application.Current.Windows.FirstOrDefault()?.Page?.DisplayPromptAsync("Email Stocktake Data", "Please type in your email address:");
+            var result = await _pageDialogService.DisplayPromptAsync("Email Stocktake Data", "Please type in your email address:");
 
             // validate email address
             if (result == null || string.IsNullOrEmpty(result.Trim()))
@@ -109,8 +118,7 @@ namespace QuickStockTaker.Core.ViewModels
             }
 
             var emailAddress = result.Trim();
-            var validator = _provider.GetService<EmailValidator>();
-            var validateResult = validator.Validate(emailAddress);
+            var validateResult = _emailValidator.Validate(emailAddress);
             if (!validateResult.IsValid)
             {
                 await _dialogs.AlertAsync(validateResult.Errors.First().ErrorMessage, "Error", "OK", "ic_error.png");
@@ -127,9 +135,8 @@ namespace QuickStockTaker.Core.ViewModels
                 }
 
                 // get smtp details.
-                var provider = Preferences.Get(Constants.SmtpProvider, "Other");
-                var smtpService = _provider.GetService<ISmtpService>();
-                var smtp = await smtpService.GetSmtp(provider);
+                var provider = _preferences.GetString(Constants.SmtpProvider, "Other");
+                var smtp = await _smtpService.GetSmtp(provider);
 
                 var tokenSource = new CancellationTokenSource();
                 string msg;
@@ -143,7 +150,7 @@ namespace QuickStockTaker.Core.ViewModels
                     _emailUploader.SmtpDetail = smtp;
 
                     // get the from email address
-                    var from = await SecureStorage.GetAsync(Constants.SmtpFrom);
+                    var from = await _secureStorage.GetAsync(Constants.SmtpFrom);
                     _emailUploader.From = provider != "Other" ? emailAddress : from;
 
                     (_, msg) = await _emailUploader.Upload(_exportedFile);
@@ -209,10 +216,8 @@ namespace QuickStockTaker.Core.ViewModels
         {
             _exportedFile = null;
 
-            var exporterFactory = _provider.GetService<DataExportFactory>();
-
             // TODO: check what file format is needed. 
-            var exporter = exporterFactory.CreateExporter("csv");
+            var exporter = _exporterFactory.CreateExporter("csv");
             await exporter.Export();
             if (exporter.ExportedFile == null)
             {
