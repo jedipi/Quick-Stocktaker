@@ -23,6 +23,21 @@
                 <Label HorizontalTextAlignment="Justify">Thank you  for trying Quick StockTaker!</Label>
                 <Label HorizontalTextAlignment="Justify">This app is free to use for personal and commercial. If you have any questions, comments, suggestions, or features you'd like to see, I'd appreciate your feedback.</Label>
                 <Label HorizontalTextAlignment="Justify">If you'd like to show your support for this project and help me continue development, please consider a donation.</Label>
+                <Label>
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Project home: " />
+                            <Span Text="https://github.com/jedipi/Quick-Stocktaker"
+                  TextColor="Blue"
+                  TextDecorations="Underline">
+                                <Span.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ProjectHomeCommand}"
+                                          CommandParameter="https://github.com/jedipi/Quick-Stocktaker" />
+                                </Span.GestureRecognizers>
+                            </Span>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
 
                 <StackLayout Orientation="Vertical" VerticalOptions="Center" IsVisible="Collapse">
 

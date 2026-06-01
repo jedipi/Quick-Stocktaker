@@ -84,7 +84,7 @@ namespace QuickStockTaker.Core.ViewModels
             try
             {
                 var sql = "UPDATE StocktakeItem SET StocktakeNumber=?";
-                await _repo.Connection.ExecuteAsync(sql, newStocktakeNo);
+                await _repo.ExecuteAsync(sql, newStocktakeNo);
                
 
                 Preferences.Set(Constants.StocktakeNumber, newStocktakeNo);
@@ -123,7 +123,7 @@ namespace QuickStockTaker.Core.ViewModels
             try
             {
                 var sql = "UPDATE StocktakeItem SET Site=?";
-                await _repo.Connection.ExecuteAsync(sql, newSite);
+                await _repo.ExecuteAsync(sql, newSite);
 
                 Preferences.Set(Constants.Site, newSite);
                 Site = newSite;
@@ -156,7 +156,7 @@ namespace QuickStockTaker.Core.ViewModels
             try
             {
                 var sql = "UPDATE StocktakeItem SET StocktakeDate=?";
-                await _repo.Connection.ExecuteAsync(sql, newDate);
+                await _repo.ExecuteAsync(sql, newDate);
 
                 Preferences.Set(Constants.StocktakeDate, SelectedDate);
                 StocktakeDate = newDate;

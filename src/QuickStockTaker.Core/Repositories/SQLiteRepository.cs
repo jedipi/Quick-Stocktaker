@@ -13,65 +13,66 @@ namespace QuickStockTaker.Core.Repositories
     public class SQLiteRepository<T> : ISQLiteRepository<T> where T : BaseModel, new()
     {
         private static readonly object locker = new object();
+        private readonly Task _initializeTask;
         private bool disposedValue;
         public SQLiteAsyncConnection Connection { get; set; }
         public SQLiteRepository(SQLiteDB db)
         {
-            try
-            {
-                Connection = db.Database;
-                Connection.CreateTableAsync<T>().Wait();
-            }
-            catch (Exception ex)
-            {
-                var s = ex.Message;
-                //Log.Error(s, ex);
-            }
-
+            Connection = db.Database;
+            _initializeTask = Connection.CreateTableAsync<T>();
         }
 
         public async Task<int> InsertAsync(T entity)
         {
+            await EnsureInitialized();
             return await Connection.InsertAsync(entity);
         }
 
         public async Task<int> InsertAllAsync(List<T> entities)
         {
+            await EnsureInitialized();
             return await Connection.InsertAllAsync(entities);
         }
 
         public async Task<int> DeleteAsync(T entity)
         {
+            await EnsureInitialized();
             return await Connection.DeleteAsync(entity);
         }
         public async Task<int> DeleteAsync(Expression<Func<T, bool>> expression)
         {
+            await EnsureInitialized();
             return await Connection.Table<T>().DeleteAsync(expression);
         }
 
 
         public async Task<int> UpdateAsync(T entity)
         {
+            await EnsureInitialized();
             return await Connection.UpdateAsync(entity);
         }
 
         public async Task<T> GetByIdAsync(int id)
         {
+            await EnsureInitialized();
             return await Connection.Table<T>().FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<List<T>> GetAllAsync()
         {
+            await EnsureInitialized();
             return await Connection.Table<T>().ToListAsync();
         }
 
         public async Task<List<T>> FindAsync(Expression<Func<T, bool>> expression)
         {
+            await EnsureInitialized();
             return await Connection.Table<T>().Where(expression).ToListAsync();
         }
 
         public async Task DropandRecreateTable()
         {
+            await EnsureInitialized();
             await Connection.RunInTransactionAsync((trans) =>
             {
                 trans.DropTable<T>();
@@ -80,15 +81,16 @@ namespace QuickStockTaker.Core.Repositories
            );
         }
 
-        //public async Task<int> ExecuteAsync(string query, params object[] objects)
-        //{
-        //    return await Connection.ExecuteAsync(query, objects);
-        //    //await connection.RunInTransactionAsync((trans) =>
-        //    //{
-        //    //    trans.Execute(query, objects);
-        //    //}
-        //    //    );
-        //}
+        public async Task<int> ExecuteAsync(string query, params object[] objects)
+        {
+            await EnsureInitialized();
+            return await Connection.ExecuteAsync(query, objects);
+        }
+
+        private Task EnsureInitialized()
+        {
+            return _initializeTask;
+        }
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

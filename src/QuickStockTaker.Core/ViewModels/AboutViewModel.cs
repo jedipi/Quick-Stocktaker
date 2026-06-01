@@ -44,6 +44,13 @@ public partial class AboutViewModel : ObservableObject
         //DoDonation();
     }
 
+    [RelayCommand]
+    private async Task OnProjectHome(string url)
+    {
+        await Launcher.Default.OpenAsync(url);
+        //DoDonation();
+    }
+
     /// <summary>
     /// Take the donation amount
     /// </summary>

@@ -72,7 +72,7 @@ namespace QuickStockTaker.Core.ViewModels
             }
 
             var sql = "DELETE FROM StocktakeItem WHERE BayLocation = ?";
-            var affectedRows = await _repo.Connection.ExecuteAsync(sql, bay.BayLocation);
+            var affectedRows = await _repo.ExecuteAsync(sql, bay.BayLocation);
             if (affectedRows == 0)
                 await _dialogs.AlertAsync("No data is deleted.");
             else
@@ -143,7 +143,7 @@ namespace QuickStockTaker.Core.ViewModels
             {
                 // update database
                 var sql = $"UPDATE StocktakeItem SET BayLocation = ? Where BayLocation = ? ";
-                await _repo.Connection.ExecuteAsync(sql, newBayLocation, bay.BayLocation);
+                await _repo.ExecuteAsync(sql, newBayLocation, bay.BayLocation);
 
                 _logger.LogInformation($"stocktake date changed from {bay.BayLocation} to {newBayLocation}");
 

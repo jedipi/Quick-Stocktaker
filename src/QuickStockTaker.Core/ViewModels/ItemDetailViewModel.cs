@@ -54,7 +54,7 @@ namespace QuickStockTaker.Core.ViewModels
             try
             {
                 var sql = $"UPDATE StocktakeItem SET Barcode= ?, Qty= ? Where Id= ? ";
-                await _repo.Connection.ExecuteAsync(sql, SelectedItem.Barcode, SelectedItem.Qty,
+                await _repo.ExecuteAsync(sql, SelectedItem.Barcode, SelectedItem.Qty,
                     _originalItem.Id);
 
                 var jsonStr = JsonSerializer.Serialize(SelectedItem);
