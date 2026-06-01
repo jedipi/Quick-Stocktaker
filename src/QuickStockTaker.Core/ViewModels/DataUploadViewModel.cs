@@ -117,20 +117,20 @@ namespace QuickStockTaker.Core.ViewModels
                 return;
             }
 
-            // export data
-            await ExportData();
-            if (_exportedFile == null)
-            {
-                return;
-            }
-
-            // get smtp details.
-            var provider = Preferences.Get(Constants.SmtpProvider, "Other");
-            var smtpService = _provider.GetService<ISmtpService>();
-            var smtp = await smtpService.GetSmtp(provider);
-
             try
             {
+                // export data
+                await ExportData();
+                if (_exportedFile == null)
+                {
+                    return;
+                }
+
+                // get smtp details.
+                var provider = Preferences.Get(Constants.SmtpProvider, "Other");
+                var smtpService = _provider.GetService<ISmtpService>();
+                var smtp = await smtpService.GetSmtp(provider);
+
                 var tokenSource = new CancellationTokenSource();
                 string msg;
 

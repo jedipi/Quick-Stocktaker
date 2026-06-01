@@ -29,7 +29,10 @@ namespace QuickStockTaker.Core.Repositories
             //}
 
             var host = await SecureStorage.GetAsync(Constants.SmtpHost);
-            var port = Convert.ToInt32(await SecureStorage.GetAsync(Constants.SmtpPort));
+            var portValue = await SecureStorage.GetAsync(Constants.SmtpPort);
+            if (!int.TryParse(portValue, out var port))
+                throw new InvalidOperationException("SMTP port is not configured or not valid.");
+
             var username = await SecureStorage.GetAsync(Constants.SmtpUsername);
             var password = await SecureStorage.GetAsync(Constants.SmtpPassword);
 
