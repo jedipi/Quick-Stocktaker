@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="QuickStockTaker.Views.ReviewPage"
+             x:Name="Review"
              xmlns:fa="clr-namespace:FontAwesome"
              xmlns:md="clr-namespace:MaterialDesign"
              Title="ReviewPage">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+                EventName="Appearing"
+                Command="{Binding Source={x:Reference Review}, Path=BindingContext.AppearingCommand}" />
+    </ContentPage.Behaviors>
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Margin="10" Spacing="10">
@@ -25,7 +32,7 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Label Grid.Row="0" Grid.Column="0" Text="Scanner ID: " Margin="0,10,0,0"/>
-                        <Label Grid.Row="0" Grid.Column="1" Text="{Binding ScannerId}" Margin="0,10,0,0"/>
+                        <Label Grid.Row="0" Grid.Column="1" Text="{Binding DeviceId}" Margin="0,10,0,0"/>
 
                         <Label Grid.Row="1" Grid.Column="0" Text="Stocktake Number: " Margin="0,10,0,0"/>
                         <Label Grid.Row="1" Grid.Column="1" Text="{Binding StocktakeNumber}" Margin="0,10,0,0"/>

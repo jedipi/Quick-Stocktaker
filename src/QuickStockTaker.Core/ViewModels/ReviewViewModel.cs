@@ -26,6 +26,7 @@ namespace QuickStockTaker.Core.ViewModels
         private readonly IAppPreferences _preferences;
         private readonly IStocktakeOperationsService _stocktakeOperations;
         private readonly IPageDialogService _pageDialogService;
+        private readonly ISQLiteRepository<StocktakeItem> _stocktakeItemRepo;
         #endregion
 
         #region Properties
@@ -58,18 +59,28 @@ namespace QuickStockTaker.Core.ViewModels
             ILogger<ReviewViewModel> logger,
             IAppPreferences preferences,
             IStocktakeOperationsService stocktakeOperations,
-            IPageDialogService pageDialogService) : base(dialogs, logger)
+            IPageDialogService pageDialogService,
+            ISQLiteRepository<StocktakeItem> stocktakeItemRepo) : base(dialogs, logger)
         {
             _popupService = popupService;
             _preferences = preferences;
             _stocktakeOperations = stocktakeOperations;
             _pageDialogService = pageDialogService;
+            _stocktakeItemRepo = stocktakeItemRepo;
 
             GetData();
             SetInitialDate();
         }
 
         #region RelayCommands
+        [RelayCommand]
+        private async Task OnAppearing()
+        {
+            GetData();
+            SetInitialDate();
+            await GetCounts();
+        }
+
         /// <summary>
         /// Change stocktake number
         /// </summary>
@@ -79,7 +90,7 @@ namespace QuickStockTaker.Core.ViewModels
         {
             // keep the original data for logging
             var oldStocktakeNo = StocktakeNumber;
-            var result = await _pageDialogService.DisplayPromptAsync("Change Stocktake Number", "Please enter the new Stocktake Number:");
+            var result = await _pageDialogService.DisplayPromptAsync("Change Stocktake Number", "Please enter the new Stocktake Number:", accept: "OK");
 
             if (result == null || string.IsNullOrEmpty(result.Trim()) || oldStocktakeNo == result)
             {
@@ -117,7 +128,7 @@ namespace QuickStockTaker.Core.ViewModels
             // keep the original data for logging
             var oldSite = Site;
 
-            var result = await _pageDialogService.DisplayPromptAsync("Change Site/Warehouse", "Please enter the Site/Warehouse:");
+            var result = await _pageDialogService.DisplayPromptAsync("Change Site/Warehouse", "Please enter the Site/Warehouse:", accept: "OK");
 
             if (result == null || string.IsNullOrEmpty(result.Trim()) || oldSite == result.Trim())
             {
@@ -188,6 +199,14 @@ namespace QuickStockTaker.Core.ViewModels
             StocktakeNumber = _preferences.GetString(Constants.StocktakeNumber, "");
             Site = _preferences.GetString(Constants.Site, "");
             StocktakeDate = _preferences.GetDateTime(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString();
+        }
+
+        private async Task GetCounts()
+        {
+            var items = await _stocktakeItemRepo.GetAllAsync();
+
+            BaysCounts = items.GroupBy(x => x.BayLocation).Count();
+            ItemCounts = (int)items.Sum(x => x.Qty);
         }
 
         private void SetInitialDate()
