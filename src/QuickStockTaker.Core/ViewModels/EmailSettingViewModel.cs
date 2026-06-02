@@ -151,7 +151,7 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private async Task OnSmtpFrom()
         {
-            var result = await _pageDialogService.DisplayPromptAsync("From", "Please type in the From email address:");
+            var result = await _pageDialogService.DisplayPromptAsync("From", "Please type in the From email address:", accept: "OK");
 
             if (string.IsNullOrEmpty(result))
                 return;
@@ -163,7 +163,7 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private async Task OnSmtpPassword()
         {
-            var result = await _pageDialogService.DisplayPromptAsync("Password", "Please type in the password:");
+            var result = await _pageDialogService.DisplayPromptAsync("Password", "Please type in the password:", accept: "OK");
 
             if (string.IsNullOrEmpty(result))
                 return;
@@ -175,7 +175,7 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private async Task OnSmtpUsername()
         {
-            var result = await _pageDialogService.DisplayPromptAsync("Username", "Please type in the username:");
+            var result = await _pageDialogService.DisplayPromptAsync("Username", "Please type in the username:", accept: "OK");
 
             if (string.IsNullOrEmpty(result))
                 return;
@@ -188,7 +188,7 @@ namespace QuickStockTaker.Core.ViewModels
         private async Task OnSmtpPort()
         {
 
-            var result = await _pageDialogService.DisplayPromptAsync("SMTP port", "Please type in the SMTP port:", keyboard: Keyboard.Numeric);
+            var result = await _pageDialogService.DisplayPromptAsync("SMTP port", "Please type in the SMTP port:", accept: "OK", keyboard: Keyboard.Numeric);
 
             if (string.IsNullOrEmpty(result))
                 return;
@@ -201,7 +201,7 @@ namespace QuickStockTaker.Core.ViewModels
         private async Task OnSmtpHost()
         {
             //var result = await _dialogs.("Please type in the SMTP host:", "SMTP HOST");
-            var result = await _pageDialogService.DisplayPromptAsync("SMTP HOST", "Please type in the SMTP host:");
+            var result = await _pageDialogService.DisplayPromptAsync("SMTP HOST", "Please type in the SMTP host:", accept: "OK");
 
             if (string.IsNullOrEmpty(result))
                 return;

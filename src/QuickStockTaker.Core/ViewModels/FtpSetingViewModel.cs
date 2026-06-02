@@ -105,7 +105,7 @@ namespace QuickStockTaker.Core.ViewModels
         private async Task OnFtpHost()
         {
             var result = await _pageDialogService.DisplayPromptAsync(
-                "FTP/SFTP Host", "Please type in the host:");
+                "FTP/SFTP Host", "Please type in the host:", accept: "OK");
 
             if (string.IsNullOrEmpty(result))
                 return;
@@ -117,7 +117,7 @@ namespace QuickStockTaker.Core.ViewModels
         private async Task OnFtpPort()
         {
             var result = await _pageDialogService.DisplayPromptAsync(
-                "FTP/SFTP Port", "Please type in the port:", keyboard: Keyboard.Numeric);
+                "FTP/SFTP Port", "Please type in the port:", accept: "OK", keyboard: Keyboard.Numeric);
 
             if (string.IsNullOrEmpty(result))
                 return;
@@ -129,7 +129,7 @@ namespace QuickStockTaker.Core.ViewModels
         private async Task OnFtpFolder()
         {
             var result = await _pageDialogService.DisplayPromptAsync(
-                "FTP/SFTP Folder", "Please type in the remote folder:");
+                "FTP/SFTP Folder", "Please type in the remote folder:", accept: "OK");
 
             if (string.IsNullOrEmpty(result))
                 return;
@@ -141,7 +141,7 @@ namespace QuickStockTaker.Core.ViewModels
         private async Task OnFtpUsername()
         {
             var result = await _pageDialogService.DisplayPromptAsync(
-                "FTP/SFTP Username", "Please type in the username:");
+                "FTP/SFTP Username", "Please type in the username:", accept: "OK");
 
             if (string.IsNullOrEmpty(result))
                 return;
@@ -154,7 +154,7 @@ namespace QuickStockTaker.Core.ViewModels
         private async Task OnFtpPassword()
         {
             var result = await _pageDialogService.DisplayPromptAsync(
-                "FTP/SFTP Password", "Please type in the password:");
+                "FTP/SFTP Password", "Please type in the password:", accept: "OK");
 
             if (string.IsNullOrEmpty(result))
                 return;

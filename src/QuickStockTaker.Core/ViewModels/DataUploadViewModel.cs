@@ -109,7 +109,7 @@ namespace QuickStockTaker.Core.ViewModels
         {
 
             // ask for email address
-            var result = await _pageDialogService.DisplayPromptAsync("Email Stocktake Data", "Please type in your email address:");
+            var result = await _pageDialogService.DisplayPromptAsync("Email Stocktake Data", "Please type in your email address:", accept: "OK");
 
             // validate email address
             if (result == null || string.IsNullOrEmpty(result.Trim()))
