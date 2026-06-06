@@ -19,7 +19,7 @@
        </StackLayout>  
    </Shell.TitleView>  
    <ContentPage.ToolbarItems>  
-       <ToolbarItem Text="PDE QTY:"/>  
+       <ToolbarItem Text="Total QTY:"/>  
        <ToolbarItem Text="{Binding TotalQty}"/>  
    </ContentPage.ToolbarItems>  
 

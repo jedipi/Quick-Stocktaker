@@ -115,9 +115,9 @@
 
                    <!--Last 5 scanned items-->  
                    <Label Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Text="Last 5 items" Margin="0, 20, 0, 0"/>  
-                   <ListView Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" ItemsSource="{Binding LastAddedItems, Mode=TwoWay}"  
+                   <CollectionView Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" ItemsSource="{Binding LastAddedItems, Mode=TwoWay}"  
                                  SelectedItem="{Binding SelectedItem}" HeightRequest="300">  
-                       <ListView.Header>  
+                       <CollectionView.Header>  
                            <Grid>  
                                <Grid.ColumnDefinitions>  
                                    <ColumnDefinition Width="0.4*"/>  
@@ -128,10 +128,10 @@
                                <Label Text="Item" FontAttributes="Bold" Grid.Column="1" Margin="5"/>  
                                <Label Text="Qty" FontAttributes="Bold" Grid.Column="2" Margin="5"/>  
                            </Grid>  
-                       </ListView.Header>  
-                       <ListView.ItemTemplate>  
+                       </CollectionView.Header>  
+                       <CollectionView.ItemTemplate>  
                            <DataTemplate>  
-                               <ViewCell>  
+                               <ContentView>  
 
                                    <SwipeView x:Name="swipeView1" BackgroundColor="#E1E7F1">  
                                        <Grid BackgroundColor="#E1E7F1">  
@@ -139,20 +139,31 @@
                                                <ColumnDefinition Width="0.4*"/>  
                                                <ColumnDefinition Width="*"/>  
                                                <ColumnDefinition Width="0.3*"/>  
-                                           </Grid.ColumnDefinitions>  
-                                           <Label Text="{Binding BayLocation}" Grid.Column="0" Margin="5"/>  
-                                           <StackLayout Orientation="Vertical" Grid.Column="1" HorizontalOptions="Fill" VerticalOptions="Fill">  
+                                           </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="1"/>
+                                            </Grid.RowDefinitions>
+                                            <Label Text="{Binding BayLocation}" Grid.Column="0" Grid.Row="0" Margin="5"/>  
+                                           <StackLayout Orientation="Vertical" Grid.Column="1" Grid.Row="0" HorizontalOptions="Fill" VerticalOptions="Fill">  
                                                <Label Text="{Binding Barcode}" />  
                                                <Label Text="{Binding Desc}"/>  
                                            </StackLayout>  
-                                           <Label Text="{Binding Qty}" Grid.Column="2" Margin="5"/>  
-                                       </Grid>  
-                                   </SwipeView>  
-                               </ViewCell>  
-                           </DataTemplate>  
-                       </ListView.ItemTemplate>  
+                                           <Label Text="{Binding Qty}" Grid.Column="2" Margin="5"/>
 
-                   </ListView>  
+                                            <!-- Separator line -->
+                                            <BoxView 
+                    Grid.Row="1" Grid.ColumnSpan="3"
+                    HeightRequest="1"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}" />
+                                            <!-- This is like SeparatorColor -->
+                                        </Grid>  
+                                   </SwipeView>  
+                               </ContentView>  
+                           </DataTemplate>  
+                       </CollectionView.ItemTemplate>  
+
+                   </CollectionView>  
 
 
                </Grid>  
