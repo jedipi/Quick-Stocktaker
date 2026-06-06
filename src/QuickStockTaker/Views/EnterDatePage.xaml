@@ -3,7 +3,11 @@
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"  
             x:Class="QuickStockTaker.Views.EnterDatePage"  
             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"  
-            Title="EnterDatePage">  
+            xmlns:models="clr-namespace:QuickStockTaker.Core.Models.Sqlite;assembly=QuickStockTaker.Core"
+            xmlns:viewModels="clr-namespace:QuickStockTaker.Core.ViewModels;assembly=QuickStockTaker.Core"
+            x:Name="EnterData"
+            x:DataType="viewModels:EnterDateViewModel"
+            Title="EnterDataPage">  
    <ContentPage.Resources>  
        <ResourceDictionary>  
            <Style TargetType="Button" x:Key="SmallButton" >  
@@ -131,7 +135,7 @@
                        </CollectionView.Header>  
                        <CollectionView.ItemTemplate>  
                            <DataTemplate>  
-                               <ContentView>  
+                               <ContentView x:DataType="models:StocktakeItem">  
 
                                    <SwipeView x:Name="swipeView1" BackgroundColor="#E1E7F1">  
                                        <Grid BackgroundColor="#E1E7F1">  
@@ -144,10 +148,10 @@
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="1"/>
                                             </Grid.RowDefinitions>
-                                            <Label Text="{Binding BayLocation}" Grid.Column="0" Grid.Row="0" Margin="5"/>  
+                                           <Label Text="{Binding BayLocation}" Grid.Column="0" Grid.Row="0" Margin="5"/>  
                                            <StackLayout Orientation="Vertical" Grid.Column="1" Grid.Row="0" HorizontalOptions="Fill" VerticalOptions="Fill">  
                                                <Label Text="{Binding Barcode}" />  
-                                               <Label Text="{Binding Desc}"/>  
+                                               <Label Text="{Binding Description}"/>  
                                            </StackLayout>  
                                            <Label Text="{Binding Qty}" Grid.Column="2" Margin="5"/>
 

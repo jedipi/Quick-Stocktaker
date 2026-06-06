@@ -13,7 +13,7 @@
                Command="{Binding Source={x:Reference BayDetails}, Path=BindingContext.AppearingCommand}" x:DataType="ContentPage" />  
    </ContentPage.Behaviors>  
    <ContentPage.ToolbarItems>  
-       <ToolbarItem Text="PDE QTY:"/>  
+       <ToolbarItem Text="Total QTY:"/>  
        <ToolbarItem Text="{Binding TotalQty}" x:DataType="ToolbarItem"/>  
    </ContentPage.ToolbarItems>  
    <ContentPage.Content>  
