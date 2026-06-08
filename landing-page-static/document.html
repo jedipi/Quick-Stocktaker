@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mobile User Manual | Quick Stocktaker</title>
+    <meta
+      name="description"
+      content="Mobile user manual for Quick Stocktaker inventory counts, stocktake workflow, review, correction, export, email, and FTP/SFTP upload."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <nav class="nav-shell" aria-label="Document navigation">
+      <a class="brand" href="./index.html" aria-label="Back to Quick Stocktaker landing page">
+        <span class="brand-mark" aria-hidden="true">Q</span>
+        Quick Stocktaker
+      </a>
+      <div class="nav-links">
+        <a href="#setup">Setup</a>
+        <a href="#stocktake">Stocktake</a>
+        <a href="#navigation">Navigation</a>
+        <a href="#troubleshooting">Troubleshooting</a>
+      </div>
+      <a class="nav-cta" href="./index.html">Back to landing</a>
+    </nav>
+
+    <main class="manual-page">
+      <header class="manual-hero section reveal">
+        <p class="eyebrow">Document</p>
+        <h1>Mobile User Manual</h1>
+        <p>
+          Quick Stocktaker helps users complete inventory counts and stocktake tasks faster and more accurately. The app lets workers scan barcodes, record quantities, review mistakes, and send completed stocktake files from a mobile device.
+        </p>
+      </header>
+
+      <section class="manual-layout section">
+        <aside class="manual-toc reveal" aria-label="Manual contents">
+          <strong>Contents</strong>
+          <a href="#introduction">1. Introduction</a>
+          <a href="#setup">2. First-Time Setup</a>
+          <a href="#stocktake">3. Complete a Stocktake</a>
+          <a href="#navigation">4. App Navigation</a>
+          <a href="#troubleshooting">6. Troubleshooting</a>
+        </aside>
+
+        <article class="manual-content">
+          <section id="introduction" class="manual-card reveal">
+            <h2>1. Introduction</h2>
+            <p>
+              Quick Stocktaker helps users complete inventory counts and stocktake tasks faster and more accurately. The app lets workers scan barcodes, record quantities, review mistakes, and send completed stocktake files from a mobile device.
+            </p>
+          </section>
+
+          <section id="setup" class="manual-card reveal">
+            <h2>2. First-Time Setup</h2>
+            <ol>
+              <li>Open <strong>Quick Stocktaker</strong> on your phone.</li>
+              <li>On the <strong>Home</strong> screen, check the current <strong>Scanner ID</strong>, <strong>Stocktake No</strong>, <strong>Site/Warehouse</strong>, and <strong>Stocktake Date</strong>.</li>
+              <li>Tap the <strong>menu</strong> icon.</li>
+              <li>Tap <strong>Settings</strong>.</li>
+              <li>Under <strong>Device</strong>, enter your <strong>Device ID</strong>.</li>
+              <li>If you want the camera to keep scanning one barcode after another, turn on <strong>Continuous Scan Mode</strong>.</li>
+              <li>Go back to <strong>Home</strong> or <strong>Dashboard</strong>.</li>
+              <li>When you first tap <strong>Scan</strong>, allow <strong>Camera Access</strong>.</li>
+              <li>If camera access is denied, open your phone app settings, find <strong>Quick Stocktaker</strong>, and turn <strong>Camera</strong> permission on.</li>
+              <li>A separate first-time setup wizard was not found in the current app.</li>
+            </ol>
+          </section>
+
+          <section id="stocktake" class="manual-card reveal">
+            <h2>3. Core Workflow: How to Complete a Stocktake</h2>
+            <ol class="manual-steps">
+              <li>Open the app and go to <strong>Dashboard</strong>.</li>
+              <li>Tap <strong>New Stocktake</strong>.</li>
+              <li>Read the warning: <strong>The current stocktake data will be cleared.</strong></li>
+              <li>Turn on the <strong>Do you want to continue?</strong> switch.</li>
+              <li>When the <strong>Warning</strong> message appears, confirm <strong>Confirm to clear data</strong>.</li>
+              <li>If you see <strong>Invalid Device ID. Please setup a Device ID before start a new stocktake.</strong>, go to <strong>Settings</strong>, enter a <strong>Device ID</strong>, then return to <strong>New Stocktake</strong>.</li>
+              <li>Enter the <strong>New Stocktake Number</strong>.</li>
+              <li>Enter the <strong>Site/Warehouse</strong>.</li>
+              <li>Choose the <strong>Stocktake Date</strong>.</li>
+              <li>Tap <strong>Save</strong>.</li>
+              <li>You will return to the previous screen. The <strong>Home</strong> screen should now show the updated <strong>Stocktake No</strong>, <strong>Site/Warehouse</strong>, and <strong>Stocktake Date</strong>.</li>
+              <li>Go to <strong>Dashboard</strong>.</li>
+              <li>Tap <strong>Enter Data</strong>.</li>
+              <li>In <strong>Bay/Location/BIN or Ref No</strong>, scan or enter the bay, location, bin, or reference number.</li>
+              <li>To scan the bay/location, tap <strong>Scan</strong> beside the bay/location field.</li>
+              <li>Hold the camera over the barcode when the scanner screen says <strong>Hold camera up to barcode to scan</strong>.</li>
+              <li>Wait for the barcode to scan automatically.</li>
+              <li>If scanning is unavailable, type the bay/location manually into <strong>Bay/Location/BIN or Ref No</strong>.</li>
+              <li>In <strong>Barcode / SKU / Item No</strong>, scan or enter the item barcode.</li>
+              <li>To scan the item barcode, tap <strong>Scan</strong> beside the barcode field.</li>
+              <li>If scanning is unavailable, type the barcode manually into <strong>Barcode / SKU / Item No</strong>.</li>
+              <li>Check <strong>QTY</strong>.</li>
+              <li>Use the <strong>minus</strong> and <strong>plus</strong> controls to adjust the quantity.</li>
+              <li>If <strong>Auto Save</strong> is on, each scanned barcode is saved automatically with quantity <strong>1</strong>.</li>
+              <li>If <strong>Auto Save</strong> is off, set the quantity, then tap <strong>Add Item</strong>.</li>
+              <li>After an item is saved, the barcode field clears.</li>
+              <li>Check the top bar for <strong>Current Bay Total QTY</strong>. This number should increase after saved counts.</li>
+              <li>Check <strong>Last 5 items</strong> to confirm the latest scans are listed.</li>
+              <li>If you entered the wrong barcode before saving, tap <strong>Clear</strong> beside the barcode field.</li>
+              <li>If you entered the wrong bay/location before scanning items, tap <strong>Clear</strong> beside the bay/location field.</li>
+              <li>To review counted bays, go back to <strong>Dashboard</strong>.</li>
+              <li>Tap <strong>Bay/Location List</strong>.</li>
+              <li>Check each <strong>Bay/Location</strong> and <strong>Total Units</strong>.</li>
+              <li>Use the search field <strong>Find Bay/Location...</strong> to find a bay quickly.</li>
+              <li>To fix a bay/location name, swipe the bay row and tap <strong>Update</strong>.</li>
+              <li>Enter the new <strong>Bay/Location/BIN or Ref No</strong>, then tap <strong>Update</strong>.</li>
+              <li>To review items inside a bay, swipe the bay row and tap <strong>Details</strong>.</li>
+              <li>On the details screen, check <strong>Bay/Loc</strong>, <strong>Item</strong>, and <strong>Qty</strong>.</li>
+              <li>To fix an item, swipe the item row and tap <strong>Details</strong>.</li>
+              <li>Edit <strong>Barcode</strong> or <strong>Qty</strong>.</li>
+              <li>Tap <strong>Save</strong>.</li>
+              <li>To delete a wrong item, swipe the item row and tap <strong>Delete</strong>.</li>
+              <li>Confirm <strong>Are you sure want to delete this item?</strong> by tapping <strong>YES</strong>.</li>
+              <li>To delete all data in a bay, go to <strong>Bay/Location List</strong>, swipe the bay row, and tap <strong>Delete</strong>.</li>
+              <li>Confirm only if you are sure. The app warns that this action cannot be undone.</li>
+              <li>To review the whole stocktake, go back to <strong>Dashboard</strong>.</li>
+              <li>Tap <strong>Review/Correction</strong>.</li>
+              <li>Check <strong>Stocktake Details</strong>, including <strong>Stocktake Number</strong>, <strong>Site/Warehouse</strong>, <strong>Stocktake Date</strong>, <strong>Number of Bays</strong>, and <strong>Total QTY</strong>.</li>
+              <li>To change the date, tap <strong>Change Stocktake Date</strong> and choose the correct date.</li>
+              <li>A successful date change shows <strong>stocktake date changed to</strong> the new date.</li>
+              <li>To change the stocktake number, tap <strong>Change Stocktake Number</strong>, enter the new number, then tap <strong>OK</strong>.</li>
+              <li>A successful number change shows <strong>Stocktake number changed to</strong> the new number.</li>
+              <li>To change the site or warehouse, tap <strong>Change Site/Warehouse</strong>, enter the new value, then tap <strong>OK</strong>.</li>
+              <li>A successful site change shows <strong>Site/Warehouse changed to</strong> the new value.</li>
+              <li>Progress is saved as items are added. The strongest save cue is that the item appears in <strong>Last 5 items</strong> and <strong>Current Bay Total QTY</strong> increases.</li>
+              <li>A separate <strong>Submit Final Stocktake</strong> button was not found in the current app.</li>
+              <li>To send the final stocktake count, go to <strong>Dashboard</strong>.</li>
+              <li>Tap <strong>Send Data</strong>.</li>
+              <li>Choose <strong>CSV File</strong>, <strong>Email</strong>, or <strong>FTP/SFTP</strong>.</li>
+              <li>For <strong>CSV File</strong>, choose <strong>Share</strong> to send the file through your phone share options, or choose <strong>Save</strong> to save it to the phone.</li>
+              <li>A successful CSV save shows <strong>File saved to:</strong> followed by the file location.</li>
+              <li>For <strong>Email</strong>, enter the email address and tap <strong>OK</strong>.</li>
+              <li>While sending, the app shows <strong>Emailing data</strong>.</li>
+              <li>A successful email shows <strong>Data send successfully.</strong></li>
+              <li>For <strong>FTP/SFTP</strong>, make sure <strong>FTP/SFTP Config</strong> is completed first.</li>
+              <li>While uploading, the app shows <strong>Uploading data</strong>.</li>
+              <li>A successful FTP/SFTP upload shows <strong>Data uploaded successfully:</strong> followed by the file name.</li>
+            </ol>
+          </section>
+
+          <section id="navigation" class="manual-card reveal">
+            <h2>4. App Navigation</h2>
+            <div class="manual-grid">
+              <div><h3>Home</h3><p>Shows <strong>Scanner ID</strong>, <strong>Stocktake No</strong>, <strong>Site/Warehouse</strong>, and <strong>Stocktake Date</strong>. Tap <strong>Get Started</strong> to open the main dashboard.</p></div>
+              <div><h3>Dashboard</h3><p>Main work screen. Shows large action tiles.</p></div>
+              <div><h3>New Stocktake</h3><p>Starts a new stocktake. Clears current stocktake data after confirmation. Lets you enter <strong>New Stocktake Number</strong>, <strong>Site/Warehouse</strong>, and <strong>Stocktake Date</strong>.</p></div>
+              <div><h3>Enter Data</h3><p>Main counting screen. Scan or type location and item details, enter <strong>QTY</strong>, and check <strong>Current Bay Total QTY</strong> plus <strong>Last 5 items</strong>.</p></div>
+              <div><h3>Bay/Location List</h3><p>Shows each bay/location and its <strong>Total Units</strong>. Search by bay/location. Swipe a row to <strong>Delete</strong>, <strong>Update</strong>, or open <strong>Details</strong>.</p></div>
+              <div><h3>Bay Details</h3><p>Shows counted items inside one bay/location. Swipe an item to <strong>Delete</strong> or open <strong>Details</strong> for editing.</p></div>
+              <div><h3>Review/Correction</h3><p>Shows stocktake summary and lets you change <strong>Stocktake Date</strong>, <strong>Stocktake Number</strong>, and <strong>Site/Warehouse</strong>.</p></div>
+              <div><h3>Send Data</h3><p>Opens sending options. Available options found in the current app: <strong>CSV File</strong>, <strong>Email</strong>, and <strong>FTP/SFTP</strong>.</p></div>
+              <div><h3>Settings</h3><p>Enter <strong>Device ID</strong>. Turn <strong>Continuous Scan Mode</strong> on or off.</p></div>
+              <div><h3>Email Config</h3><p>Set <strong>Host Type</strong>, <strong>Host</strong>, <strong>Port</strong>, <strong>Username</strong>, <strong>Password</strong>, and <strong>From</strong> if needed. Tap <strong>Send Test Email</strong> to check the setup.</p></div>
+              <div><h3>FTP/SFTP Config</h3><p>Turn <strong>Use SFTP</strong> on or off. Set <strong>Host</strong>, <strong>Port</strong>, <strong>Folder</strong>, <strong>Username</strong>, and <strong>Password</strong>. Tap <strong>Test Connection</strong> to check the setup.</p></div>
+              <div><h3>About</h3><p>Shows app information and feedback options.</p></div>
+            </div>
+          </section>
+
+          <section id="troubleshooting" class="manual-card reveal">
+            <h2>6. Troubleshooting for Count Errors</h2>
+            <div class="manual-table-wrap">
+              <table class="manual-table">
+                <thead>
+                  <tr>
+                    <th>Message or Problem</th>
+                    <th>What It Means</th>
+                    <th>What To Do</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td><strong>Please specify a stocktake number before scanning any item</strong></td><td>A stocktake has not been started yet.</td><td>Go to <strong>Dashboard</strong>, tap <strong>New Stocktake</strong>, enter the stocktake details, and tap <strong>Save</strong>.</td></tr>
+                  <tr><td><strong>Invalid Device ID. Please setup a Device ID before start a new stocktake.</strong></td><td>The phone does not have a scanner/device ID yet.</td><td>Open <strong>Settings</strong>, enter <strong>Device ID</strong>, then start the stocktake again.</td></tr>
+                  <tr><td><strong>Stocktake number must not be empty.</strong></td><td>The stocktake number field is blank.</td><td>Enter the stocktake number and tap <strong>Save</strong> again.</td></tr>
+                  <tr><td><strong>Please specify a stocktake site</strong></td><td>The site or warehouse field is blank.</td><td>Enter <strong>Site/Warehouse</strong> and tap <strong>Save</strong> again.</td></tr>
+                  <tr><td><strong>Please enter the Bay/Location/BIN or Ref No.</strong></td><td>You tried to save an item without a bay/location.</td><td>Enter or scan the bay/location first.</td></tr>
+                  <tr><td><strong>Barcode not recognized</strong></td><td>The camera did not capture a barcode. This exact message was not found in the current app.</td><td>Hold the camera steady, improve lighting, try again, or type the barcode manually.</td></tr>
+                  <tr><td><strong>Camera permission denied</strong></td><td>The phone has blocked camera scanning. A custom in-app denied message was not found in the current app.</td><td>Open phone settings, enable <strong>Camera</strong> for <strong>Quick Stocktaker</strong>, then try <strong>Scan</strong> again.</td></tr>
+                  <tr><td><strong>[barcode] failed to save. Please try again.</strong></td><td>The item count was not saved.</td><td>Try <strong>Add Item</strong> again. If it keeps happening, check the barcode, quantity, and restart the app.</td></tr>
+                  <tr><td><strong>There is no stocktake data.</strong></td><td>No items have been counted yet.</td><td>Go to <strong>Enter Data</strong> and add stocktake items.</td></tr>
+                  <tr><td><strong>No data is exported. Please try again.</strong></td><td>The app could not create an export file.</td><td>Make sure stocktake items have been added, then try <strong>Send Data</strong> again.</td></tr>
+                  <tr><td><strong>Data export fail. Please try again.</strong></td><td>The export did not complete.</td><td>Try again. If needed, close and reopen the app.</td></tr>
+                  <tr><td><strong>Email address is required</strong></td><td>The email field was left blank.</td><td>Enter an email address.</td></tr>
+                  <tr><td><strong>A valid email address is required.</strong></td><td>The email address format is wrong.</td><td>Check the spelling and enter a valid email address.</td></tr>
+                  <tr><td><strong>SMTP port is not configured or not valid.</strong></td><td>Email settings are incomplete or the port is wrong.</td><td>Open <strong>Email Config</strong> and check <strong>Port</strong>.</td></tr>
+                  <tr><td><strong>Data send fail.</strong></td><td>The email did not send.</td><td>Check <strong>Email Config</strong>, internet connection, and the email address.</td></tr>
+                  <tr><td><strong>No internet connection</strong></td><td>Internet is needed for email and FTP/SFTP. This exact message was not found in the current app.</td><td>Connect to Wi-Fi or mobile data, then send again.</td></tr>
+                  <tr><td><strong>FTP/SFTP host is not configured or not valid.</strong></td><td>FTP/SFTP host is missing or incorrect.</td><td>Open <strong>FTP/SFTP Config</strong> and enter the correct <strong>Host</strong>.</td></tr>
+                  <tr><td><strong>FTP/SFTP port is not configured or not valid.</strong></td><td>FTP/SFTP port is missing or incorrect.</td><td>Open <strong>FTP/SFTP Config</strong> and enter the correct <strong>Port</strong>.</td></tr>
+                  <tr><td><strong>FTP/SFTP username is not configured.</strong></td><td>FTP/SFTP username is missing.</td><td>Open <strong>FTP/SFTP Config</strong> and enter <strong>Username</strong>.</td></tr>
+                  <tr><td><strong>FTP/SFTP password is not configured.</strong></td><td>FTP/SFTP password is missing.</td><td>Open <strong>FTP/SFTP Config</strong> and enter <strong>Password</strong>.</td></tr>
+                  <tr><td><strong>Connection failed.</strong></td><td>FTP/SFTP connection test failed.</td><td>Check internet, host, port, username, password, and folder.</td></tr>
+                  <tr><td><strong>Data upload failed.</strong></td><td>FTP/SFTP upload did not finish.</td><td>Check connection and <strong>FTP/SFTP Config</strong>, then upload again.</td></tr>
+                  <tr><td><strong>Connection test cancelled.</strong></td><td>The FTP/SFTP test was stopped.</td><td>Run <strong>Test Connection</strong> again if needed.</td></tr>
+                  <tr><td><strong>Data upload cancelled.</strong></td><td>The upload was stopped.</td><td>Start the upload again when ready.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </article>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
