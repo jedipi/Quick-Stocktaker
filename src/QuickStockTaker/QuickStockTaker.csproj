@@ -30,26 +30,26 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-ios|AnyCPU'">
-	  <ApplicationDisplayVersion>16.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>16</ApplicationVersion>
+	  <ApplicationDisplayVersion>17.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>17</ApplicationVersion>
 	  <ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-android|AnyCPU'">
-	  <ApplicationDisplayVersion>16.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>16</ApplicationVersion>
+	  <ApplicationDisplayVersion>17.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>17</ApplicationVersion>
 	  <ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-ios|AnyCPU'">
-	  <ApplicationDisplayVersion>16.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>16</ApplicationVersion>
+	  <ApplicationDisplayVersion>17.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>17</ApplicationVersion>
 	  <ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-android|AnyCPU'">
-	  <ApplicationDisplayVersion>16.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>16</ApplicationVersion>
+	  <ApplicationDisplayVersion>17.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>17</ApplicationVersion>
 	  <ApplicationId>com.thyconsultants.quickstocktakers</ApplicationId>
 	  <AndroidLinkTool>r8</AndroidLinkTool>
 	</PropertyGroup>
