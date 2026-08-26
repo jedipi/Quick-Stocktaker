@@ -24,6 +24,7 @@ namespace QuickStockTaker.Core.ViewModels
         private readonly IAppPreferences _preferences;
         private readonly ISecureStorageService _secureStorage;
         private readonly IPageDialogService _pageDialogService;
+        private readonly StocktakeEmailConfigurationGate _emailConfigurationGate;
         #endregion
 
         #region Properties
@@ -62,6 +63,7 @@ namespace QuickStockTaker.Core.ViewModels
             IAppPreferences preferences,
             ISecureStorageService secureStorage,
             IPageDialogService pageDialogService,
+            StocktakeEmailConfigurationGate emailConfigurationGate,
             ILogger<EmailSettingViewModel> logger) : base(dialogs, logger)
         {
             _logger.LogInformation("test");
@@ -71,6 +73,7 @@ namespace QuickStockTaker.Core.ViewModels
             _preferences = preferences;
             _secureStorage = secureStorage;
             _pageDialogService = pageDialogService;
+            _emailConfigurationGate = emailConfigurationGate;
         }
 
         #region RelayCommands
@@ -156,8 +159,7 @@ namespace QuickStockTaker.Core.ViewModels
             if (string.IsNullOrEmpty(result))
                 return;
 
-            SmtpFrom = result.Trim();
-            await _secureStorage.SetAsync(Constants.SmtpFrom, SmtpFrom);
+            await SaveSmtpSettingAsync(Constants.SmtpFrom, result.Trim(), value => SmtpFrom = value);
         }
 
         [RelayCommand]
@@ -168,8 +170,7 @@ namespace QuickStockTaker.Core.ViewModels
             if (string.IsNullOrEmpty(result))
                 return;
 
-            SmtpPassword = result.Trim();
-            await _secureStorage.SetAsync(Constants.SmtpPassword, SmtpPassword);
+            await SaveSmtpSettingAsync(Constants.SmtpPassword, result.Trim(), value => SmtpPassword = value);
         }
 
         [RelayCommand]
@@ -180,8 +181,7 @@ namespace QuickStockTaker.Core.ViewModels
             if (string.IsNullOrEmpty(result))
                 return;
 
-            SmtpUsername = result.Trim();
-            await _secureStorage.SetAsync(Constants.SmtpUsername, SmtpUsername);
+            await SaveSmtpSettingAsync(Constants.SmtpUsername, result.Trim(), value => SmtpUsername = value);
         }
 
         [RelayCommand]
@@ -193,8 +193,7 @@ namespace QuickStockTaker.Core.ViewModels
             if (string.IsNullOrEmpty(result))
                 return;
 
-            SmtpPort = result.Trim();
-            await _secureStorage.SetAsync(Constants.SmtpPort, SmtpPort);
+            await SaveSmtpSettingAsync(Constants.SmtpPort, result.Trim(), value => SmtpPort = value);
         }
 
         [RelayCommand]
@@ -206,8 +205,7 @@ namespace QuickStockTaker.Core.ViewModels
             if (string.IsNullOrEmpty(result))
                 return;
 
-            SmtpHost = result.Trim();
-            await _secureStorage.SetAsync(Constants.SmtpHost, SmtpHost);
+            await SaveSmtpSettingAsync(Constants.SmtpHost, result.Trim(), value => SmtpHost = value);
         }
 
         [RelayCommand]
@@ -223,22 +221,34 @@ namespace QuickStockTaker.Core.ViewModels
             {
                 cfg.Add(provider, () =>
                 {
-                    SmtpProvider = provider;
-                    _preferences.Set(Constants.SmtpProvider, SmtpProvider);
-                    if (SmtpProvider == "Gmail")
-                    {
-                        SmtpHost = "smtp.gmail.com";
-                        SmtpPort = "587";
-                        _ = _secureStorage.SetAsync(Constants.SmtpHost, SmtpHost);
-                        _ = _secureStorage.SetAsync(Constants.SmtpPort, SmtpPort);
-                    }
-
-
+                    _ = SaveSmtpProviderAsync(provider);
                 });
             }
 
             _dialogs.ActionSheet(cfg);
         }
+
+        private Task SaveSmtpSettingAsync(string key, string value, Action<string> applyValue) =>
+            _emailConfigurationGate.RunAsync(async () =>
+            {
+                applyValue(value);
+                await _secureStorage.SetAsync(key, value);
+            });
+
+        private Task SaveSmtpProviderAsync(string provider) =>
+            _emailConfigurationGate.RunAsync(async () =>
+            {
+                SmtpProvider = provider;
+                _preferences.Set(Constants.SmtpProvider, SmtpProvider);
+                if (SmtpProvider == "Gmail")
+                {
+                    SmtpHost = "smtp.gmail.com";
+                    SmtpPort = "587";
+                    await Task.WhenAll(
+                        _secureStorage.SetAsync(Constants.SmtpHost, SmtpHost),
+                        _secureStorage.SetAsync(Constants.SmtpPort, SmtpPort));
+                }
+            });
 
         #endregion
 

@@ -346,6 +346,80 @@ public sealed class StocktakeEmailDeliveryWorkflowTests
     }
 
     [Fact]
+    public async Task DeliverByEmailAsync_WhenSettingsWriteRacesSnapshot_AppliesWriteToNextOperation()
+    {
+        var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));
+        var exporter = Substitute.For<ICsvExportService>();
+        exporter.CreateExportAsync(TestContext.Current.CancellationToken).ReturnsForAnyArgs(export);
+        var preferences = CreatePreferences();
+        var senderRead = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var secureStorage = Substitute.For<ISecureStorageService>();
+        secureStorage.GetAsync(Constants.SmtpFrom).Returns(senderRead.Task);
+        secureStorage.GetAsync(Constants.SmtpHost).Returns("old.smtp.example.com");
+        secureStorage.GetAsync(Constants.SmtpPort).Returns("587");
+        secureStorage.GetAsync(Constants.SmtpUsername).Returns("old-user");
+        secureStorage.GetAsync(Constants.SmtpPassword).Returns("old-password");
+        var deliveries = new List<StocktakeEmailDelivery>();
+        var adapter = Substitute.For<IStocktakeEmailAdapter>();
+        adapter.SendAsync(Arg.Any<StocktakeEmailDelivery>(), Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                deliveries.Add(call.Arg<StocktakeEmailDelivery>());
+                return Task.CompletedTask;
+            });
+        var configurationGate = new StocktakeEmailConfigurationGate();
+        var workflow = new StocktakeDeliveryWorkflow(
+            exporter,
+            NullLogger<StocktakeDeliveryWorkflow>.Instance,
+            new StocktakeDeliveryOperationGate(),
+            preferences,
+            secureStorage,
+            new StocktakeRemoteConfigurationValidator(),
+            [],
+            new StocktakeEmailConfigurationValidator(),
+            adapter,
+            configurationGate);
+        var firstOperation = workflow.DeliverByEmailAsync(
+            "recipient@example.com",
+            TestContext.Current.CancellationToken);
+
+        var settingsWrite = configurationGate.RunAsync(() =>
+        {
+            preferences.Set(Constants.SmtpProvider, "Gmail");
+            secureStorage.GetAsync(Constants.SmtpFrom).Returns("ignored@example.com");
+            secureStorage.GetAsync(Constants.SmtpHost).Returns("new.smtp.example.com");
+            secureStorage.GetAsync(Constants.SmtpPort).Returns("465");
+            secureStorage.GetAsync(Constants.SmtpUsername).Returns("new-user");
+            secureStorage.GetAsync(Constants.SmtpPassword).Returns("new-password");
+            return Task.CompletedTask;
+        });
+
+        settingsWrite.IsCompleted.Should().BeFalse();
+        senderRead.TrySetResult("old-sender@example.com");
+        await firstOperation;
+        await settingsWrite;
+        await workflow.DeliverByEmailAsync(
+            "recipient@example.com",
+            TestContext.Current.CancellationToken);
+
+        deliveries.Should().HaveCount(2);
+        deliveries[0].Sender.Should().Be("old-sender@example.com");
+        deliveries[0].Configuration.Should().Be(new StocktakeEmailConfiguration(
+            "Other",
+            "old.smtp.example.com",
+            587,
+            "old-user",
+            "old-password"));
+        deliveries[1].Sender.Should().Be("recipient@example.com");
+        deliveries[1].Configuration.Should().Be(new StocktakeEmailConfiguration(
+            "Gmail",
+            "new.smtp.example.com",
+            465,
+            "new-user",
+            "new-password"));
+    }
+
+    [Fact]
     public async Task DeliverByEmailAsync_WhenAnotherDeliveryIsSending_ReturnsAlreadyInProgressImmediately()
     {
         var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));

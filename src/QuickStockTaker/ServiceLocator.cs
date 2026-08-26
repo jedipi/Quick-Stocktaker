@@ -67,6 +67,8 @@ namespace QuickStockTaker
 
             autofacBuilder.RegisterType<StocktakeDeliveryOperationGate>()
                 .SingleInstance();
+            autofacBuilder.RegisterType<StocktakeEmailConfigurationGate>()
+                .SingleInstance();
             autofacBuilder.RegisterAssemblyTypes(typeof(Constants).Assembly)
                 .Where(type => type.Name.EndsWith("StocktakeRemoteTransferAdapter"))
                 .AsImplementedInterfaces();
@@ -76,7 +78,7 @@ namespace QuickStockTaker
             autofacBuilder.RegisterType<StocktakeDeliveryWorkflow>()
                 .FindConstructorsWith(type => type
                     .GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                    .Where(constructor => constructor.GetParameters().Length == 9)
+                    .Where(constructor => constructor.GetParameters().Length == 10)
                     .ToArray())
                 .AsImplementedInterfaces();
             autofacBuilder.RegisterType<DataExportFactory>();

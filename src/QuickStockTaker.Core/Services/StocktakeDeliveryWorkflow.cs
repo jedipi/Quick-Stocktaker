@@ -16,6 +16,7 @@ namespace QuickStockTaker.Core.Services
         private readonly IReadOnlyCollection<IStocktakeRemoteTransferAdapter> _remoteTransferAdapters;
         private readonly StocktakeEmailConfigurationValidator _emailConfigurationValidator;
         private readonly IStocktakeEmailAdapter _emailAdapter;
+        private readonly StocktakeEmailConfigurationGate _emailConfigurationGate;
 
         public event Action EmailDeliveryStarting;
 
@@ -71,10 +72,36 @@ namespace QuickStockTaker.Core.Services
                 preferences,
                 secureStorage,
                 remoteConfigurationValidator,
+                remoteTransferAdapters,
+                emailConfigurationValidator,
+                emailAdapter,
+                new StocktakeEmailConfigurationGate())
+        {
+        }
+
+        internal StocktakeDeliveryWorkflow(
+            ICsvExportService csvExport,
+            ILogger<StocktakeDeliveryWorkflow> logger,
+            StocktakeDeliveryOperationGate operationGate,
+            IAppPreferences preferences,
+            ISecureStorageService secureStorage,
+            StocktakeRemoteConfigurationValidator remoteConfigurationValidator,
+            IEnumerable<IStocktakeRemoteTransferAdapter> remoteTransferAdapters,
+            StocktakeEmailConfigurationValidator emailConfigurationValidator,
+            IStocktakeEmailAdapter emailAdapter,
+            StocktakeEmailConfigurationGate emailConfigurationGate)
+            : this(
+                csvExport,
+                logger,
+                operationGate,
+                preferences,
+                secureStorage,
+                remoteConfigurationValidator,
                 remoteTransferAdapters)
         {
             _emailConfigurationValidator = emailConfigurationValidator;
             _emailAdapter = emailAdapter;
+            _emailConfigurationGate = emailConfigurationGate;
         }
 
         public async Task<StocktakeDeliveryResult> CreateExportAsync(CancellationToken cancellationToken = default)
@@ -224,37 +251,43 @@ namespace QuickStockTaker.Core.Services
         private async Task<(StocktakeEmailConfiguration Configuration, string Sender, string ErrorMessage)> CaptureEmailConfigurationAsync(
             string recipient)
         {
-            var provider = _preferences.GetString(Constants.SmtpProvider, "Other");
-            var configuredSenderTask = _secureStorage.GetAsync(Constants.SmtpFrom);
-            var hostTask = _secureStorage.GetAsync(Constants.SmtpHost);
-            var portTask = _secureStorage.GetAsync(Constants.SmtpPort);
-            var usernameTask = _secureStorage.GetAsync(Constants.SmtpUsername);
-            var passwordTask = _secureStorage.GetAsync(Constants.SmtpPassword);
-            await Task.WhenAll(
-                configuredSenderTask,
-                hostTask,
-                portTask,
-                usernameTask,
-                passwordTask);
+            return await _emailConfigurationGate.RunAsync<(
+                StocktakeEmailConfiguration Configuration,
+                string Sender,
+                string ErrorMessage)>(async () =>
+            {
+                var provider = _preferences.GetString(Constants.SmtpProvider, "Other");
+                var configuredSenderTask = _secureStorage.GetAsync(Constants.SmtpFrom);
+                var hostTask = _secureStorage.GetAsync(Constants.SmtpHost);
+                var portTask = _secureStorage.GetAsync(Constants.SmtpPort);
+                var usernameTask = _secureStorage.GetAsync(Constants.SmtpUsername);
+                var passwordTask = _secureStorage.GetAsync(Constants.SmtpPassword);
+                await Task.WhenAll(
+                    configuredSenderTask,
+                    hostTask,
+                    portTask,
+                    usernameTask,
+                    passwordTask);
 
-            var configuredSender = await configuredSenderTask;
-            var input = new StocktakeEmailConfigurationInput(
-                provider,
-                provider != "Other" ? recipient : configuredSender ?? string.Empty,
-                await hostTask ?? string.Empty,
-                await portTask ?? string.Empty,
-                await usernameTask ?? string.Empty,
-                await passwordTask ?? string.Empty);
-            var validation = _emailConfigurationValidator.Validate(input);
-            if (!validation.IsValid)
-                return (null, null, validation.Errors[0].ErrorMessage);
+                var configuredSender = await configuredSenderTask;
+                var input = new StocktakeEmailConfigurationInput(
+                    provider,
+                    provider != "Other" ? recipient : configuredSender ?? string.Empty,
+                    await hostTask ?? string.Empty,
+                    await portTask ?? string.Empty,
+                    await usernameTask ?? string.Empty,
+                    await passwordTask ?? string.Empty);
+                var validation = _emailConfigurationValidator.Validate(input);
+                if (!validation.IsValid)
+                    return (null, null, validation.Errors[0].ErrorMessage);
 
-            return (new StocktakeEmailConfiguration(
-                input.Provider,
-                input.Host.Trim(),
-                int.Parse(input.Port),
-                input.Username,
-                input.Password), input.Sender, null);
+                return (new StocktakeEmailConfiguration(
+                    input.Provider,
+                    input.Host.Trim(),
+                    int.Parse(input.Port),
+                    input.Username,
+                    input.Password), input.Sender, null);
+            });
         }
     }
 }
