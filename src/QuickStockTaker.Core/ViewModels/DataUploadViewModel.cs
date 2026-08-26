@@ -14,6 +14,7 @@ namespace QuickStockTaker.Core.ViewModels
         #region Fields
 
         private FileInfo _exportedFile;
+        private readonly IStocktakeDeliveryWorkflow _deliveryWorkflow;
         private readonly IEmailUploadService _emailUploader;
         private readonly IFtpUplodService _ftpUploader;
         private readonly EmailValidator _emailValidator;
@@ -26,6 +27,7 @@ namespace QuickStockTaker.Core.ViewModels
         #endregion
         public DataUploadViewModel(
             IUserDialogs dialogs,
+            IStocktakeDeliveryWorkflow deliveryWorkflow,
             IEmailUploadService emailUploader,
             IFtpUplodService ftpUploader,
             EmailValidator emailValidator,
@@ -37,6 +39,7 @@ namespace QuickStockTaker.Core.ViewModels
             IPageDialogService pageDialogService,
             ILogger<DataUploadViewModel> logger) : base(dialogs, logger)
         {
+            _deliveryWorkflow = deliveryWorkflow;
             _emailUploader = emailUploader;
             _ftpUploader = ftpUploader;
             _emailValidator = emailValidator;
@@ -53,20 +56,22 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private async Task OnCsv()
         {
-            await ExportData();
-            if (_exportedFile == null)
+            var result = await _deliveryWorkflow.CreateExportAsync();
+            if (result.Status is not StocktakeDeliveryStatus.Succeeded || result.Export is null)
             {
                 await _dialogs.AlertAsync("No data is exported. Please try again.", "Error", "OK", "ic_error.png");
                 return;
             }
 
+            var exportedFile = result.Export.File;
+
             try
             {
-                string filePath = _fileSystem.GetDownloadFilePath(_exportedFile.Name);
+                string filePath = _fileSystem.GetDownloadFilePath(exportedFile.Name);
 
                 var config = new ActionSheetConfig()
                 {
-                    Message = "Data exported: " + _exportedFile.Name,
+                    Message = "Data exported: " + exportedFile.Name,
                     UseBottomSheet = true,
                     Cancel = new ActionSheetOption("Cancel", () =>
                     {
@@ -79,12 +84,12 @@ namespace QuickStockTaker.Core.ViewModels
                         new ActionSheetOption("Share", async () => await Share.Default.RequestAsync(new ShareFileRequest
                         {
                             Title = "Sharing file",
-                            File = new ShareFile(_exportedFile.FullName)
+                            File = new ShareFile(exportedFile.FullName)
                         }), "ic_ios_share.png"),
 
                         new ActionSheetOption("Save", async () =>
                         {
-                            File.Copy(_exportedFile.FullName, filePath, true);
+                            File.Copy(exportedFile.FullName, filePath, true);
                             await _dialogs.AlertAsync("File saved to: " + filePath, "Success", "OK", "ic_greentick.png");
                         }, "ic_download.png")
                     }

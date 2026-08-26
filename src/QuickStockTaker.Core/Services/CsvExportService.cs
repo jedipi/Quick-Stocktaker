@@ -44,35 +44,58 @@ namespace QuickStockTaker.Core.Services
 
         public async Task Export()
         {
-            // get all stocktake data
-            var data = await _stocktakeItemRepo.GetAllAsync();
+            ExportedFile = null;
 
-            // There is no stocktake data to export
-            if (data.Count == 0)
+            try
+            {
+                var export = await CreateExportAsync();
+                ExportedFile = export?.File;
+            }
+            catch (Exception)
+            {
                 return;
+            }
+        }
+
+        public async Task<StocktakeExport> CreateExportAsync(CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
 
             var site = _preferences.GetString(Constants.Site, "");
             var deviceId = _preferences.GetString(Constants.DeviceId, "");
 
+            // get all stocktake data
+            var data = await _stocktakeItemRepo.GetAllAsync().ConfigureAwait(false);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            // There is no stocktake data to export
+            if (data.Count == 0)
+                return null;
+
             var dir = _fileSystem.AppDataDirectory;
             var filePath = Path.Combine(dir, $"Stocktake-{site}-{deviceId}-{DateTime.Now.ToString("yyMMdd-HHmmss")}.csv");
+            var tempFilePath = $"{filePath}.{Guid.NewGuid():N}.tmp";
 
-            // write data into a csv file using csvhelper
-            await using (var textWriter = new StreamWriter(filePath, false))
+            try
             {
-                try
+                // write data into a csv file using csvhelper
+                await using (var textWriter = new StreamWriter(tempFilePath, false))
                 {
-                    var csv = new CsvWriter(textWriter, CultureInfo.CurrentCulture);
-                    csv.WriteRecords(data);
+                    using var csv = new CsvWriter(textWriter, CultureInfo.CurrentCulture);
+                    await csv.WriteRecordsAsync(data, cancellationToken).ConfigureAwait(false);
                 }
-                catch (Exception)
-                {
-                    //_logger.Error(e, "csv export fail.");
-                    return;
-                }
-            }
 
-            ExportedFile = new FileInfo(filePath);
+                cancellationToken.ThrowIfCancellationRequested();
+                File.Move(tempFilePath, filePath, true);
+
+                return new StocktakeExport(new FileInfo(filePath));
+            }
+            finally
+            {
+                if (File.Exists(tempFilePath))
+                    File.Delete(tempFilePath);
+            }
         }
 
 

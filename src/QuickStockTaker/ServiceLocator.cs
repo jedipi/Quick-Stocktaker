@@ -65,6 +65,10 @@ namespace QuickStockTaker
                .As(typeof(ISQLiteRepository<>))
                .InstancePerLifetimeScope();
 
+            autofacBuilder.RegisterType<StocktakeDeliveryOperationGate>()
+                .SingleInstance();
+            autofacBuilder.RegisterType<StocktakeDeliveryWorkflow>()
+                .AsImplementedInterfaces();
             autofacBuilder.RegisterType<DataExportFactory>();
             autofacBuilder.RegisterType<EmailService>();
         }
