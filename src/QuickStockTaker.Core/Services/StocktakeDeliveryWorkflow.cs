@@ -16,7 +16,7 @@ namespace QuickStockTaker.Core.Services
         private readonly IReadOnlyCollection<IStocktakeRemoteTransferAdapter> _remoteTransferAdapters;
         private readonly StocktakeEmailConfigurationValidator _emailConfigurationValidator;
         private readonly IStocktakeEmailAdapter _emailAdapter;
-        private readonly StocktakeEmailConfigurationGate _emailConfigurationGate;
+        private readonly IStocktakeEmailConfigurationGate _emailConfigurationGate;
 
         public event Action EmailDeliveryStarting;
 
@@ -89,7 +89,7 @@ namespace QuickStockTaker.Core.Services
             IEnumerable<IStocktakeRemoteTransferAdapter> remoteTransferAdapters,
             StocktakeEmailConfigurationValidator emailConfigurationValidator,
             IStocktakeEmailAdapter emailAdapter,
-            StocktakeEmailConfigurationGate emailConfigurationGate)
+            IStocktakeEmailConfigurationGate emailConfigurationGate)
             : this(
                 csvExport,
                 logger,

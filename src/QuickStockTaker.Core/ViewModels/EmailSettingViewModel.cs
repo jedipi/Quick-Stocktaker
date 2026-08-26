@@ -24,7 +24,7 @@ namespace QuickStockTaker.Core.ViewModels
         private readonly IAppPreferences _preferences;
         private readonly ISecureStorageService _secureStorage;
         private readonly IPageDialogService _pageDialogService;
-        private readonly StocktakeEmailConfigurationGate _emailConfigurationGate;
+        private readonly IStocktakeEmailConfigurationGate _emailConfigurationGate;
         #endregion
 
         #region Properties
@@ -63,7 +63,7 @@ namespace QuickStockTaker.Core.ViewModels
             IAppPreferences preferences,
             ISecureStorageService secureStorage,
             IPageDialogService pageDialogService,
-            StocktakeEmailConfigurationGate emailConfigurationGate,
+            IStocktakeEmailConfigurationGate emailConfigurationGate,
             ILogger<EmailSettingViewModel> logger) : base(dialogs, logger)
         {
             _logger.LogInformation("test");
@@ -219,9 +219,17 @@ namespace QuickStockTaker.Core.ViewModels
 
             foreach (var provider in Constants.SmtpHostProviders)
             {
-                cfg.Add(provider, () =>
+                cfg.Add(provider, async () =>
                 {
-                    _ = SaveSmtpProviderAsync(provider);
+                    try
+                    {
+                        await SaveSmtpProviderAsync(provider);
+                    }
+                    catch (Exception ex)
+                    {
+                        await _dialogs.AlertAsync(ex.Message, "ERROR", "OK");
+                        _logger.LogError(ex, "Save SMTP provider fail");
+                    }
                 });
             }
 

@@ -1,23 +1,17 @@
 namespace QuickStockTaker.Core.Services
 {
-    public sealed class StocktakeEmailConfigurationGate
+    public sealed class StocktakeEmailConfigurationGate : Interfaces.IStocktakeEmailConfigurationGate
     {
         private readonly SemaphoreSlim _gate = new(1, 1);
 
-        internal async Task RunAsync(Func<Task> action)
-        {
-            await _gate.WaitAsync();
-            try
+        public Task RunAsync(Func<Task> action) =>
+            RunAsync(async () =>
             {
                 await action();
-            }
-            finally
-            {
-                _gate.Release();
-            }
-        }
+                return true;
+            });
 
-        internal async Task<T> RunAsync<T>(Func<Task<T>> action)
+        public async Task<T> RunAsync<T>(Func<Task<T>> action)
         {
             await _gate.WaitAsync();
             try
