@@ -60,9 +60,13 @@ public sealed class DataUploadViewModelDeliveryTests
         workflow.DeliverByEmailAsync(
                 Arg.Any<string>(),
                 Arg.Any<CancellationToken>())
-            .Returns(StocktakeDeliveryResult.Succeeded(
-                new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv"))),
-                "Data send successfully."));
+            .Returns(_ =>
+            {
+                workflow.EmailDeliveryStarting += Raise.Event<Action>();
+                return StocktakeDeliveryResult.Succeeded(
+                    new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv"))),
+                    "Data send successfully.");
+            });
         var viewModel = CreateViewModel(
             dialogs,
             workflow,
@@ -98,6 +102,8 @@ public sealed class DataUploadViewModelDeliveryTests
     public async Task EmailCommand_WhenWorkflowHasNoStocktakeData_PreservesExistingExportError()
     {
         var dialogs = Substitute.For<IUserDialogs>();
+        var progress = Substitute.For<IHudDialog>();
+        dialogs.Progress("Emailing data", "Cancel", true, null, Arg.Any<Action>()).Returns(progress);
         var pageDialogs = CreateEmailPrompt("recipient@example.com");
         var workflow = Substitute.For<IStocktakeDeliveryWorkflow>();
         workflow.DeliverByEmailAsync(
@@ -118,6 +124,7 @@ public sealed class DataUploadViewModelDeliveryTests
             "OK",
             null,
             Arg.Any<CancellationToken>());
+        progress.DidNotReceive().Show();
     }
 
     [Fact]

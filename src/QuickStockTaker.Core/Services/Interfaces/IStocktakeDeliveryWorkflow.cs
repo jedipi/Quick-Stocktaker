@@ -4,6 +4,8 @@ namespace QuickStockTaker.Core.Services.Interfaces
 {
     public interface IStocktakeDeliveryWorkflow
     {
+        event Action EmailDeliveryStarting;
+
         Task<StocktakeDeliveryResult> CreateExportAsync(CancellationToken cancellationToken = default);
 
         Task<StocktakeDeliveryResult> DeliverByEmailAsync(

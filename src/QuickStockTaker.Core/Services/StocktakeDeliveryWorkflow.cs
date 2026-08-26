@@ -17,6 +17,8 @@ namespace QuickStockTaker.Core.Services
         private readonly StocktakeEmailConfigurationValidator _emailConfigurationValidator;
         private readonly IStocktakeEmailAdapter _emailAdapter;
 
+        public event Action EmailDeliveryStarting;
+
         internal StocktakeDeliveryWorkflow(
             ICsvExportService csvExport,
             ILogger<StocktakeDeliveryWorkflow> logger)
@@ -131,6 +133,7 @@ namespace QuickStockTaker.Core.Services
                     configurationResult.Configuration,
                     content);
 
+                EmailDeliveryStarting?.Invoke();
                 await _emailAdapter.SendAsync(delivery, cancellationToken);
 
                 return StocktakeDeliveryResult.Succeeded(export, "Data send successfully.");

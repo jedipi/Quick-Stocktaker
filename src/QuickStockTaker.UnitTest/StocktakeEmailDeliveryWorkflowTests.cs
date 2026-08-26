@@ -109,10 +109,12 @@ public sealed class StocktakeEmailDeliveryWorkflowTests
         preferences.Set(Constants.StocktakeDate, new DateTime(2026, 8, 26));
         var secureStorage = CreateSecureStorage();
         var adapter = Substitute.For<IStocktakeEmailAdapter>();
+        var deliveryStarted = false;
         adapter.SendAsync(Arg.Any<StocktakeEmailDelivery>(), Arg.Any<CancellationToken>())
             .Returns(_ =>
             {
                 exportCreated.Should().BeTrue();
+                deliveryStarted.Should().BeTrue();
                 return Task.CompletedTask;
             });
         var workflow = new StocktakeDeliveryWorkflow(
@@ -125,6 +127,7 @@ public sealed class StocktakeEmailDeliveryWorkflowTests
             [],
             new StocktakeEmailConfigurationValidator(),
             adapter);
+        workflow.EmailDeliveryStarting += () => deliveryStarted = true;
 
         var result = await workflow.DeliverByEmailAsync(
             "recipient@example.com",

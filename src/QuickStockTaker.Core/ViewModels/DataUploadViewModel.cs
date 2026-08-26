@@ -134,10 +134,17 @@ namespace QuickStockTaker.Core.ViewModels
 
                 using (var progress = _dialogs.Progress(message: "Emailing data", cancelText: "Cancel", cancel: tokenSource.Cancel))
                 {
-                    progress.Show();
-                    deliveryResult = await _deliveryWorkflow.DeliverByEmailAsync(
-                        emailAddress,
-                        tokenSource.Token);
+                    _deliveryWorkflow.EmailDeliveryStarting += progress.Show;
+                    try
+                    {
+                        deliveryResult = await _deliveryWorkflow.DeliverByEmailAsync(
+                            emailAddress,
+                            tokenSource.Token);
+                    }
+                    finally
+                    {
+                        _deliveryWorkflow.EmailDeliveryStarting -= progress.Show;
+                    }
                 }
 
                 if (deliveryResult.Status == StocktakeDeliveryStatus.NoStocktakeData)
