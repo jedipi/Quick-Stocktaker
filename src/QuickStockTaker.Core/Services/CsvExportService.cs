@@ -19,9 +19,6 @@ namespace QuickStockTaker.Core.Services
         //private IDBConnection _dbConnection;
         private static object locker = new();
 
-        // the exported file info
-        public FileInfo ExportedFile { get; set; }
-
         private readonly ISQLiteRepository<StocktakeItem> _stocktakeItemRepo;
         private readonly IAppPreferences _preferences;
         private readonly IAppFileSystem _fileSystem;
@@ -39,22 +36,6 @@ namespace QuickStockTaker.Core.Services
             _stocktakeItemRepo = stocktakeItemRepo;
             _preferences = preferences;
             _fileSystem = fileSystem;
-        }
-
-
-        public async Task Export()
-        {
-            ExportedFile = null;
-
-            try
-            {
-                var export = await CreateExportAsync();
-                ExportedFile = export?.File;
-            }
-            catch (Exception)
-            {
-                return;
-            }
         }
 
         public async Task<StocktakeExport> CreateExportAsync(CancellationToken cancellationToken = default)

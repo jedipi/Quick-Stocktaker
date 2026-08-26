@@ -82,7 +82,6 @@ namespace QuickStockTaker
                     .Where(constructor => constructor.GetParameters().Length == 10)
                     .ToArray())
                 .AsImplementedInterfaces();
-            autofacBuilder.RegisterType<DataExportFactory>();
             autofacBuilder.RegisterType<EmailService>();
         }
     }

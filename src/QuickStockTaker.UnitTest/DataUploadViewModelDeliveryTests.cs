@@ -28,7 +28,6 @@ public sealed class DataUploadViewModelDeliveryTests
         var viewModel = CreateViewModel(
             dialogs,
             workflow,
-            Substitute.For<ICsvExportService>(),
             pageDialogs);
 
         await viewModel.EmailCommand.ExecuteAsync(null);
@@ -70,7 +69,6 @@ public sealed class DataUploadViewModelDeliveryTests
         var viewModel = CreateViewModel(
             dialogs,
             workflow,
-            Substitute.For<ICsvExportService>(),
             pageDialogs);
 
         await viewModel.EmailCommand.ExecuteAsync(null);
@@ -113,7 +111,6 @@ public sealed class DataUploadViewModelDeliveryTests
         var viewModel = CreateViewModel(
             dialogs,
             workflow,
-            Substitute.For<ICsvExportService>(),
             pageDialogs);
 
         await viewModel.EmailCommand.ExecuteAsync(null);
@@ -141,7 +138,6 @@ public sealed class DataUploadViewModelDeliveryTests
         var viewModel = CreateViewModel(
             dialogs,
             workflow,
-            Substitute.For<ICsvExportService>(),
             pageDialogs);
 
         await viewModel.EmailCommand.ExecuteAsync(null);
@@ -173,7 +169,6 @@ public sealed class DataUploadViewModelDeliveryTests
         var viewModel = CreateViewModel(
             dialogs,
             workflow,
-            Substitute.For<ICsvExportService>(),
             pageDialogs);
 
         await viewModel.EmailCommand.ExecuteAsync(null);
@@ -233,7 +228,6 @@ public sealed class DataUploadViewModelDeliveryTests
         var viewModel = CreateViewModel(
             dialogs,
             workflow,
-            exporter,
             CreateEmailPrompt("recipient@example.com"));
 
         var command = viewModel.EmailCommand.ExecuteAsync(null);
@@ -259,8 +253,7 @@ public sealed class DataUploadViewModelDeliveryTests
         var workflow = Substitute.For<IStocktakeDeliveryWorkflow>();
         workflow.CreateExportAsync(TestContext.Current.CancellationToken)
             .ReturnsForAnyArgs(StocktakeDeliveryResult.NoStocktakeData());
-        var csvExport = Substitute.For<ICsvExportService>();
-        var viewModel = CreateViewModel(dialogs, workflow, csvExport);
+        var viewModel = CreateViewModel(dialogs, workflow);
 
         await viewModel.CsvCommand.ExecuteAsync(null);
 
@@ -285,8 +278,7 @@ public sealed class DataUploadViewModelDeliveryTests
             var workflow = Substitute.For<IStocktakeDeliveryWorkflow>();
             workflow.CreateExportAsync(TestContext.Current.CancellationToken)
                 .ReturnsForAnyArgs(StocktakeDeliveryResult.Succeeded(new StocktakeExport(file)));
-            var csvExport = Substitute.For<ICsvExportService>();
-            var viewModel = CreateViewModel(dialogs, workflow, csvExport);
+            var viewModel = CreateViewModel(dialogs, workflow);
 
             await viewModel.CsvCommand.ExecuteAsync(null);
 
@@ -316,7 +308,7 @@ public sealed class DataUploadViewModelDeliveryTests
                     new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv"))),
                     "Data uploaded successfully: stocktake.csv");
             });
-        var viewModel = CreateViewModel(dialogs, workflow, Substitute.For<ICsvExportService>());
+        var viewModel = CreateViewModel(dialogs, workflow);
 
         await viewModel.FTPCommand.ExecuteAsync(null);
 
@@ -360,7 +352,7 @@ public sealed class DataUploadViewModelDeliveryTests
         var workflow = Substitute.For<IStocktakeDeliveryWorkflow>();
         workflow.DeliverToConfiguredRemoteAsync(Arg.Any<CancellationToken>(), Arg.Any<Action>())
             .Returns(new StocktakeDeliveryResult(status, Message: resultMessage));
-        var viewModel = CreateViewModel(dialogs, workflow, Substitute.For<ICsvExportService>());
+        var viewModel = CreateViewModel(dialogs, workflow);
 
         await viewModel.FTPCommand.ExecuteAsync(null);
 
@@ -382,7 +374,7 @@ public sealed class DataUploadViewModelDeliveryTests
         var workflow = Substitute.For<IStocktakeDeliveryWorkflow>();
         workflow.DeliverToConfiguredRemoteAsync(Arg.Any<CancellationToken>(), Arg.Any<Action>())
             .Returns(StocktakeDeliveryResult.NoStocktakeData());
-        var viewModel = CreateViewModel(dialogs, workflow, Substitute.For<ICsvExportService>());
+        var viewModel = CreateViewModel(dialogs, workflow);
 
         await viewModel.FTPCommand.ExecuteAsync(null);
 
@@ -398,7 +390,6 @@ public sealed class DataUploadViewModelDeliveryTests
     private static DataUploadViewModel CreateViewModel(
         IUserDialogs dialogs,
         IStocktakeDeliveryWorkflow workflow,
-        ICsvExportService csvExport,
         IPageDialogService? pageDialogs = null)
     {
         var fileSystem = Substitute.For<IAppFileSystem>();
@@ -408,12 +399,7 @@ public sealed class DataUploadViewModelDeliveryTests
         return new DataUploadViewModel(
             dialogs,
             workflow,
-            Substitute.For<IEmailUploadService>(),
             new EmailValidator(),
-            Substitute.For<ISmtpService>(),
-            new DataExportFactory(csvExport),
-            Substitute.For<IAppPreferences>(),
-            Substitute.For<ISecureStorageService>(),
             fileSystem,
             pageDialogs ?? Substitute.For<IPageDialogService>(),
             Substitute.For<ILogger<DataUploadViewModel>>());

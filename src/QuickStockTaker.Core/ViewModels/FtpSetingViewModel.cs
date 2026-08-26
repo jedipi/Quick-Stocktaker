@@ -9,7 +9,7 @@ namespace QuickStockTaker.Core.ViewModels
 {
     public partial class FtpSetingViewModel : BaseViewModel
     {
-        private readonly IFtpUplodService _ftpUploader;
+        private readonly IStocktakeRemoteConnectionService _connectionService;
         private readonly IAppPreferences _preferences;
         private readonly ISecureStorageService _secureStorage;
         private readonly IPageDialogService _pageDialogService;
@@ -81,13 +81,13 @@ namespace QuickStockTaker.Core.ViewModels
 
         public FtpSetingViewModel(
             IUserDialogs dialogs,
-            IFtpUplodService ftpUploader,
+            IStocktakeRemoteConnectionService connectionService,
             IAppPreferences preferences,
             ISecureStorageService secureStorage,
             IPageDialogService pageDialogService,
             ILogger<FtpSetingViewModel> logger) : base(dialogs, logger)
         {
-            _ftpUploader = ftpUploader;
+            _connectionService = connectionService;
             _preferences = preferences;
             _secureStorage = secureStorage;
             _pageDialogService = pageDialogService;
@@ -175,7 +175,7 @@ namespace QuickStockTaker.Core.ViewModels
                 using (var progress = _dialogs.Progress("Testing FTP/SFTP connection...", cancelText: "Cancel", cancel: tokenSource.Cancel))
                 {
                     progress.Show();
-                    (success, msg) = await _ftpUploader.TestConnection(tokenSource.Token);
+                    (success, msg) = await _connectionService.TestConnectionAsync(tokenSource.Token);
                 }
 
                 await _dialogs.AlertAsync(msg, success ? "Success" : "Error", "OK", success ? "ic_greentick.png" : "ic_error.png");

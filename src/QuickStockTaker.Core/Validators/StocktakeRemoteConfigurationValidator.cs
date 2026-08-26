@@ -11,7 +11,7 @@ namespace QuickStockTaker.Core.Validators
                 .NotEmpty()
                 .WithMessage("FTP/SFTP host is not configured or not valid.");
             RuleFor(configuration => configuration.Port)
-                .Must(FtpUplodService.IsValidPort)
+                .Must(IsValidPort)
                 .WithMessage("FTP/SFTP port is not configured or not valid.");
             RuleFor(configuration => configuration.Username)
                 .NotEmpty()
@@ -19,6 +19,11 @@ namespace QuickStockTaker.Core.Validators
             RuleFor(configuration => configuration.Password)
                 .NotEmpty()
                 .WithMessage("FTP/SFTP password is not configured.");
+        }
+
+        private static bool IsValidPort(string port)
+        {
+            return int.TryParse(port, out var parsedPort) && parsedPort is >= 1 and <= 65535;
         }
     }
 }

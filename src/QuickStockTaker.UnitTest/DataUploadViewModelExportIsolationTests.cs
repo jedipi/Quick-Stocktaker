@@ -53,16 +53,10 @@ public sealed class DataUploadViewModelExportIsolationTests
         IStocktakeDeliveryWorkflow workflow,
         IAppFileSystem fileSystem)
     {
-        var csvExport = Substitute.For<ICsvExportService>();
         return new DataUploadViewModel(
             dialogs,
             workflow,
-            Substitute.For<IEmailUploadService>(),
             new EmailValidator(),
-            Substitute.For<ISmtpService>(),
-            new DataExportFactory(csvExport),
-            Substitute.For<IAppPreferences>(),
-            Substitute.For<ISecureStorageService>(),
             fileSystem,
             Substitute.For<IPageDialogService>(),
             Substitute.For<ILogger<DataUploadViewModel>>());

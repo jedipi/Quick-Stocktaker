@@ -25,7 +25,7 @@ namespace QuickStockTaker.Core.Services
             StocktakeRemoteConfiguration configuration,
             CancellationToken cancellationToken = default)
         {
-            var remotePath = FtpUplodService.BuildRemotePath(
+            var remotePath = StocktakeRemotePath.Build(
                 configuration.Folder,
                 export.File.Name,
                 path => path);

@@ -189,7 +189,10 @@ namespace QuickStockTaker.Core.Services
 
             try
             {
-                var configurationResult = await CaptureRemoteConfigurationAsync();
+                var configurationResult = await StocktakeRemoteConfigurationSnapshot.CaptureAsync(
+                    _preferences,
+                    _secureStorage,
+                    _remoteConfigurationValidator);
                 if (configurationResult.ErrorMessage is not null)
                     return StocktakeDeliveryResult.InvalidConfiguration(configurationResult.ErrorMessage);
 
@@ -223,29 +226,6 @@ namespace QuickStockTaker.Core.Services
             {
                 _operationGate.Exit();
             }
-        }
-
-        private async Task<(StocktakeRemoteConfiguration Configuration, string ErrorMessage)> CaptureRemoteConfigurationAsync()
-        {
-            var useSftp = _preferences.GetBool(Constants.FtpUseSftp, true);
-            var input = new StocktakeRemoteConfigurationInput(
-                useSftp,
-                _preferences.GetString(Constants.FtpHost, string.Empty),
-                _preferences.GetString(Constants.FtpPort, useSftp ? "22" : "21"),
-                _preferences.GetString(Constants.FtpFolder, string.Empty),
-                await _secureStorage.GetAsync(Constants.FtpUsername) ?? string.Empty,
-                await _secureStorage.GetAsync(Constants.FtpPassword) ?? string.Empty);
-            var validation = _remoteConfigurationValidator.Validate(input);
-            if (!validation.IsValid)
-                return (null, validation.Errors[0].ErrorMessage);
-
-            return (new StocktakeRemoteConfiguration(
-                input.UseSftp ? StocktakeRemoteProtocol.Sftp : StocktakeRemoteProtocol.Ftp,
-                input.Host.Trim(),
-                int.Parse(input.Port),
-                input.Folder,
-                input.Username,
-                input.Password), null);
         }
 
         private async Task<(StocktakeEmailConfiguration Configuration, string Sender, string ErrorMessage)> CaptureEmailConfigurationAsync(

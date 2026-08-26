@@ -13,37 +13,21 @@ namespace QuickStockTaker.Core.ViewModels
     {
         #region Fields
 
-        private FileInfo _exportedFile;
         private readonly IStocktakeDeliveryWorkflow _deliveryWorkflow;
-        private readonly IEmailUploadService _emailUploader;
         private readonly EmailValidator _emailValidator;
-        private readonly ISmtpService _smtpService;
-        private readonly DataExportFactory _exporterFactory;
-        private readonly IAppPreferences _preferences;
-        private readonly ISecureStorageService _secureStorage;
         private readonly IAppFileSystem _fileSystem;
         private readonly IPageDialogService _pageDialogService;
         #endregion
         public DataUploadViewModel(
             IUserDialogs dialogs,
             IStocktakeDeliveryWorkflow deliveryWorkflow,
-            IEmailUploadService emailUploader,
             EmailValidator emailValidator,
-            ISmtpService smtpService,
-            DataExportFactory exporterFactory,
-            IAppPreferences preferences,
-            ISecureStorageService secureStorage,
             IAppFileSystem fileSystem,
             IPageDialogService pageDialogService,
             ILogger<DataUploadViewModel> logger) : base(dialogs, logger)
         {
             _deliveryWorkflow = deliveryWorkflow;
-            _emailUploader = emailUploader;
             _emailValidator = emailValidator;
-            _smtpService = smtpService;
-            _exporterFactory = exporterFactory;
-            _preferences = preferences;
-            _secureStorage = secureStorage;
             _fileSystem = fileSystem;
             _pageDialogService = pageDialogService;
         }
@@ -172,7 +156,6 @@ namespace QuickStockTaker.Core.ViewModels
             catch (Exception ex)
             {
                 await _dialogs.AlertAsync($"{ex.Message}", "ERROR", "OK");
-                _logger.LogError(ex, "Email data fail");
             }
         }
 
@@ -216,29 +199,8 @@ namespace QuickStockTaker.Core.ViewModels
             catch (Exception ex)
             {
                 await _dialogs.AlertAsync($"{ex.Message}", "ERROR", "OK");
-                _logger.LogError(ex, "FTP/SFTP data upload fail");
             }
         }
         #endregion
-
-        /// <summary>
-        /// Export stocktake data into a file
-        /// </summary>
-        /// <returns></returns>
-        private async Task ExportData()
-        {
-            _exportedFile = null;
-
-            // TODO: check what file format is needed. 
-            var exporter = _exporterFactory.CreateExporter("csv");
-            await exporter.Export();
-            if (exporter.ExportedFile == null)
-            {
-                await _dialogs.AlertAsync("Data export fail. Please try again.", "Error", "OK");
-                return;
-            }
-
-            _exportedFile = exporter.ExportedFile;
-        }
     }
 }

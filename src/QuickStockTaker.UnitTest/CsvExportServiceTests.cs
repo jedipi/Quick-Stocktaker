@@ -8,16 +8,16 @@ namespace QuickStockTaker.UnitTest;
 public class CsvExportServiceTests
 {
     [Fact]
-    public async Task Export_WhenNoRowsExist_DoesNotCreateExportedFile()
+    public async Task CreateExportAsync_WhenNoRowsExist_DoesNotCreateFile()
     {
         var tempDirectory = Directory.CreateTempSubdirectory("qst-csv-empty-");
         try
         {
             var service = CreateService([], tempDirectory.FullName);
 
-            await service.Export();
+            var export = await service.CreateExportAsync(TestContext.Current.CancellationToken);
 
-            service.ExportedFile.Should().BeNull();
+            export.Should().BeNull();
             Directory.GetFiles(tempDirectory.FullName).Should().BeEmpty();
         }
         finally
@@ -27,7 +27,7 @@ public class CsvExportServiceTests
     }
 
     [Fact]
-    public async Task Export_WhenRowsExist_CreatesCsvWithCurrentFilenameAndContentShape()
+    public async Task CreateExportAsync_WhenRowsExist_ReturnsCsvWithCurrentFilenameAndContentShape()
     {
         var tempDirectory = Directory.CreateTempSubdirectory("qst-csv-data-");
         try
@@ -48,15 +48,15 @@ public class CsvExportServiceTests
             };
             var service = CreateService([item], tempDirectory.FullName);
 
-            await service.Export();
+            var export = await service.CreateExportAsync(TestContext.Current.CancellationToken);
 
-            service.ExportedFile.Should().NotBeNull();
-            service.ExportedFile!.Exists.Should().BeTrue();
-            service.ExportedFile.DirectoryName.Should().Be(tempDirectory.FullName);
-            service.ExportedFile.Name.Should().StartWith("Stocktake-WH-A-SCANNER-01-");
-            service.ExportedFile.Extension.Should().Be(".csv");
+            export.Should().NotBeNull();
+            export!.File.Exists.Should().BeTrue();
+            export.File.DirectoryName.Should().Be(tempDirectory.FullName);
+            export.File.Name.Should().StartWith("Stocktake-WH-A-SCANNER-01-");
+            export.File.Extension.Should().Be(".csv");
 
-            var content = await File.ReadAllTextAsync(service.ExportedFile.FullName, TestContext.Current.CancellationToken);
+            var content = await File.ReadAllTextAsync(export.File.FullName, TestContext.Current.CancellationToken);
             content.Should().Contain("DeviceId");
             content.Should().Contain("SCANNER-01");
             content.Should().Contain("ST-100");
