@@ -58,7 +58,6 @@ public sealed class DataUploadViewModelExportIsolationTests
             dialogs,
             workflow,
             Substitute.For<IEmailUploadService>(),
-            Substitute.For<IFtpUplodService>(),
             new EmailValidator(),
             Substitute.For<ISmtpService>(),
             new DataExportFactory(csvExport),

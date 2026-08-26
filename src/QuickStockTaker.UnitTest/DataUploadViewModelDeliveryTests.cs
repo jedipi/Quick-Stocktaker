@@ -60,6 +60,100 @@ public sealed class DataUploadViewModelDeliveryTests
         }
     }
 
+    [Fact]
+    public async Task FtpCommand_WhenWorkflowSucceeds_ShowsExistingSuccessPresentation()
+    {
+        var dialogs = Substitute.For<IUserDialogs>();
+        var progress = Substitute.For<IHudDialog>();
+        dialogs.Progress("Uploading data", "Cancel", true, null, Arg.Any<Action>()).Returns(progress);
+        var workflow = Substitute.For<IStocktakeDeliveryWorkflow>();
+        workflow.DeliverToConfiguredRemoteAsync(Arg.Any<CancellationToken>(), Arg.Any<Action>())
+            .Returns(call =>
+            {
+                call.Arg<Action>()();
+                return StocktakeDeliveryResult.Succeeded(
+                    new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv"))),
+                    "Data uploaded successfully: stocktake.csv");
+            });
+        var viewModel = CreateViewModel(dialogs, workflow, Substitute.For<ICsvExportService>());
+
+        await viewModel.FTPCommand.ExecuteAsync(null);
+
+        await workflow.Received(1).DeliverToConfiguredRemoteAsync(
+            Arg.Is<CancellationToken>(token => token.CanBeCanceled),
+            Arg.Any<Action>());
+        progress.Received(1).Show();
+        await dialogs.Received(1).AlertAsync(
+            "Data uploaded successfully: stocktake.csv",
+            "Success",
+            "OK",
+            "ic_greentick.png",
+            Arg.Any<CancellationToken>());
+        Received.InOrder(() =>
+        {
+            progress.Show();
+            progress.Dispose();
+            _ = dialogs.AlertAsync(
+                "Data uploaded successfully: stocktake.csv",
+                "Success",
+                "OK",
+                "ic_greentick.png",
+                Arg.Any<CancellationToken>());
+        });
+    }
+
+    [Theory]
+    [InlineData(StocktakeDeliveryStatus.InvalidConfiguration, "FTP/SFTP host is not configured or not valid.", "FTP/SFTP host is not configured or not valid.")]
+    [InlineData(StocktakeDeliveryStatus.Cancelled, null, "Data upload cancelled.")]
+    [InlineData(StocktakeDeliveryStatus.AlreadyInProgress, null, "Another stocktake delivery is already in progress.")]
+    [InlineData(StocktakeDeliveryStatus.Failed, "Data upload failed. Please try again.", "Data upload failed. Please try again.")]
+    public async Task FtpCommand_WhenWorkflowDoesNotSucceed_ShowsExistingErrorPresentation(
+        StocktakeDeliveryStatus status,
+        string? resultMessage,
+        string expectedMessage)
+    {
+        var dialogs = Substitute.For<IUserDialogs>();
+        var progress = Substitute.For<IHudDialog>();
+        dialogs.Progress("Uploading data", "Cancel", true, null, Arg.Any<Action>())
+            .Returns(progress);
+        var workflow = Substitute.For<IStocktakeDeliveryWorkflow>();
+        workflow.DeliverToConfiguredRemoteAsync(Arg.Any<CancellationToken>(), Arg.Any<Action>())
+            .Returns(new StocktakeDeliveryResult(status, Message: resultMessage));
+        var viewModel = CreateViewModel(dialogs, workflow, Substitute.For<ICsvExportService>());
+
+        await viewModel.FTPCommand.ExecuteAsync(null);
+
+        progress.DidNotReceive().Show();
+        await dialogs.Received(1).AlertAsync(
+            expectedMessage,
+            "Error",
+            "OK",
+            "ic_error.png",
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task FtpCommand_WhenWorkflowHasNoStocktakeData_PreservesExistingExportErrorPresentation()
+    {
+        var dialogs = Substitute.For<IUserDialogs>();
+        var progress = Substitute.For<IHudDialog>();
+        dialogs.Progress("Uploading data", "Cancel", true, null, Arg.Any<Action>()).Returns(progress);
+        var workflow = Substitute.For<IStocktakeDeliveryWorkflow>();
+        workflow.DeliverToConfiguredRemoteAsync(Arg.Any<CancellationToken>(), Arg.Any<Action>())
+            .Returns(StocktakeDeliveryResult.NoStocktakeData());
+        var viewModel = CreateViewModel(dialogs, workflow, Substitute.For<ICsvExportService>());
+
+        await viewModel.FTPCommand.ExecuteAsync(null);
+
+        progress.DidNotReceive().Show();
+        await dialogs.Received(1).AlertAsync(
+            "Data export fail. Please try again.",
+            "Error",
+            "OK",
+            null,
+            Arg.Any<CancellationToken>());
+    }
+
     private static DataUploadViewModel CreateViewModel(
         IUserDialogs dialogs,
         IStocktakeDeliveryWorkflow workflow,
@@ -73,7 +167,6 @@ public sealed class DataUploadViewModelDeliveryTests
             dialogs,
             workflow,
             Substitute.For<IEmailUploadService>(),
-            Substitute.For<IFtpUplodService>(),
             new EmailValidator(),
             Substitute.For<ISmtpService>(),
             new DataExportFactory(csvExport),

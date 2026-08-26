@@ -16,7 +16,6 @@ namespace QuickStockTaker.Core.ViewModels
         private FileInfo _exportedFile;
         private readonly IStocktakeDeliveryWorkflow _deliveryWorkflow;
         private readonly IEmailUploadService _emailUploader;
-        private readonly IFtpUplodService _ftpUploader;
         private readonly EmailValidator _emailValidator;
         private readonly ISmtpService _smtpService;
         private readonly DataExportFactory _exporterFactory;
@@ -29,7 +28,6 @@ namespace QuickStockTaker.Core.ViewModels
             IUserDialogs dialogs,
             IStocktakeDeliveryWorkflow deliveryWorkflow,
             IEmailUploadService emailUploader,
-            IFtpUplodService ftpUploader,
             EmailValidator emailValidator,
             ISmtpService smtpService,
             DataExportFactory exporterFactory,
@@ -41,7 +39,6 @@ namespace QuickStockTaker.Core.ViewModels
         {
             _deliveryWorkflow = deliveryWorkflow;
             _emailUploader = emailUploader;
-            _ftpUploader = ftpUploader;
             _emailValidator = emailValidator;
             _smtpService = smtpService;
             _exporterFactory = exporterFactory;
@@ -180,30 +177,33 @@ namespace QuickStockTaker.Core.ViewModels
         {
             try
             {
-                var (isConfigured, configurationMessage) = await _ftpUploader.ValidateSettings();
-                if (!isConfigured)
-                {
-                    await _dialogs.AlertAsync(configurationMessage, "Error", "OK", "ic_error.png");
-                    return;
-                }
-
-                await ExportData();
-                if (_exportedFile == null)
-                {
-                    return;
-                }
-
-                var tokenSource = new CancellationTokenSource();
-                bool success;
-                string msg;
+                using var tokenSource = new CancellationTokenSource();
+                StocktakeDeliveryResult result;
 
                 using (var progress = _dialogs.Progress(message: "Uploading data", cancelText: "Cancel", cancel: tokenSource.Cancel))
                 {
-                    progress.Show();
-                    (success, msg) = await _ftpUploader.Upload(_exportedFile, tokenSource.Token);
+                    result = await _deliveryWorkflow.DeliverToConfiguredRemoteAsync(tokenSource.Token, progress.Show);
                 }
 
-                await _dialogs.AlertAsync(msg, success ? "Success" : "Error", "OK", success ? "ic_greentick.png" : "ic_error.png");
+                if (result.Status == StocktakeDeliveryStatus.NoStocktakeData)
+                {
+                    await _dialogs.AlertAsync("Data export fail. Please try again.", "Error", "OK");
+                    return;
+                }
+
+                var success = result.Status == StocktakeDeliveryStatus.Succeeded;
+                var message = result.Message ?? result.Status switch
+                {
+                    StocktakeDeliveryStatus.Cancelled => "Data upload cancelled.",
+                    StocktakeDeliveryStatus.AlreadyInProgress => "Another stocktake delivery is already in progress.",
+                    _ => "Data upload failed. Please try again."
+                };
+
+                await _dialogs.AlertAsync(
+                    message,
+                    success ? "Success" : "Error",
+                    "OK",
+                    success ? "ic_greentick.png" : "ic_error.png");
             }
             catch (Exception ex)
             {
