@@ -129,36 +129,37 @@ namespace QuickStockTaker.Core.ViewModels
 
             try
             {
-                // export data
-                await ExportData();
-                if (_exportedFile == null)
-                {
-                    return;
-                }
-
-                // get smtp details.
-                var provider = _preferences.GetString(Constants.SmtpProvider, "Other");
-                var smtp = await _smtpService.GetSmtp(provider);
-
-                var tokenSource = new CancellationTokenSource();
-                string msg;
+                using var tokenSource = new CancellationTokenSource();
+                StocktakeDeliveryResult deliveryResult;
 
                 using (var progress = _dialogs.Progress(message: "Emailing data", cancelText: "Cancel", cancel: tokenSource.Cancel))
                 {
-                    progress.Show();
-
-                    // assing email address
-                    _emailUploader.To = emailAddress;
-                    _emailUploader.SmtpDetail = smtp;
-
-                    // get the from email address
-                    var from = await _secureStorage.GetAsync(Constants.SmtpFrom);
-                    _emailUploader.From = provider != "Other" ? emailAddress : from;
-
-                    (_, msg) = await _emailUploader.Upload(_exportedFile);
+                    deliveryResult = await _deliveryWorkflow.DeliverByEmailAsync(
+                        emailAddress,
+                        tokenSource.Token,
+                        progress.Show);
                 }
 
-                await _dialogs.AlertAsync(msg);
+                if (deliveryResult.Status == StocktakeDeliveryStatus.NoStocktakeData)
+                {
+                    await _dialogs.AlertAsync("Data export fail. Please try again.", "Error", "OK");
+                    return;
+                }
+
+                if (deliveryResult.Status == StocktakeDeliveryStatus.InvalidConfiguration)
+                {
+                    await _dialogs.AlertAsync(deliveryResult.Message, "ERROR", "OK");
+                    return;
+                }
+
+                var message = deliveryResult.Message ?? deliveryResult.Status switch
+                {
+                    StocktakeDeliveryStatus.Cancelled => "Email cancelled.",
+                    StocktakeDeliveryStatus.AlreadyInProgress => "Another stocktake delivery is already in progress.",
+                    _ => "Data send fail."
+                };
+
+                await _dialogs.AlertAsync(message);
 
             }
             catch (Exception ex)

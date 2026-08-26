@@ -6,6 +6,11 @@ namespace QuickStockTaker.Core.Services.Interfaces
     {
         Task<StocktakeDeliveryResult> CreateExportAsync(CancellationToken cancellationToken = default);
 
+        Task<StocktakeDeliveryResult> DeliverByEmailAsync(
+            string recipient,
+            CancellationToken cancellationToken = default,
+            Action onDeliveryStarting = null);
+
         Task<StocktakeDeliveryResult> DeliverToConfiguredRemoteAsync(
             CancellationToken cancellationToken = default,
             Action onTransferStarting = null);

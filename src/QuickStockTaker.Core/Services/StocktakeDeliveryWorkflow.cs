@@ -14,6 +14,8 @@ namespace QuickStockTaker.Core.Services
         private readonly ISecureStorageService _secureStorage;
         private readonly StocktakeRemoteConfigurationValidator _remoteConfigurationValidator;
         private readonly IReadOnlyCollection<IStocktakeRemoteTransferAdapter> _remoteTransferAdapters;
+        private readonly StocktakeEmailConfigurationValidator _emailConfigurationValidator;
+        private readonly IStocktakeEmailAdapter _emailAdapter;
 
         internal StocktakeDeliveryWorkflow(
             ICsvExportService csvExport,
@@ -50,6 +52,29 @@ namespace QuickStockTaker.Core.Services
             _remoteTransferAdapters = remoteTransferAdapters.ToArray();
         }
 
+        internal StocktakeDeliveryWorkflow(
+            ICsvExportService csvExport,
+            ILogger<StocktakeDeliveryWorkflow> logger,
+            StocktakeDeliveryOperationGate operationGate,
+            IAppPreferences preferences,
+            ISecureStorageService secureStorage,
+            StocktakeRemoteConfigurationValidator remoteConfigurationValidator,
+            IEnumerable<IStocktakeRemoteTransferAdapter> remoteTransferAdapters,
+            StocktakeEmailConfigurationValidator emailConfigurationValidator,
+            IStocktakeEmailAdapter emailAdapter)
+            : this(
+                csvExport,
+                logger,
+                operationGate,
+                preferences,
+                secureStorage,
+                remoteConfigurationValidator,
+                remoteTransferAdapters)
+        {
+            _emailConfigurationValidator = emailConfigurationValidator;
+            _emailAdapter = emailAdapter;
+        }
+
         public async Task<StocktakeDeliveryResult> CreateExportAsync(CancellationToken cancellationToken = default)
         {
             if (!_operationGate.TryEnter())
@@ -70,6 +95,60 @@ namespace QuickStockTaker.Core.Services
             {
                 _logger.LogError(ex, "Stocktake export creation failed");
                 return StocktakeDeliveryResult.Failed();
+            }
+            finally
+            {
+                _operationGate.Exit();
+            }
+        }
+
+        public async Task<StocktakeDeliveryResult> DeliverByEmailAsync(
+            string recipient,
+            CancellationToken cancellationToken = default,
+            Action onDeliveryStarting = null)
+        {
+            if (!_operationGate.TryEnter())
+                return StocktakeDeliveryResult.AlreadyInProgress();
+
+            try
+            {
+                var configurationResult = await CaptureEmailConfigurationAsync(recipient);
+                if (configurationResult.ErrorMessage is not null)
+                    return StocktakeDeliveryResult.InvalidConfiguration(configurationResult.ErrorMessage);
+
+                var content = new StocktakeEmailContent(
+                    _preferences.GetString(Constants.DeviceId, string.Empty),
+                    _preferences.GetInt(Constants.StocktakeNumber, 0),
+                    _preferences.GetString(Constants.Site, string.Empty),
+                    _preferences.GetDateTime(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString());
+                var export = await _csvExport.CreateExportAsync(cancellationToken);
+                if (export is null)
+                    return StocktakeDeliveryResult.NoStocktakeData();
+
+                var delivery = new StocktakeEmailDelivery(
+                    export,
+                    recipient,
+                    configurationResult.Sender,
+                    configurationResult.Configuration,
+                    content);
+
+                onDeliveryStarting?.Invoke();
+                await _emailAdapter.SendAsync(delivery, cancellationToken);
+
+                return StocktakeDeliveryResult.Succeeded(export, "Data send successfully.");
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                return StocktakeDeliveryResult.Cancelled();
+            }
+            catch (Exception) when (cancellationToken.IsCancellationRequested)
+            {
+                return StocktakeDeliveryResult.Cancelled();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Stocktake email delivery failed");
+                return StocktakeDeliveryResult.Failed("Data send fail.");
             }
             finally
             {
@@ -143,6 +222,30 @@ namespace QuickStockTaker.Core.Services
                 input.Folder,
                 input.Username,
                 input.Password), null);
+        }
+
+        private async Task<(StocktakeEmailConfiguration Configuration, string Sender, string ErrorMessage)> CaptureEmailConfigurationAsync(
+            string recipient)
+        {
+            var provider = _preferences.GetString(Constants.SmtpProvider, "Other");
+            var configuredSender = await _secureStorage.GetAsync(Constants.SmtpFrom);
+            var input = new StocktakeEmailConfigurationInput(
+                provider,
+                provider != "Other" ? recipient : configuredSender ?? string.Empty,
+                await _secureStorage.GetAsync(Constants.SmtpHost) ?? string.Empty,
+                await _secureStorage.GetAsync(Constants.SmtpPort) ?? string.Empty,
+                await _secureStorage.GetAsync(Constants.SmtpUsername) ?? string.Empty,
+                await _secureStorage.GetAsync(Constants.SmtpPassword) ?? string.Empty);
+            var validation = _emailConfigurationValidator.Validate(input);
+            if (!validation.IsValid)
+                return (null, null, validation.Errors[0].ErrorMessage);
+
+            return (new StocktakeEmailConfiguration(
+                input.Provider,
+                input.Host.Trim(),
+                int.Parse(input.Port),
+                input.Username,
+                input.Password), input.Sender, null);
         }
     }
 }
