@@ -1,6 +1,9 @@
 using Controls.UserDialogs.Maui;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
+using QuickStockTaker.Core.Data;
 using QuickStockTaker.Core.Repositories.Interfaces;
 using QuickStockTaker.Core.Services;
 using QuickStockTaker.Core.Services.Interfaces;
@@ -38,8 +41,7 @@ public sealed class DataUploadViewModelDeliveryTests
             Arg.Any<CancellationToken>());
         await workflow.DidNotReceive().DeliverByEmailAsync(
             Arg.Any<string>(),
-            Arg.Any<CancellationToken>(),
-            Arg.Any<Action>());
+            Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -57,15 +59,10 @@ public sealed class DataUploadViewModelDeliveryTests
         var workflow = Substitute.For<IStocktakeDeliveryWorkflow>();
         workflow.DeliverByEmailAsync(
                 Arg.Any<string>(),
-                Arg.Any<CancellationToken>(),
-                Arg.Any<Action>())
-            .Returns(call =>
-            {
-                call.Arg<Action>()();
-                return StocktakeDeliveryResult.Succeeded(
-                    new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv"))),
-                    "Data send successfully.");
-            });
+                Arg.Any<CancellationToken>())
+            .Returns(StocktakeDeliveryResult.Succeeded(
+                new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv"))),
+                "Data send successfully."));
         var viewModel = CreateViewModel(
             dialogs,
             workflow,
@@ -76,8 +73,7 @@ public sealed class DataUploadViewModelDeliveryTests
 
         await workflow.Received(1).DeliverByEmailAsync(
             "recipient@example.com",
-            Arg.Is<CancellationToken>(token => token.CanBeCanceled),
-            Arg.Any<Action>());
+            Arg.Is<CancellationToken>(token => token.CanBeCanceled));
         progress.Received(1).Show();
         await dialogs.Received(1).AlertAsync(
             "Data send successfully.",
@@ -106,8 +102,7 @@ public sealed class DataUploadViewModelDeliveryTests
         var workflow = Substitute.For<IStocktakeDeliveryWorkflow>();
         workflow.DeliverByEmailAsync(
                 Arg.Any<string>(),
-                Arg.Any<CancellationToken>(),
-                Arg.Any<Action>())
+                Arg.Any<CancellationToken>())
             .Returns(StocktakeDeliveryResult.NoStocktakeData());
         var viewModel = CreateViewModel(
             dialogs,
@@ -133,8 +128,7 @@ public sealed class DataUploadViewModelDeliveryTests
         var workflow = Substitute.For<IStocktakeDeliveryWorkflow>();
         workflow.DeliverByEmailAsync(
                 Arg.Any<string>(),
-                Arg.Any<CancellationToken>(),
-                Arg.Any<Action>())
+                Arg.Any<CancellationToken>())
             .Returns(StocktakeDeliveryResult.InvalidConfiguration(
                 "SMTP host is not configured or not valid."));
         var viewModel = CreateViewModel(
@@ -167,8 +161,7 @@ public sealed class DataUploadViewModelDeliveryTests
         var workflow = Substitute.For<IStocktakeDeliveryWorkflow>();
         workflow.DeliverByEmailAsync(
                 Arg.Any<string>(),
-                Arg.Any<CancellationToken>(),
-                Arg.Any<Action>())
+                Arg.Any<CancellationToken>())
             .Returns(new StocktakeDeliveryResult(status, Message: resultMessage));
         var viewModel = CreateViewModel(
             dialogs,
@@ -180,6 +173,72 @@ public sealed class DataUploadViewModelDeliveryTests
 
         await dialogs.Received(1).AlertAsync(
             expectedMessage,
+            null,
+            null,
+            null,
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task EmailCommand_WhenProgressIsCancelledDuringSend_PropagatesCancellationThroughWorkflow()
+    {
+        var dialogs = Substitute.For<IUserDialogs>();
+        var progress = Substitute.For<IHudDialog>();
+        Action? cancel = null;
+        dialogs.Progress(
+                "Emailing data",
+                "Cancel",
+                true,
+                null,
+                Arg.Do<Action>(action => cancel = action))
+            .Returns(progress);
+        var exporter = Substitute.For<ICsvExportService>();
+        var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));
+        exporter.CreateExportAsync(Arg.Any<CancellationToken>()).Returns(export);
+        var preferences = new TestAppPreferences();
+        preferences.Set(Constants.SmtpProvider, "Other");
+        var secureStorage = Substitute.For<ISecureStorageService>();
+        secureStorage.GetAsync(Constants.SmtpFrom).Returns("sender@example.com");
+        secureStorage.GetAsync(Constants.SmtpHost).Returns("smtp.example.com");
+        secureStorage.GetAsync(Constants.SmtpPort).Returns("587");
+        secureStorage.GetAsync(Constants.SmtpUsername).Returns("smtp-user");
+        secureStorage.GetAsync(Constants.SmtpPassword).Returns("smtp-password");
+        var sendStarted = new TaskCompletionSource<CancellationToken>(
+            TaskCreationOptions.RunContinuationsAsynchronously);
+        var adapter = Substitute.For<IStocktakeEmailAdapter>();
+        adapter.SendAsync(Arg.Any<StocktakeEmailDelivery>(), Arg.Any<CancellationToken>())
+            .Returns(async call =>
+            {
+                var cancellationToken = call.Arg<CancellationToken>();
+                sendStarted.TrySetResult(cancellationToken);
+                await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
+            });
+        var workflow = new StocktakeDeliveryWorkflow(
+            exporter,
+            NullLogger<StocktakeDeliveryWorkflow>.Instance,
+            new StocktakeDeliveryOperationGate(),
+            preferences,
+            secureStorage,
+            new StocktakeRemoteConfigurationValidator(),
+            [],
+            new StocktakeEmailConfigurationValidator(),
+            adapter);
+        var viewModel = CreateViewModel(
+            dialogs,
+            workflow,
+            exporter,
+            CreateEmailPrompt("recipient@example.com"));
+
+        var command = viewModel.EmailCommand.ExecuteAsync(null);
+        var deliveryToken = await sendStarted.Task.WaitAsync(TestContext.Current.CancellationToken);
+        cancel.Should().NotBeNull();
+        cancel!();
+        await command;
+
+        deliveryToken.IsCancellationRequested.Should().BeTrue();
+        progress.Received(1).Show();
+        await dialogs.Received(1).AlertAsync(
+            "Email cancelled.",
             null,
             null,
             null,

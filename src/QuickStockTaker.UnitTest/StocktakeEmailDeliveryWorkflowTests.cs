@@ -109,12 +109,10 @@ public sealed class StocktakeEmailDeliveryWorkflowTests
         preferences.Set(Constants.StocktakeDate, new DateTime(2026, 8, 26));
         var secureStorage = CreateSecureStorage();
         var adapter = Substitute.For<IStocktakeEmailAdapter>();
-        var deliveryStarted = false;
         adapter.SendAsync(Arg.Any<StocktakeEmailDelivery>(), Arg.Any<CancellationToken>())
             .Returns(_ =>
             {
                 exportCreated.Should().BeTrue();
-                deliveryStarted.Should().BeTrue();
                 return Task.CompletedTask;
             });
         var workflow = new StocktakeDeliveryWorkflow(
@@ -130,8 +128,7 @@ public sealed class StocktakeEmailDeliveryWorkflowTests
 
         var result = await workflow.DeliverByEmailAsync(
             "recipient@example.com",
-            TestContext.Current.CancellationToken,
-            () => deliveryStarted = true);
+            TestContext.Current.CancellationToken);
 
         result.Should().Be(StocktakeDeliveryResult.Succeeded(export, "Data send successfully."));
         await adapter.Received(1).SendAsync(
@@ -164,19 +161,16 @@ public sealed class StocktakeEmailDeliveryWorkflowTests
         var exporter = Substitute.For<ICsvExportService>();
         exporter.CreateExportAsync(TestContext.Current.CancellationToken).ReturnsForAnyArgs((StocktakeExport)null!);
         var adapter = Substitute.For<IStocktakeEmailAdapter>();
-        var deliveryStarting = Substitute.For<Action>();
         var workflow = CreateWorkflow(exporter, CreatePreferences(), CreateSecureStorage(), adapter);
 
         var result = await workflow.DeliverByEmailAsync(
             "recipient@example.com",
-            TestContext.Current.CancellationToken,
-            deliveryStarting);
+            TestContext.Current.CancellationToken);
 
         result.Status.Should().Be(StocktakeDeliveryStatus.NoStocktakeData);
         await adapter.DidNotReceive().SendAsync(
             Arg.Any<StocktakeEmailDelivery>(),
             Arg.Any<CancellationToken>());
-        deliveryStarting.DidNotReceive().Invoke();
     }
 
     [Fact]
@@ -237,6 +231,37 @@ public sealed class StocktakeEmailDeliveryWorkflowTests
     }
 
     [Fact]
+    public async Task DeliverByEmailAsync_WhenCancellationRacesWithAdapterFault_LogsAndReturnsFailure()
+    {
+        var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));
+        var exporter = Substitute.For<ICsvExportService>();
+        exporter.CreateExportAsync(TestContext.Current.CancellationToken).ReturnsForAnyArgs(export);
+        var failure = new IOException("SMTP transport failed after cancellation was requested.");
+        using var cancellation = new CancellationTokenSource();
+        var adapter = Substitute.For<IStocktakeEmailAdapter>();
+        adapter.SendAsync(Arg.Any<StocktakeEmailDelivery>(), Arg.Any<CancellationToken>())
+            .Returns(_ =>
+            {
+                cancellation.Cancel();
+                return Task.FromException(failure);
+            });
+        var logger = new CapturingLogger<StocktakeDeliveryWorkflow>();
+        var workflow = CreateWorkflow(
+            exporter,
+            CreatePreferences(),
+            CreateSecureStorage(),
+            adapter,
+            logger);
+
+        var result = await workflow.DeliverByEmailAsync(
+            "recipient@example.com",
+            cancellation.Token);
+
+        result.Should().Be(StocktakeDeliveryResult.Failed("Data send fail."));
+        logger.Entries.Should().ContainSingle().Which.Should().Be((LogLevel.Error, failure));
+    }
+
+    [Fact]
     public async Task DeliverByEmailAsync_WhenConfigurationChangesDuringSend_UsesChangesOnlyOnNextOperation()
     {
         var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));
@@ -278,6 +303,43 @@ public sealed class StocktakeEmailDeliveryWorkflowTests
             465,
             "second-user",
             "second-password"));
+    }
+
+    [Fact]
+    public async Task DeliverByEmailAsync_StartsAllSecureConfigurationReadsBeforeAwaitingSnapshot()
+    {
+        var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));
+        var exporter = Substitute.For<ICsvExportService>();
+        exporter.CreateExportAsync(TestContext.Current.CancellationToken).ReturnsForAnyArgs(export);
+        var senderRead = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var secureStorage = Substitute.For<ISecureStorageService>();
+        secureStorage.GetAsync(Constants.SmtpFrom).Returns(senderRead.Task);
+        secureStorage.GetAsync(Constants.SmtpHost).Returns("smtp.example.com");
+        secureStorage.GetAsync(Constants.SmtpPort).Returns("587");
+        secureStorage.GetAsync(Constants.SmtpUsername).Returns("smtp-user");
+        secureStorage.GetAsync(Constants.SmtpPassword).Returns("smtp-password");
+        var workflow = CreateWorkflow(
+            exporter,
+            CreatePreferences(),
+            secureStorage,
+            Substitute.For<IStocktakeEmailAdapter>());
+
+        var operation = workflow.DeliverByEmailAsync(
+            "recipient@example.com",
+            TestContext.Current.CancellationToken);
+
+        try
+        {
+            await secureStorage.Received(1).GetAsync(Constants.SmtpHost);
+            await secureStorage.Received(1).GetAsync(Constants.SmtpPort);
+            await secureStorage.Received(1).GetAsync(Constants.SmtpUsername);
+            await secureStorage.Received(1).GetAsync(Constants.SmtpPassword);
+        }
+        finally
+        {
+            senderRead.TrySetResult("sender@example.com");
+            await operation;
+        }
     }
 
     [Fact]

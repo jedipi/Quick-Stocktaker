@@ -104,8 +104,7 @@ namespace QuickStockTaker.Core.Services
 
         public async Task<StocktakeDeliveryResult> DeliverByEmailAsync(
             string recipient,
-            CancellationToken cancellationToken = default,
-            Action onDeliveryStarting = null)
+            CancellationToken cancellationToken = default)
         {
             if (!_operationGate.TryEnter())
                 return StocktakeDeliveryResult.AlreadyInProgress();
@@ -132,16 +131,11 @@ namespace QuickStockTaker.Core.Services
                     configurationResult.Configuration,
                     content);
 
-                onDeliveryStarting?.Invoke();
                 await _emailAdapter.SendAsync(delivery, cancellationToken);
 
                 return StocktakeDeliveryResult.Succeeded(export, "Data send successfully.");
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                return StocktakeDeliveryResult.Cancelled();
-            }
-            catch (Exception) when (cancellationToken.IsCancellationRequested)
             {
                 return StocktakeDeliveryResult.Cancelled();
             }
@@ -228,14 +222,26 @@ namespace QuickStockTaker.Core.Services
             string recipient)
         {
             var provider = _preferences.GetString(Constants.SmtpProvider, "Other");
-            var configuredSender = await _secureStorage.GetAsync(Constants.SmtpFrom);
+            var configuredSenderTask = _secureStorage.GetAsync(Constants.SmtpFrom);
+            var hostTask = _secureStorage.GetAsync(Constants.SmtpHost);
+            var portTask = _secureStorage.GetAsync(Constants.SmtpPort);
+            var usernameTask = _secureStorage.GetAsync(Constants.SmtpUsername);
+            var passwordTask = _secureStorage.GetAsync(Constants.SmtpPassword);
+            await Task.WhenAll(
+                configuredSenderTask,
+                hostTask,
+                portTask,
+                usernameTask,
+                passwordTask);
+
+            var configuredSender = await configuredSenderTask;
             var input = new StocktakeEmailConfigurationInput(
                 provider,
                 provider != "Other" ? recipient : configuredSender ?? string.Empty,
-                await _secureStorage.GetAsync(Constants.SmtpHost) ?? string.Empty,
-                await _secureStorage.GetAsync(Constants.SmtpPort) ?? string.Empty,
-                await _secureStorage.GetAsync(Constants.SmtpUsername) ?? string.Empty,
-                await _secureStorage.GetAsync(Constants.SmtpPassword) ?? string.Empty);
+                await hostTask ?? string.Empty,
+                await portTask ?? string.Empty,
+                await usernameTask ?? string.Empty,
+                await passwordTask ?? string.Empty);
             var validation = _emailConfigurationValidator.Validate(input);
             if (!validation.IsValid)
                 return (null, null, validation.Errors[0].ErrorMessage);
