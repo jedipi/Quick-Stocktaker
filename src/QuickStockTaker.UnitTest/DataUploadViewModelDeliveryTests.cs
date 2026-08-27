@@ -266,6 +266,33 @@ public sealed class DataUploadViewModelDeliveryTests
             TestContext.Current.CancellationToken);
     }
 
+    [Theory]
+    [InlineData(
+        StocktakeDeliveryStatus.AlreadyInProgress,
+        "Another stocktake delivery is already in progress.")]
+    [InlineData(
+        StocktakeDeliveryStatus.Failed,
+        "Stocktake export failed. Please try again.")]
+    public async Task CsvCommand_WhenWorkflowCannotCreateExport_ShowsDistinctOutcome(
+        StocktakeDeliveryStatus status,
+        string expectedMessage)
+    {
+        var dialogs = Substitute.For<IUserDialogs>();
+        var workflow = Substitute.For<IStocktakeDeliveryWorkflow>();
+        workflow.CreateExportAsync(Arg.Any<CancellationToken>())
+            .Returns(new StocktakeDeliveryResult(status));
+        var viewModel = CreateViewModel(dialogs, workflow);
+
+        await viewModel.CsvCommand.ExecuteAsync(null);
+
+        await dialogs.Received(1).AlertAsync(
+            expectedMessage,
+            "Error",
+            "OK",
+            "ic_error.png",
+            Arg.Any<CancellationToken>());
+    }
+
     [Fact]
     public async Task CsvCommand_WhenWorkflowCreatesExport_ShowsExistingShareAndSaveActions()
     {

@@ -40,7 +40,15 @@ namespace QuickStockTaker.Core.ViewModels
             var result = await _deliveryWorkflow.CreateExportAsync();
             if (result.Status is not StocktakeDeliveryStatus.Succeeded || result.Export is null)
             {
-                await _dialogs.AlertAsync("No data is exported. Please try again.", "Error", "OK", "ic_error.png");
+                var message = result.Message ?? result.Status switch
+                {
+                    StocktakeDeliveryStatus.NoStocktakeData => "No data is exported. Please try again.",
+                    StocktakeDeliveryStatus.Cancelled => "Stocktake export cancelled.",
+                    StocktakeDeliveryStatus.AlreadyInProgress => "Another stocktake delivery is already in progress.",
+                    _ => "Stocktake export failed. Please try again."
+                };
+
+                await _dialogs.AlertAsync(message, "Error", "OK", "ic_error.png");
                 return;
             }
 

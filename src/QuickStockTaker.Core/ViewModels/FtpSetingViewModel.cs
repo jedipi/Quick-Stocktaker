@@ -10,68 +10,23 @@ namespace QuickStockTaker.Core.ViewModels
     public partial class FtpSetingViewModel : BaseViewModel
     {
         private readonly IStocktakeRemoteConnectionService _connectionService;
+        private readonly IStocktakeRemoteConfigurationGate _configurationGate;
         private readonly IAppPreferences _preferences;
         private readonly ISecureStorageService _secureStorage;
         private readonly IPageDialogService _pageDialogService;
+        private int _useSftpChangeVersion;
 
-        public bool FtpUseSftp
-        {
-            get => _preferences.GetBool(Constants.FtpUseSftp, true);
-            set
-            {
-                var previousUseSftp = _preferences.GetBool(Constants.FtpUseSftp, true);
-                if (previousUseSftp == value)
-                    return;
+        [ObservableProperty]
+        private bool _ftpUseSftp;
 
-                var port = GetPortForProtocolChange(previousUseSftp, value, FtpPort);
+        [ObservableProperty]
+        private string _ftpHost;
 
-                _preferences.Set(Constants.FtpUseSftp, value);
+        [ObservableProperty]
+        private string _ftpPort;
 
-                if (port != FtpPort)
-                    FtpPort = port;
-
-                OnPropertyChanged(nameof(FtpPort));
-            }
-        }
-
-        public string FtpHost
-        {
-            get => _preferences.GetString(Constants.FtpHost, "");
-            set
-            {
-                if (_preferences.GetString(Constants.FtpHost, "") == value)
-                    return;
-
-                _preferences.Set(Constants.FtpHost, value);
-                OnPropertyChanged();
-            }
-        }
-
-        public string FtpPort
-        {
-            get => _preferences.GetString(Constants.FtpPort, FtpUseSftp ? "22" : "21");
-            set
-            {
-                if (_preferences.GetString(Constants.FtpPort, FtpUseSftp ? "22" : "21") == value)
-                    return;
-
-                _preferences.Set(Constants.FtpPort, value);
-                OnPropertyChanged();
-            }
-        }
-
-        public string FtpFolder
-        {
-            get => _preferences.GetString(Constants.FtpFolder, "");
-            set
-            {
-                if (_preferences.GetString(Constants.FtpFolder, "") == value)
-                    return;
-
-                _preferences.Set(Constants.FtpFolder, value);
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        private string _ftpFolder;
 
         [ObservableProperty]
         private string _ftpUsername;
@@ -79,15 +34,23 @@ namespace QuickStockTaker.Core.ViewModels
         [ObservableProperty]
         private string _ftpPasswordDisplay;
 
+        [ObservableProperty]
+        private bool _isFtpConfigurationLoaded;
+
+        [ObservableProperty]
+        private bool _hasFtpConfigurationLoadError;
+
         public FtpSetingViewModel(
             IUserDialogs dialogs,
             IStocktakeRemoteConnectionService connectionService,
+            IStocktakeRemoteConfigurationGate configurationGate,
             IAppPreferences preferences,
             ISecureStorageService secureStorage,
             IPageDialogService pageDialogService,
             ILogger<FtpSetingViewModel> logger) : base(dialogs, logger)
         {
             _connectionService = connectionService;
+            _configurationGate = configurationGate;
             _preferences = preferences;
             _secureStorage = secureStorage;
             _pageDialogService = pageDialogService;
@@ -97,8 +60,69 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private async Task OnAppearing()
         {
-            FtpUsername = await _secureStorage.GetAsync(Constants.FtpUsername) ?? "";
-            FtpPasswordDisplay = string.IsNullOrEmpty(await _secureStorage.GetAsync(Constants.FtpPassword)) ? "" : "******";
+            IsFtpConfigurationLoaded = false;
+            HasFtpConfigurationLoadError = false;
+            try
+            {
+                var settings = await _configurationGate.RunAsync(async () =>
+                {
+                    var useSftp = _preferences.GetBool(Constants.FtpUseSftp, true);
+                    return (
+                        UseSftp: useSftp,
+                        Host: _preferences.GetString(Constants.FtpHost, ""),
+                        Port: _preferences.GetString(Constants.FtpPort, useSftp ? "22" : "21"),
+                        Folder: _preferences.GetString(Constants.FtpFolder, ""),
+                        Username: await _secureStorage.GetAsync(Constants.FtpUsername) ?? "",
+                        HasPassword: !string.IsNullOrEmpty(await _secureStorage.GetAsync(Constants.FtpPassword)));
+                });
+
+                FtpUseSftp = settings.UseSftp;
+                FtpHost = settings.Host;
+                FtpPort = settings.Port;
+                FtpFolder = settings.Folder;
+                FtpUsername = settings.Username;
+                FtpPasswordDisplay = settings.HasPassword ? "******" : "";
+                IsFtpConfigurationLoaded = true;
+            }
+            catch (Exception ex)
+            {
+                HasFtpConfigurationLoadError = true;
+                _logger.LogError(ex, "FTP/SFTP settings load failed");
+                await _dialogs.AlertAsync(
+                    "FTP/SFTP settings could not be loaded. Please try again.",
+                    "Error",
+                    "OK",
+                    "ic_error.png");
+            }
+        }
+
+        [RelayCommand(AllowConcurrentExecutions = true)]
+        private async Task OnUseSftpToggled(bool useSftp)
+        {
+            var changeVersion = Interlocked.Increment(ref _useSftpChangeVersion);
+            var change = await _configurationGate.RunAsync(() =>
+            {
+                if (changeVersion != Volatile.Read(ref _useSftpChangeVersion))
+                    return Task.FromResult((Applied: false, Port: string.Empty));
+
+                var previousUseSftp = _preferences.GetBool(Constants.FtpUseSftp, true);
+                var currentPort = _preferences.GetString(
+                    Constants.FtpPort,
+                    previousUseSftp ? "22" : "21");
+                var nextPort = GetPortForProtocolChange(previousUseSftp, useSftp, currentPort);
+
+                _preferences.Set(Constants.FtpUseSftp, useSftp);
+                if (nextPort != currentPort)
+                    _preferences.Set(Constants.FtpPort, nextPort);
+
+                return Task.FromResult((Applied: true, Port: nextPort));
+            });
+
+            if (!change.Applied || changeVersion != Volatile.Read(ref _useSftpChangeVersion))
+                return;
+
+            FtpUseSftp = useSftp;
+            FtpPort = change.Port;
         }
 
         [RelayCommand]
@@ -110,7 +134,13 @@ namespace QuickStockTaker.Core.ViewModels
             if (string.IsNullOrEmpty(result))
                 return;
 
-            FtpHost = result.Trim();
+            var host = result.Trim();
+            await _configurationGate.RunAsync(() =>
+            {
+                _preferences.Set(Constants.FtpHost, host);
+                return Task.CompletedTask;
+            });
+            FtpHost = host;
         }
 
         [RelayCommand]
@@ -122,7 +152,13 @@ namespace QuickStockTaker.Core.ViewModels
             if (string.IsNullOrEmpty(result))
                 return;
 
-            FtpPort = result.Trim();
+            var port = result.Trim();
+            await _configurationGate.RunAsync(() =>
+            {
+                _preferences.Set(Constants.FtpPort, port);
+                return Task.CompletedTask;
+            });
+            FtpPort = port;
         }
 
         [RelayCommand]
@@ -134,7 +170,13 @@ namespace QuickStockTaker.Core.ViewModels
             if (string.IsNullOrEmpty(result))
                 return;
 
-            FtpFolder = result.Trim();
+            var folder = result.Trim();
+            await _configurationGate.RunAsync(() =>
+            {
+                _preferences.Set(Constants.FtpFolder, folder);
+                return Task.CompletedTask;
+            });
+            FtpFolder = folder;
         }
 
         [RelayCommand]
@@ -146,8 +188,10 @@ namespace QuickStockTaker.Core.ViewModels
             if (string.IsNullOrEmpty(result))
                 return;
 
-            FtpUsername = result.Trim();
-            await _secureStorage.SetAsync(Constants.FtpUsername, FtpUsername);
+            var username = result.Trim();
+            await _configurationGate.RunAsync(
+                () => _secureStorage.SetAsync(Constants.FtpUsername, username));
+            FtpUsername = username;
         }
 
         [RelayCommand]
@@ -159,7 +203,8 @@ namespace QuickStockTaker.Core.ViewModels
             if (string.IsNullOrEmpty(result))
                 return;
 
-            await _secureStorage.SetAsync(Constants.FtpPassword, result.Trim());
+            await _configurationGate.RunAsync(
+                () => _secureStorage.SetAsync(Constants.FtpPassword, result.Trim()));
             FtpPasswordDisplay = "******";
         }
 

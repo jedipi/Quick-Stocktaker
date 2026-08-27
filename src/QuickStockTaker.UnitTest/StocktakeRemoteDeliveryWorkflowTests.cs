@@ -1,3 +1,4 @@
+using Controls.UserDialogs.Maui;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -6,6 +7,7 @@ using QuickStockTaker.Core.Data;
 using QuickStockTaker.Core.Services;
 using QuickStockTaker.Core.Services.Interfaces;
 using QuickStockTaker.Core.Validators;
+using QuickStockTaker.Core.ViewModels;
 
 namespace QuickStockTaker.UnitTest;
 
@@ -248,6 +250,121 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
                 configuration.Username == "second-user" &&
                 configuration.Password == "second-password"),
             TestContext.Current.CancellationToken);
+    }
+
+    [Fact]
+    public async Task DeliverToConfiguredRemoteAsync_WhenPasswordChangesDuringCapture_UsesChangesOnlyOnNextOperation()
+    {
+        var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));
+        var exporter = Substitute.For<ICsvExportService>();
+        exporter.CreateExportAsync(Arg.Any<CancellationToken>()).Returns(export);
+        var preferences = CreateValidPreferences(useSftp: false);
+        var usernameReadStarted = new TaskCompletionSource(
+            TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseUsernameRead = new TaskCompletionSource(
+            TaskCreationOptions.RunContinuationsAsynchronously);
+        var password = "old-password";
+        var secureStorage = Substitute.For<ISecureStorageService>();
+        secureStorage.GetAsync(Constants.FtpUsername).Returns(async _ =>
+        {
+            usernameReadStarted.TrySetResult();
+            await releaseUsernameRead.Task;
+            return "stocktaker";
+        });
+        secureStorage.GetAsync(Constants.FtpPassword).Returns(_ => password);
+        secureStorage.SetAsync(Constants.FtpPassword, Arg.Any<string>()).Returns(call =>
+        {
+            password = call.ArgAt<string>(1);
+            return Task.CompletedTask;
+        });
+        var configurations = new List<StocktakeRemoteConfiguration>();
+        var configurationGate = new StocktakeRemoteConfigurationGate();
+        var adapter = Substitute.For<IStocktakeRemoteTransferAdapter>();
+        adapter.Protocol.Returns(StocktakeRemoteProtocol.Ftp);
+        adapter.TransferAsync(export, Arg.Any<StocktakeRemoteConfiguration>(), Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                configurations.Add(call.Arg<StocktakeRemoteConfiguration>());
+                return Task.CompletedTask;
+            });
+        var workflow = new StocktakeDeliveryWorkflow(
+            exporter,
+            NullLogger<StocktakeDeliveryWorkflow>.Instance,
+            new StocktakeDeliveryOperationGate(),
+            preferences,
+            secureStorage,
+            new StocktakeRemoteConfigurationValidator(),
+            [adapter],
+            configurationGate);
+        var pageDialogs = Substitute.For<IPageDialogService>();
+        pageDialogs.DisplayPromptAsync(
+                "FTP/SFTP Password",
+                "Please type in the password:",
+                "OK")
+            .ReturnsForAnyArgs("new-password");
+        var settings = new FtpSetingViewModel(
+            Substitute.For<IUserDialogs>(),
+            Substitute.For<IStocktakeRemoteConnectionService>(),
+            configurationGate,
+            preferences,
+            secureStorage,
+            pageDialogs,
+            NullLogger<FtpSetingViewModel>.Instance);
+
+        var firstDelivery = workflow.DeliverToConfiguredRemoteAsync(TestContext.Current.CancellationToken);
+        await usernameReadStarted.Task.WaitAsync(TestContext.Current.CancellationToken);
+        var passwordChange = settings.FtpPasswordCommand.ExecuteAsync(null);
+        releaseUsernameRead.TrySetResult();
+        await Task.WhenAll(firstDelivery, passwordChange);
+        await workflow.DeliverToConfiguredRemoteAsync(TestContext.Current.CancellationToken);
+
+        configurations.Should().HaveCount(2);
+        configurations[0].Password.Should().Be("old-password");
+        configurations[1].Password.Should().Be("new-password");
+    }
+
+    [Fact]
+    public async Task DeliverToConfiguredRemoteAsync_WhenCancelledDuringConfigurationCapture_ReturnsCancelledWithoutTransfer()
+    {
+        var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));
+        var exporter = Substitute.For<ICsvExportService>();
+        exporter.CreateExportAsync(Arg.Any<CancellationToken>()).Returns(export);
+        var usernameReadStarted = new TaskCompletionSource(
+            TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseUsernameRead = new TaskCompletionSource(
+            TaskCreationOptions.RunContinuationsAsynchronously);
+        var secureStorage = Substitute.For<ISecureStorageService>();
+        secureStorage.GetAsync(Constants.FtpUsername).Returns(async _ =>
+        {
+            usernameReadStarted.TrySetResult();
+            await releaseUsernameRead.Task;
+            return "stocktaker";
+        });
+        secureStorage.GetAsync(Constants.FtpPassword).Returns("secret");
+        var adapter = Substitute.For<IStocktakeRemoteTransferAdapter>();
+        adapter.Protocol.Returns(StocktakeRemoteProtocol.Ftp);
+        var workflow = new StocktakeDeliveryWorkflow(
+            exporter,
+            NullLogger<StocktakeDeliveryWorkflow>.Instance,
+            new StocktakeDeliveryOperationGate(),
+            CreateValidPreferences(useSftp: false),
+            secureStorage,
+            new StocktakeRemoteConfigurationValidator(),
+            [adapter],
+            new StocktakeRemoteConfigurationGate());
+        using var cancellation = new CancellationTokenSource();
+
+        var delivery = workflow.DeliverToConfiguredRemoteAsync(cancellation.Token);
+        await usernameReadStarted.Task.WaitAsync(TestContext.Current.CancellationToken);
+        cancellation.Cancel();
+        releaseUsernameRead.TrySetResult();
+        var result = await delivery;
+
+        result.Status.Should().Be(StocktakeDeliveryStatus.Cancelled);
+        await adapter.DidNotReceive().TransferAsync(
+            Arg.Any<StocktakeExport>(),
+            Arg.Any<StocktakeRemoteConfiguration>(),
+            Arg.Any<CancellationToken>());
     }
 
     [Fact]

@@ -11,17 +11,20 @@ namespace QuickStockTaker.Core.Services
         private readonly IAppPreferences _preferences;
         private readonly ISecureStorageService _secureStorage;
         private readonly StocktakeRemoteConfigurationValidator _validator;
+        private readonly IStocktakeRemoteConfigurationGate _configurationGate;
         private readonly Func<StocktakeRemoteConfiguration, CancellationToken, Task> _testFtpConnection;
         private readonly Func<StocktakeRemoteConfiguration, CancellationToken, Task> _testSftpConnection;
 
         public StocktakeRemoteConnectionService(
             IAppPreferences preferences,
             ISecureStorageService secureStorage,
-            StocktakeRemoteConfigurationValidator validator)
+            StocktakeRemoteConfigurationValidator validator,
+            IStocktakeRemoteConfigurationGate configurationGate)
             : this(
                 preferences,
                 secureStorage,
                 validator,
+                configurationGate,
                 TestFtpConnectionAsync,
                 TestSftpConnectionAsync)
         {
@@ -31,12 +34,14 @@ namespace QuickStockTaker.Core.Services
             IAppPreferences preferences,
             ISecureStorageService secureStorage,
             StocktakeRemoteConfigurationValidator validator,
+            IStocktakeRemoteConfigurationGate configurationGate,
             Func<StocktakeRemoteConfiguration, CancellationToken, Task> testFtpConnection,
             Func<StocktakeRemoteConfiguration, CancellationToken, Task> testSftpConnection)
         {
             _preferences = preferences;
             _secureStorage = secureStorage;
             _validator = validator;
+            _configurationGate = configurationGate;
             _testFtpConnection = testFtpConnection;
             _testSftpConnection = testSftpConnection;
         }
@@ -44,17 +49,18 @@ namespace QuickStockTaker.Core.Services
         public async Task<(bool Success, string Message)> TestConnectionAsync(
             CancellationToken cancellationToken = default)
         {
-            var snapshot = await StocktakeRemoteConfigurationSnapshot.CaptureAsync(
-                _preferences,
-                _secureStorage,
-                _validator);
-            if (snapshot.ErrorMessage is not null)
-                return (false, snapshot.ErrorMessage);
-
-            var configuration = snapshot.Configuration;
-
             try
             {
+                var snapshot = await StocktakeRemoteConfigurationSnapshot.CaptureAsync(
+                    _preferences,
+                    _secureStorage,
+                    _validator,
+                    _configurationGate,
+                    cancellationToken);
+                if (snapshot.ErrorMessage is not null)
+                    return (false, snapshot.ErrorMessage);
+
+                var configuration = snapshot.Configuration;
                 if (configuration.Protocol == StocktakeRemoteProtocol.Sftp)
                     await Task.Run(() => _testSftpConnection(configuration, cancellationToken), cancellationToken);
                 else

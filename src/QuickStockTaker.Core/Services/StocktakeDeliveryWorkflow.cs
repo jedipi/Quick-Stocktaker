@@ -13,6 +13,7 @@ namespace QuickStockTaker.Core.Services
         private readonly IAppPreferences _preferences;
         private readonly ISecureStorageService _secureStorage;
         private readonly StocktakeRemoteConfigurationValidator _remoteConfigurationValidator;
+        private readonly IStocktakeRemoteConfigurationGate _remoteConfigurationGate;
         private readonly IReadOnlyCollection<IStocktakeRemoteTransferAdapter> _remoteTransferAdapters;
         private readonly StocktakeEmailConfigurationValidator _emailConfigurationValidator;
         private readonly IStocktakeEmailAdapter _emailAdapter;
@@ -45,6 +46,27 @@ namespace QuickStockTaker.Core.Services
             ISecureStorageService secureStorage,
             StocktakeRemoteConfigurationValidator remoteConfigurationValidator,
             IEnumerable<IStocktakeRemoteTransferAdapter> remoteTransferAdapters)
+            : this(
+                csvExport,
+                logger,
+                operationGate,
+                preferences,
+                secureStorage,
+                remoteConfigurationValidator,
+                remoteTransferAdapters,
+                new StocktakeRemoteConfigurationGate())
+        {
+        }
+
+        internal StocktakeDeliveryWorkflow(
+            ICsvExportService csvExport,
+            ILogger<StocktakeDeliveryWorkflow> logger,
+            StocktakeDeliveryOperationGate operationGate,
+            IAppPreferences preferences,
+            ISecureStorageService secureStorage,
+            StocktakeRemoteConfigurationValidator remoteConfigurationValidator,
+            IEnumerable<IStocktakeRemoteTransferAdapter> remoteTransferAdapters,
+            IStocktakeRemoteConfigurationGate remoteConfigurationGate)
         {
             _csvExport = csvExport;
             _logger = logger;
@@ -53,6 +75,7 @@ namespace QuickStockTaker.Core.Services
             _secureStorage = secureStorage;
             _remoteConfigurationValidator = remoteConfigurationValidator;
             _remoteTransferAdapters = remoteTransferAdapters.ToArray();
+            _remoteConfigurationGate = remoteConfigurationGate;
         }
 
         internal StocktakeDeliveryWorkflow(
@@ -98,6 +121,33 @@ namespace QuickStockTaker.Core.Services
                 secureStorage,
                 remoteConfigurationValidator,
                 remoteTransferAdapters)
+        {
+            _emailConfigurationValidator = emailConfigurationValidator;
+            _emailAdapter = emailAdapter;
+            _emailConfigurationGate = emailConfigurationGate;
+        }
+
+        internal StocktakeDeliveryWorkflow(
+            ICsvExportService csvExport,
+            ILogger<StocktakeDeliveryWorkflow> logger,
+            StocktakeDeliveryOperationGate operationGate,
+            IAppPreferences preferences,
+            ISecureStorageService secureStorage,
+            StocktakeRemoteConfigurationValidator remoteConfigurationValidator,
+            IEnumerable<IStocktakeRemoteTransferAdapter> remoteTransferAdapters,
+            StocktakeEmailConfigurationValidator emailConfigurationValidator,
+            IStocktakeEmailAdapter emailAdapter,
+            IStocktakeEmailConfigurationGate emailConfigurationGate,
+            IStocktakeRemoteConfigurationGate remoteConfigurationGate)
+            : this(
+                csvExport,
+                logger,
+                operationGate,
+                preferences,
+                secureStorage,
+                remoteConfigurationValidator,
+                remoteTransferAdapters,
+                remoteConfigurationGate)
         {
             _emailConfigurationValidator = emailConfigurationValidator;
             _emailAdapter = emailAdapter;
@@ -192,7 +242,9 @@ namespace QuickStockTaker.Core.Services
                 var configurationResult = await StocktakeRemoteConfigurationSnapshot.CaptureAsync(
                     _preferences,
                     _secureStorage,
-                    _remoteConfigurationValidator);
+                    _remoteConfigurationValidator,
+                    _remoteConfigurationGate,
+                    cancellationToken);
                 if (configurationResult.ErrorMessage is not null)
                     return StocktakeDeliveryResult.InvalidConfiguration(configurationResult.ErrorMessage);
 
