@@ -4,9 +4,9 @@ namespace QuickStockTaker.Views;
 
 public partial class ItemDetailPage : ContentPage
 {
-	public ItemDetailPage(ItemDetailViewModel vm)
-	{
-		InitializeComponent();
-		BindingContext = vm;
-	}
+    public ItemDetailPage(ItemDetailViewModel vm)
+    {
+        InitializeComponent();
+        BindingContext = vm;
+    }
 }

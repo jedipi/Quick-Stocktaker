@@ -10,7 +10,7 @@ namespace QuickStockTaker.Core.Validators
     /// <summary>
     /// Validate email address
     /// </summary>
-    public class EmailValidator: AbstractValidator<string>
+    public class EmailValidator : AbstractValidator<string>
     {
         public EmailValidator()
         {

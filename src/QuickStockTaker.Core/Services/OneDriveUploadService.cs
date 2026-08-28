@@ -10,7 +10,7 @@ namespace QuickStockTaker.Core.Services
     /// <summary>
     /// Upload data file via One Drive
     /// </summary>
-    public class OneDriveUploadService:IUploader
+    public class OneDriveUploadService : IUploader
     {
         //public FileInfo File { get; set; }
 

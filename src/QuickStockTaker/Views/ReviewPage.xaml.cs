@@ -5,11 +5,11 @@ namespace QuickStockTaker.Views;
 
 public partial class ReviewPage : ContentPage
 {
-	public ReviewPage(ReviewViewModel vm)
-	{
-		InitializeComponent();
-		BindingContext = vm;
-	}
+    public ReviewPage(ReviewViewModel vm)
+    {
+        InitializeComponent();
+        BindingContext = vm;
+    }
 
     /// <summary>
     /// This is a workaround for opening the datapicker

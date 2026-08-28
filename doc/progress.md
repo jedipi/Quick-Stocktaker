@@ -4,7 +4,7 @@ Last updated: 27 August 2026
 
 ## Status
 
-Planning and specification are complete. Tickets #6 through #9 are implemented. Focused tests and the Android build are verified; repository-wide formatting remains a separately tracked acceptance blocker for ticket #9.
+Planning, implementation, and verification are complete for tickets #6 through #9.
 
 ## Completed
 
@@ -60,8 +60,8 @@ Planning and specification are complete. Tickets #6 through #9 are implemented. 
 
 - Full .NET 10 unit-test suite: passed, 87/87 tests.
 - Ticket-scoped formatting verification: passed.
+- Repository-wide formatting verification: passed with no changes required.
 - Android MAUI Debug build for `net10.0-android`: passed with 0 errors.
-- Repository-wide formatting verification remains blocked by pre-existing whitespace errors in untouched MAUI entry points, platform files, view code-behind, and older email/cloud modules.
 - Existing warnings remain for known package advisories affecting `SQLitePCLRaw.lib.e_sqlite3` and `SSH.NET`, plus existing `FontAwesome.Equals` member-hiding warnings in the Android build.
 
 ## Approved Direction
@@ -77,7 +77,7 @@ Planning and specification are complete. Tickets #6 through #9 are implemented. 
 
 ## Next Step
 
-Track repository-wide formatting debt as separate maintenance work. For ticket #9, report the existing blocker without modifying unrelated files.
+Run the final ticket #9 acceptance audit and close it when all criteria are confirmed.
 
 ## Existing Unrelated Worktree State
 

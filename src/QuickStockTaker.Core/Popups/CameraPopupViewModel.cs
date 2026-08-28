@@ -14,11 +14,11 @@ namespace QuickStockTaker.Core.Popups
 
         [ObservableProperty]
         private int _delayBetweenContinuousScans;
-        public CameraPopupViewModel() 
+        public CameraPopupViewModel()
         {
             // default delay in ms
             DelayBetweenContinuousScans = 1500;
-        }  
+        }
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {

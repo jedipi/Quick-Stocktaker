@@ -10,7 +10,7 @@ namespace QuickStockTaker.Core.Services
     /// <summary>
     /// Uploade data to dropbox
     /// </summary>
-    class DropboxUploadService:IUploader
+    class DropboxUploadService : IUploader
     {
         public string Name { get; set; }
 
