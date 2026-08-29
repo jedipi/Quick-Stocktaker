@@ -13,11 +13,11 @@ namespace QuickStockTaker;
 
 public static class MauiProgram
 {
-	public static MauiApp CreateMauiApp()
-	{
-		var builder = MauiApp.CreateBuilder();
-		builder
-			.UseMauiApp<App>()
+    public static MauiApp CreateMauiApp()
+    {
+        var builder = MauiApp.CreateBuilder();
+        builder
+            .UseMauiApp<App>()
             .UseAndroidInAppUpdates(static options =>
             {
 #if DEBUG
@@ -40,9 +40,9 @@ public static class MauiProgram
                 ToastConfig.DefaultCornerRadius = 15;
             })
             .ConfigureFonts(fonts =>
-			{
-				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+            {
+                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 fonts.AddFont("material-icons-outlined-regular.ttf", "MD-O");
                 fonts.AddFont("Font Awesome 6 Duotone-Solid-900.otf", "FA-D");
                 fonts.AddFont("Font Awesome 6 Free-Regular-400.otf", "FA");
@@ -64,11 +64,11 @@ public static class MauiProgram
         builder.Logging.AddSerilog(dispose: true);
 
         return builder.Build();
-	}
+    }
 
     private static void SetupSerilog()
     {
-        
+
         var flushInterval = new TimeSpan(0, 0, 1);
         var file = Path.Combine(FileSystem.AppDataDirectory, "log.log");
         Log.Logger = new LoggerConfiguration()

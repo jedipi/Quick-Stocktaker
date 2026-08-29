@@ -13,37 +13,21 @@ namespace QuickStockTaker.Core.ViewModels
     {
         #region Fields
 
-        private FileInfo _exportedFile;
-        private readonly IEmailUploadService _emailUploader;
-        private readonly IFtpUplodService _ftpUploader;
+        private readonly IStocktakeDeliveryWorkflow _deliveryWorkflow;
         private readonly EmailValidator _emailValidator;
-        private readonly ISmtpService _smtpService;
-        private readonly DataExportFactory _exporterFactory;
-        private readonly IAppPreferences _preferences;
-        private readonly ISecureStorageService _secureStorage;
         private readonly IAppFileSystem _fileSystem;
         private readonly IPageDialogService _pageDialogService;
         #endregion
         public DataUploadViewModel(
             IUserDialogs dialogs,
-            IEmailUploadService emailUploader,
-            IFtpUplodService ftpUploader,
+            IStocktakeDeliveryWorkflow deliveryWorkflow,
             EmailValidator emailValidator,
-            ISmtpService smtpService,
-            DataExportFactory exporterFactory,
-            IAppPreferences preferences,
-            ISecureStorageService secureStorage,
             IAppFileSystem fileSystem,
             IPageDialogService pageDialogService,
             ILogger<DataUploadViewModel> logger) : base(dialogs, logger)
         {
-            _emailUploader = emailUploader;
-            _ftpUploader = ftpUploader;
+            _deliveryWorkflow = deliveryWorkflow;
             _emailValidator = emailValidator;
-            _smtpService = smtpService;
-            _exporterFactory = exporterFactory;
-            _preferences = preferences;
-            _secureStorage = secureStorage;
             _fileSystem = fileSystem;
             _pageDialogService = pageDialogService;
         }
@@ -53,20 +37,30 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         private async Task OnCsv()
         {
-            await ExportData();
-            if (_exportedFile == null)
+            var result = await _deliveryWorkflow.CreateExportAsync();
+            if (result.Status is not StocktakeDeliveryStatus.Succeeded || result.Export is null)
             {
-                await _dialogs.AlertAsync("No data is exported. Please try again.", "Error", "OK", "ic_error.png");
+                var message = result.Message ?? result.Status switch
+                {
+                    StocktakeDeliveryStatus.NoStocktakeData => "No data is exported. Please try again.",
+                    StocktakeDeliveryStatus.Cancelled => "Stocktake export cancelled.",
+                    StocktakeDeliveryStatus.AlreadyInProgress => "Another stocktake delivery is already in progress.",
+                    _ => "Stocktake export failed. Please try again."
+                };
+
+                await _dialogs.AlertAsync(message, "Error", "OK", "ic_error.png");
                 return;
             }
 
+            var exportedFile = result.Export.File;
+
             try
             {
-                string filePath = _fileSystem.GetDownloadFilePath(_exportedFile.Name);
+                string filePath = _fileSystem.GetDownloadFilePath(exportedFile.Name);
 
                 var config = new ActionSheetConfig()
                 {
-                    Message = "Data exported: " + _exportedFile.Name,
+                    Message = "Data exported: " + exportedFile.Name,
                     UseBottomSheet = true,
                     Cancel = new ActionSheetOption("Cancel", () =>
                     {
@@ -79,12 +73,12 @@ namespace QuickStockTaker.Core.ViewModels
                         new ActionSheetOption("Share", async () => await Share.Default.RequestAsync(new ShareFileRequest
                         {
                             Title = "Sharing file",
-                            File = new ShareFile(_exportedFile.FullName)
+                            File = new ShareFile(exportedFile.FullName)
                         }), "ic_ios_share.png"),
 
                         new ActionSheetOption("Save", async () =>
                         {
-                            File.Copy(_exportedFile.FullName, filePath, true);
+                            File.Copy(exportedFile.FullName, filePath, true);
                             await _dialogs.AlertAsync("File saved to: " + filePath, "Success", "OK", "ic_greentick.png");
                         }, "ic_download.png")
                     }
@@ -127,42 +121,49 @@ namespace QuickStockTaker.Core.ViewModels
 
             try
             {
-                // export data
-                await ExportData();
-                if (_exportedFile == null)
-                {
-                    return;
-                }
-
-                // get smtp details.
-                var provider = _preferences.GetString(Constants.SmtpProvider, "Other");
-                var smtp = await _smtpService.GetSmtp(provider);
-
-                var tokenSource = new CancellationTokenSource();
-                string msg;
+                using var tokenSource = new CancellationTokenSource();
+                StocktakeDeliveryResult deliveryResult;
 
                 using (var progress = _dialogs.Progress(message: "Emailing data", cancelText: "Cancel", cancel: tokenSource.Cancel))
                 {
-                    progress.Show();
-
-                    // assing email address
-                    _emailUploader.To = emailAddress;
-                    _emailUploader.SmtpDetail = smtp;
-
-                    // get the from email address
-                    var from = await _secureStorage.GetAsync(Constants.SmtpFrom);
-                    _emailUploader.From = provider != "Other" ? emailAddress : from;
-
-                    (_, msg) = await _emailUploader.Upload(_exportedFile);
+                    _deliveryWorkflow.EmailDeliveryStarting += progress.Show;
+                    try
+                    {
+                        deliveryResult = await _deliveryWorkflow.DeliverByEmailAsync(
+                            emailAddress,
+                            tokenSource.Token);
+                    }
+                    finally
+                    {
+                        _deliveryWorkflow.EmailDeliveryStarting -= progress.Show;
+                    }
                 }
 
-                await _dialogs.AlertAsync(msg);
+                if (deliveryResult.Status == StocktakeDeliveryStatus.NoStocktakeData)
+                {
+                    await _dialogs.AlertAsync("Data export fail. Please try again.", "Error", "OK");
+                    return;
+                }
+
+                if (deliveryResult.Status == StocktakeDeliveryStatus.InvalidConfiguration)
+                {
+                    await _dialogs.AlertAsync(deliveryResult.Message, "ERROR", "OK");
+                    return;
+                }
+
+                var message = deliveryResult.Message ?? deliveryResult.Status switch
+                {
+                    StocktakeDeliveryStatus.Cancelled => "Email cancelled.",
+                    StocktakeDeliveryStatus.AlreadyInProgress => "Another stocktake delivery is already in progress.",
+                    _ => "Data send fail."
+                };
+
+                await _dialogs.AlertAsync(message);
 
             }
             catch (Exception ex)
             {
                 await _dialogs.AlertAsync($"{ex.Message}", "ERROR", "OK");
-                _logger.LogError(ex, "Email data fail");
             }
         }
 
@@ -175,57 +176,39 @@ namespace QuickStockTaker.Core.ViewModels
         {
             try
             {
-                var (isConfigured, configurationMessage) = await _ftpUploader.ValidateSettings();
-                if (!isConfigured)
-                {
-                    await _dialogs.AlertAsync(configurationMessage, "Error", "OK", "ic_error.png");
-                    return;
-                }
-
-                await ExportData();
-                if (_exportedFile == null)
-                {
-                    return;
-                }
-
-                var tokenSource = new CancellationTokenSource();
-                bool success;
-                string msg;
+                using var tokenSource = new CancellationTokenSource();
+                StocktakeDeliveryResult result;
 
                 using (var progress = _dialogs.Progress(message: "Uploading data", cancelText: "Cancel", cancel: tokenSource.Cancel))
                 {
-                    progress.Show();
-                    (success, msg) = await _ftpUploader.Upload(_exportedFile, tokenSource.Token);
+                    result = await _deliveryWorkflow.DeliverToConfiguredRemoteAsync(tokenSource.Token, progress.Show);
                 }
 
-                await _dialogs.AlertAsync(msg, success ? "Success" : "Error", "OK", success ? "ic_greentick.png" : "ic_error.png");
+                if (result.Status == StocktakeDeliveryStatus.NoStocktakeData)
+                {
+                    await _dialogs.AlertAsync("Data export fail. Please try again.", "Error", "OK");
+                    return;
+                }
+
+                var success = result.Status == StocktakeDeliveryStatus.Succeeded;
+                var message = result.Message ?? result.Status switch
+                {
+                    StocktakeDeliveryStatus.Cancelled => "Data upload cancelled.",
+                    StocktakeDeliveryStatus.AlreadyInProgress => "Another stocktake delivery is already in progress.",
+                    _ => "Data upload failed. Please try again."
+                };
+
+                await _dialogs.AlertAsync(
+                    message,
+                    success ? "Success" : "Error",
+                    "OK",
+                    success ? "ic_greentick.png" : "ic_error.png");
             }
             catch (Exception ex)
             {
                 await _dialogs.AlertAsync($"{ex.Message}", "ERROR", "OK");
-                _logger.LogError(ex, "FTP/SFTP data upload fail");
             }
         }
         #endregion
-
-        /// <summary>
-        /// Export stocktake data into a file
-        /// </summary>
-        /// <returns></returns>
-        private async Task ExportData()
-        {
-            _exportedFile = null;
-
-            // TODO: check what file format is needed. 
-            var exporter = _exporterFactory.CreateExporter("csv");
-            await exporter.Export();
-            if (exporter.ExportedFile == null)
-            {
-                await _dialogs.AlertAsync("Data export fail. Please try again.", "Error", "OK");
-                return;
-            }
-
-            _exportedFile = exporter.ExportedFile;
-        }
     }
 }

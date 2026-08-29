@@ -10,7 +10,7 @@ namespace QuickStockTaker.Core.Services
     /// <summary>
     /// Export stocktake data as a json file
     /// </summary>
-    public class JsonExportService:IDataExport
+    public class JsonExportService : IDataExport
     {
         public FileInfo ExportedFile { get; set; }
 

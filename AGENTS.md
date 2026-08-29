@@ -164,3 +164,17 @@ Don't:
 - Do not rename public or existing misspelled types such as `FtpUplodService` unless the task includes the migration.
 - Do not replace Autofac/MAUI/CommunityToolkit patterns with a different architecture without an explicit architectural task.
 - Do not hard-code export directories; use MAUI `FileSystem.AppDataDirectory` or the existing storage abstractions.
+
+## Agent skills
+
+### Issue tracker
+
+Issues are tracked in this repository's GitHub Issues. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The canonical default triage labels are used unchanged. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Domain documentation uses a single-context layout. See `docs/agents/domain.md`.

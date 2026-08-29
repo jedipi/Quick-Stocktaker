@@ -10,7 +10,7 @@ namespace QuickStockTaker.Core.Services
     /// <summary>
     /// Upload data file via Google Drive
     /// </summary>
-    class GoogleDriveUploadService :IUploader
+    class GoogleDriveUploadService : IUploader
     {
         public string Name { get; }
 

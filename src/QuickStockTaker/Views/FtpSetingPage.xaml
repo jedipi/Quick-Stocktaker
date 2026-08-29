@@ -14,6 +14,17 @@
     <ContentPage.Content>
         <ScrollView Padding="15">
             <StackLayout Orientation="Vertical">
+                <StackLayout IsVisible="{Binding HasFtpConfigurationLoadError}"
+                             Spacing="12"
+                             Padding="20">
+                    <Label Text="FTP/SFTP settings could not be loaded."
+                           HorizontalTextAlignment="Center" />
+                    <Button Text="Retry"
+                            Command="{Binding AppearingCommand}"
+                            HorizontalOptions="Center" />
+                </StackLayout>
+
+                <StackLayout Orientation="Vertical" IsEnabled="{Binding IsFtpConfigurationLoaded}">
 
                 <StackLayout Orientation="Vertical" VerticalOptions="Start" Padding="20,0,0,5">
                     <Label Text="FTP/SFTP Server Settings" TextColor="{StaticResource Primary}" />
@@ -22,7 +33,17 @@
 
                 <StackLayout Orientation="Horizontal" VerticalOptions="Center" Padding="20,20,20,0">
                     <Label Text="Use SFTP" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="StartAndExpand" />
-                    <Switch IsToggled="{Binding FtpUseSftp}" OnColor="{StaticResource Primary}" HorizontalOptions="End" />
+                    <Switch x:Name="UseSftpSwitch"
+                            IsToggled="{Binding FtpUseSftp, Mode=OneWay}"
+                            OnColor="{StaticResource Primary}"
+                            HorizontalOptions="End">
+                        <Switch.Behaviors>
+                            <toolkit:EventToCommandBehavior
+                                EventName="Toggled"
+                                Command="{Binding Source={x:Reference FtpSeting}, Path=BindingContext.UseSftpToggledCommand}"
+                                CommandParameter="{Binding Source={x:Reference UseSftpSwitch}, Path=IsToggled}" />
+                        </Switch.Behaviors>
+                    </Switch>
                 </StackLayout>
                 <Border Stroke="#ccc" StrokeThickness="1" StrokeShape="Line 0 0 2000 0" />
 
@@ -77,6 +98,7 @@
                             <FontImageSource Glyph="{x:Static md:MaterialDesignIcons.Network_check}" FontFamily="MD-O" />
                         </Button.ImageSource>
                     </Button>
+                </StackLayout>
                 </StackLayout>
             </StackLayout>
         </ScrollView>

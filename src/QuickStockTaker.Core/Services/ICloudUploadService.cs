@@ -10,7 +10,7 @@ namespace QuickStockTaker.Core.Services
     /// <summary>
     /// Upload data file via iCloud
     /// </summary>
-    public class ICloudUploadService:IUploader
+    public class ICloudUploadService : IUploader
     {
         public string Name { get; }
 

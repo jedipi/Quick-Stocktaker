@@ -4,9 +4,9 @@ namespace QuickStockTaker.Views;
 
 public partial class DataUploadPage : ContentPage
 {
-	public DataUploadPage(DataUploadViewModel vm)
-	{
-		InitializeComponent();
-		BindingContext = vm;
-	}
+    public DataUploadPage(DataUploadViewModel vm)
+    {
+        InitializeComponent();
+        BindingContext = vm;
+    }
 }

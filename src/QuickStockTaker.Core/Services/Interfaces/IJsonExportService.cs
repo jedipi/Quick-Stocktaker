@@ -3,7 +3,7 @@
     /// <summary>
     /// intermediate interface for exporting data in json format
     /// </summary>
-    public interface IJsonExportService:IDataExport
+    public interface IJsonExportService : IDataExport
     {
     }
 }

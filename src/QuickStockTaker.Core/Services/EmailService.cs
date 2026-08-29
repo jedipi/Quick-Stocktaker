@@ -26,10 +26,10 @@ namespace QuickStockTaker.Core.Services
 
         #region Properties
 
-        public string Username { get;set; }
-        public string Password { get;set; }
-        public string Host { get;set; }
-        public int Port { get;set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Host { get; set; }
+        public int Port { get; set; }
 
         public List<string> Recipients { get; set; }
         public string From { get; set; }
@@ -41,7 +41,7 @@ namespace QuickStockTaker.Core.Services
 
         #endregion
 
-        public EmailService() 
+        public EmailService()
         {
             Recipients = new List<string>();
         }
@@ -99,7 +99,7 @@ namespace QuickStockTaker.Core.Services
 
             foreach (var email in Recipients)
                 mail.To.Add(MailboxAddress.Parse(email));
-            
+
             mail.From.Add(MailboxAddress.Parse(From));
             mail.Subject = Subject;
 
@@ -129,10 +129,11 @@ namespace QuickStockTaker.Core.Services
 
 
             using var client = new SmtpClient();
-            
+
             // obtain the response from server
-            client.MessageSent += (sender, args) => { 
-                Response = args.Response; 
+            client.MessageSent += (sender, args) =>
+            {
+                Response = args.Response;
             };
             client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 
