@@ -24,6 +24,8 @@ namespace QuickStockTaker.Core.ViewModels
     public partial class EnterDateViewModel : ObservableObject, IRecipient<BarcodeResult[]>
     {
         #region fields
+        private const int FreeScannedItemLimit = 250;
+
         private bool _isContinuousMode;
         private string _deviceId;
         private string _stocktakeNumber;
@@ -118,6 +120,16 @@ namespace QuickStockTaker.Core.ViewModels
             if (string.IsNullOrEmpty(Barcode))
             {
                 Vibration.Vibrate(TimeSpan.FromSeconds(2));
+                return;
+            }
+
+            var items = await _repo.GetAllAsync();
+            if (items.Count >= FreeScannedItemLimit)
+            {
+                await _dialogs.AlertAsync(
+                    $"You have reached the {FreeScannedItemLimit} item scan limit.",
+                    "Scan limit reached",
+                    "OK");
                 return;
             }
 

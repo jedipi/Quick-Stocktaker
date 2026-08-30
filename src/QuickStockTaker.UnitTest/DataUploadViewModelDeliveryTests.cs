@@ -294,7 +294,7 @@ public sealed class DataUploadViewModelDeliveryTests
     }
 
     [Fact]
-    public async Task CsvCommand_WhenWorkflowCreatesExport_ShowsExistingShareAndSaveActions()
+    public async Task CsvCommand_WhenWorkflowCreatesExport_ShowsOnlySaveAction()
     {
         var tempDirectory = Directory.CreateTempSubdirectory("qst-viewmodel-export-");
         try
@@ -312,7 +312,7 @@ public sealed class DataUploadViewModelDeliveryTests
             dialogs.Received(1).ActionSheet(Arg.Is<ActionSheetConfig>(config =>
                 config.Title == "CSV File" &&
                 config.Message == "Data exported: Stocktake-WH-A-SCANNER-01.csv" &&
-                config.Options.Select(option => option.Text).SequenceEqual(new[] { "Share", "Save" })));
+                config.Options.Select(option => option.Text).SequenceEqual(new[] { "Save" })));
         }
         finally
         {

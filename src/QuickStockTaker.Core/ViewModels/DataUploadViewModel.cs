@@ -70,11 +70,13 @@ namespace QuickStockTaker.Core.ViewModels
                     Icon = "ic_csv.png",
                     Options = new ActionSheetOption[]
                     {
+                        /*
                         new ActionSheetOption("Share", async () => await Share.Default.RequestAsync(new ShareFileRequest
                         {
                             Title = "Sharing file",
                             File = new ShareFile(exportedFile.FullName)
                         }), "ic_ios_share.png"),
+                        */
 
                         new ActionSheetOption("Save", async () =>
                         {
