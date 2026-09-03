@@ -15,6 +15,7 @@ namespace QuickStockTaker.Core.Services
         public const string ItemDetailPage = "ItemDetailPage";
         public const string ReviewPage = "ReviewPage";
         public const string DataUploadPage = "DataUploadPage";
+        public const string SavedStocktakesPage = "SavedStocktakesPage";
 
         public const string Back = "..";
 

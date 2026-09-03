@@ -24,13 +24,14 @@ public sealed class StocktakeDeliveryWorkflowSnapshotTests
             preferences.Set(Constants.DeviceId, "SCANNER-OLD");
             var repository = Substitute.For<ISQLiteRepository<StocktakeItem>>();
             repository.GetAllAsync().Returns(_ => ReadSnapshotAsync());
-            var exporter = new CsvExportService(
+            var exporter = TestCsvExportServiceFactory.Create(
                 repository,
                 preferences,
                 new TestAppFileSystem(tempDirectory.FullName));
             IStocktakeDeliveryWorkflow workflow = new StocktakeDeliveryWorkflow(
                 exporter,
-                NullLogger<StocktakeDeliveryWorkflow>.Instance);
+                NullLogger<StocktakeDeliveryWorkflow>.Instance,
+                TestCsvExportServiceFactory.CreateWorkspace(preferences));
 
             var operation = workflow.CreateExportAsync(TestContext.Current.CancellationToken);
             await snapshotStarted.Task.WaitAsync(TestContext.Current.CancellationToken);

@@ -3,8 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using Controls.UserDialogs.Maui;
 using Microsoft.Extensions.Logging;
 using QuickStockTaker.Core.Models;
-using QuickStockTaker.Core.Models.Sqlite;
-using QuickStockTaker.Core.Repositories.Interfaces;
 using QuickStockTaker.Core.Services;
 using QuickStockTaker.Core.Services.Interfaces;
 using System.Collections.ObjectModel;
@@ -17,7 +15,6 @@ namespace QuickStockTaker.Core.ViewModels
     public partial class BayListViewModel : BaseViewModel
     {
         #region fields
-        private ISQLiteRepository<StocktakeItem> _repo;
         private readonly IStocktakeOperationsService _stocktakeOperations;
         private readonly INavigationService _navigationService;
         private readonly IPageDialogService _pageDialogService;
@@ -47,12 +44,10 @@ namespace QuickStockTaker.Core.ViewModels
         public BayListViewModel(
             IUserDialogs dialogs,
             ILogger<BayListViewModel> logger,
-            ISQLiteRepository<StocktakeItem> repo,
             IStocktakeOperationsService stocktakeOperations,
             INavigationService navigationService,
             IPageDialogService pageDialogService) : base(dialogs, logger)
         {
-            _repo = repo;
             _stocktakeOperations = stocktakeOperations;
             _navigationService = navigationService;
             _pageDialogService = pageDialogService;
@@ -137,9 +132,8 @@ namespace QuickStockTaker.Core.ViewModels
             }
 
             // check existing bay number.
-            var isBayNoExist = await _repo.FindAsync(x => x.BayLocation == newBayLocation);
-
-            if (isBayNoExist.Any())
+            if ((await _stocktakeOperations.GetItemsAsync())
+                .Any(item => item.BayLocation == newBayLocation))
             {
                 var isMergeBay = await _dialogs.ConfirmAsync($"Bay/Loc {newBayLocation} is already exist. \r\nDo you want to merge Bay/Loc {bay.BayLocation} into {newBayLocation}?");
                 if (!isMergeBay)
@@ -196,7 +190,7 @@ namespace QuickStockTaker.Core.ViewModels
             _dialogs.ShowLoading("Loading data...");
             Bays = new ObservableCollection<Bay>();
 
-            var items = await _repo.GetAllAsync();
+            var items = await _stocktakeOperations.GetItemsAsync();
 
             var bays = items.GroupBy(x => x.BayLocation).Select(l => new Bay
             {

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using QuickStockTaker.Core.Data;
+using QuickStockTaker.Core.Models.Sqlite;
 using QuickStockTaker.Core.Repositories.Interfaces;
 using QuickStockTaker.Core.Services;
 using QuickStockTaker.Core.Services.Interfaces;
@@ -196,7 +197,14 @@ public sealed class DataUploadViewModelDeliveryTests
             .Returns(progress);
         var exporter = Substitute.For<ICsvExportService>();
         var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));
-        exporter.CreateExportAsync(Arg.Any<CancellationToken>()).Returns(export);
+        var current = new Stocktake
+        {
+            Id = 1,
+            StocktakeNumber = "COUNT",
+            Site = "SITE",
+            StocktakeDate = new DateTime(2026, 8, 31)
+        };
+        exporter.CreateExportAsync(current, Arg.Any<CancellationToken>()).Returns(export);
         var preferences = new TestAppPreferences();
         preferences.Set(Constants.SmtpProvider, "Other");
         var secureStorage = Substitute.For<ISecureStorageService>();
@@ -215,6 +223,8 @@ public sealed class DataUploadViewModelDeliveryTests
                 sendStarted.TrySetResult(cancellationToken);
                 await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
             });
+        var workspace = Substitute.For<IStocktakeWorkspace>();
+        workspace.GetCurrentAsync(Arg.Any<CancellationToken>()).Returns(current);
         var workflow = new StocktakeDeliveryWorkflow(
             exporter,
             NullLogger<StocktakeDeliveryWorkflow>.Instance,
@@ -224,7 +234,10 @@ public sealed class DataUploadViewModelDeliveryTests
             new StocktakeRemoteConfigurationValidator(),
             [],
             new StocktakeEmailConfigurationValidator(),
-            adapter);
+            adapter,
+            new StocktakeEmailConfigurationGate(),
+            new StocktakeRemoteConfigurationGate(),
+            workspace);
         var viewModel = CreateViewModel(
             dialogs,
             workflow,
@@ -429,6 +442,7 @@ public sealed class DataUploadViewModelDeliveryTests
             new EmailValidator(),
             fileSystem,
             pageDialogs ?? Substitute.For<IPageDialogService>(),
+            Substitute.For<IEntitlementService>(),
             Substitute.For<ILogger<DataUploadViewModel>>());
     }
 

@@ -105,12 +105,12 @@
                             </StackLayout>
                         </Border>
                     </StackLayout>
-                    <StackLayout Style="{StaticResource outer}" IsVisible="False">
+                    <StackLayout Style="{StaticResource outer}">
                         <Border>
                             <StackLayout Orientation="Vertical">
-                                <ImageButton Source="ic_bin" 
-                                             Command="{Binding EnterDataCommand}"/>
-                                <Label Text="Purge Data"
+                                <ImageButton Source="ic_stocktake"
+                                             Command="{Binding SavedStocktakesCommand}"/>
+                                <Label Text="Saved Stocktakes"
                                        HorizontalOptions="Center"
                                        VerticalOptions="Center" />
                             </StackLayout>

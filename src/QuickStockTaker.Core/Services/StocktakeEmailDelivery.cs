@@ -16,7 +16,7 @@ namespace QuickStockTaker.Core.Services
 
     internal sealed record StocktakeEmailContent(
         string DeviceId,
-        int StocktakeNumber,
+        string StocktakeNumber,
         string Site,
         string StocktakeDate);
 

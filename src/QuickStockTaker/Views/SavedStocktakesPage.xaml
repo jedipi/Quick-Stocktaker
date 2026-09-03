@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:viewModels="clr-namespace:QuickStockTaker.Core.ViewModels;assembly=QuickStockTaker.Core"
+             xmlns:services="clr-namespace:QuickStockTaker.Core.Services.Interfaces;assembly=QuickStockTaker.Core"
+             x:Class="QuickStockTaker.Views.SavedStocktakesPage"
+             x:Name="SavedStocktakes"
+             x:DataType="viewModels:SavedStocktakesViewModel"
+             Title="Saved Stocktakes">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding Source={x:Reference SavedStocktakes}, Path=BindingContext.AppearingCommand}"
+            x:DataType="ContentPage" />
+    </ContentPage.Behaviors>
+
+    <Grid Padding="12" RowDefinitions="Auto,*" RowSpacing="12">
+        <Border Grid.Row="0"
+                Padding="12"
+                Stroke="{StaticResource Primary}"
+                StrokeShape="RoundRectangle 8"
+                IsVisible="{Binding ShowUpgradePrompt}">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <Label Text="Free includes one Saved Stocktake. Upgrade to Pro for unlimited Saved Stocktakes."
+                       VerticalOptions="Center" />
+                <Button Grid.Column="1"
+                        Text="Upgrade"
+                        Command="{Binding UpgradeCommand}" />
+            </Grid>
+        </Border>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Stocktakes}">
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="24" Spacing="8">
+                    <Label Text="No Saved Stocktakes"
+                           FontSize="Title"
+                           HorizontalTextAlignment="Center" />
+                    <Label Text="Create a Stocktake from the Dashboard to begin."
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="services:SavedStocktakeSummary">
+                    <SwipeView Margin="0,0,0,8">
+                        <SwipeView.LeftItems>
+                            <SwipeItems>
+                                <SwipeItem Text="Delete"
+                                           BackgroundColor="#DC3545"
+                                           Command="{Binding Source={x:Reference SavedStocktakes}, Path=BindingContext.DeleteCommand}"
+                                           CommandParameter="{Binding .}" />
+                            </SwipeItems>
+                        </SwipeView.LeftItems>
+                        <Border Padding="14"
+                                Stroke="#D5DDE5"
+                                StrokeShape="RoundRectangle 10"
+                                BackgroundColor="#F5F8FA">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={x:Reference SavedStocktakes}, Path=BindingContext.ResumeCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                                <Label Text="{Binding StocktakeNumber}"
+                                       FontSize="18"
+                                       FontAttributes="Bold" />
+                                <Label Grid.Column="1"
+                                       Text="CURRENT"
+                                       FontAttributes="Bold"
+                                       TextColor="Green"
+                                       IsVisible="{Binding IsCurrent}" />
+                                <Label Grid.Row="1"
+                                       Grid.ColumnSpan="2"
+                                       Text="{Binding Site, StringFormat='Site: {0}'}" />
+                                <HorizontalStackLayout Grid.Row="2" Grid.ColumnSpan="2" Spacing="16">
+                                    <Label Text="{Binding StocktakeDate, StringFormat='Date: {0:d}'}" />
+                                    <Label Text="{Binding ItemCount, StringFormat='Items: {0}'}" />
+                                    <Label Text="{Binding UnitCount, StringFormat='Units: {0}'}" />
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </Border>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

@@ -4,17 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Controls.UserDialogs.Maui;
 using Microsoft.Extensions.Logging;
 using QuickStockTaker.Core.Data;
-using QuickStockTaker.Core.Models.Sqlite;
-using QuickStockTaker.Core.Repositories.Interfaces;
-using QuickStockTaker.Core.Popups;
 using QuickStockTaker.Core.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuickStockTaker.Core.ViewModels
 {
@@ -26,7 +16,6 @@ namespace QuickStockTaker.Core.ViewModels
         private readonly IAppPreferences _preferences;
         private readonly IStocktakeOperationsService _stocktakeOperations;
         private readonly IPageDialogService _pageDialogService;
-        private readonly ISQLiteRepository<StocktakeItem> _stocktakeItemRepo;
         #endregion
 
         #region Properties
@@ -59,14 +48,12 @@ namespace QuickStockTaker.Core.ViewModels
             ILogger<ReviewViewModel> logger,
             IAppPreferences preferences,
             IStocktakeOperationsService stocktakeOperations,
-            IPageDialogService pageDialogService,
-            ISQLiteRepository<StocktakeItem> stocktakeItemRepo) : base(dialogs, logger)
+            IPageDialogService pageDialogService) : base(dialogs, logger)
         {
             _popupService = popupService;
             _preferences = preferences;
             _stocktakeOperations = stocktakeOperations;
             _pageDialogService = pageDialogService;
-            _stocktakeItemRepo = stocktakeItemRepo;
 
             GetData();
             SetInitialDate();
@@ -203,7 +190,7 @@ namespace QuickStockTaker.Core.ViewModels
 
         private async Task GetCounts()
         {
-            var items = await _stocktakeItemRepo.GetAllAsync();
+            var items = await _stocktakeOperations.GetItemsAsync();
 
             BaysCounts = items.GroupBy(x => x.BayLocation).Count();
             ItemCounts = (int)items.Sum(x => x.Qty);

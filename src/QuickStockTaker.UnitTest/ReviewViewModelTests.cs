@@ -15,21 +15,22 @@ public class ReviewViewModelTests
     [Fact]
     public async Task Appearing_LoadsBayAndQuantityTotalsFromStocktakeItems()
     {
-        var repository = new TestStocktakeItemRepository(
+        IReadOnlyList<StocktakeItem> items =
         [
             new StocktakeItem { BayLocation = "A1", Qty = 2 },
             new StocktakeItem { BayLocation = "A1", Qty = 3 },
             new StocktakeItem { BayLocation = "B2", Qty = 5 }
-        ]);
+        ];
+        var stocktakeOperations = Substitute.For<IStocktakeOperationsService>();
+        stocktakeOperations.GetItemsAsync(Arg.Any<CancellationToken>()).Returns(items);
 
         var viewModel = new ReviewViewModel(
             Substitute.For<IUserDialogs>(),
             Substitute.For<IPopupService>(),
             Substitute.For<ILogger<ReviewViewModel>>(),
             new TestAppPreferences(),
-            new StocktakeOperationsService(repository),
-            Substitute.For<IPageDialogService>(),
-            repository);
+            stocktakeOperations,
+            Substitute.For<IPageDialogService>());
 
         await viewModel.AppearingCommand.ExecuteAsync(null);
 

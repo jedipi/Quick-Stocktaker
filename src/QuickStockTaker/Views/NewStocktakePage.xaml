@@ -26,9 +26,9 @@
           <StackLayout Spacing="20" Padding="15">  
               <Border>  
                   <StackLayout>  
-                      <Label Text="The current stocktake data will be cleared." FontSize="Medium" />  
+                      <Label Text="Create a new Stocktake. Pro keeps unlimited Saved Stocktakes; Free can replace its current Stocktake after confirmation." FontSize="Medium" />
                       <Grid ColumnDefinitions="Auto, *">  
-                          <Label Text="Do you want to continue?" VerticalOptions="Center" FontSize="Medium" Grid.Column="0" />  
+                          <Label Text="Enter Stocktake details" VerticalOptions="Center" FontSize="Medium" Grid.Column="0" />
                           <Switch IsToggled="{Binding IsToggled}"  
                                   x:Name="NewToggle"  
                                   OnColor="Orange" ThumbColor="Green"  

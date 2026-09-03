@@ -7,6 +7,7 @@ namespace QuickStockTaker.Services;
 public class MauiCameraPopupService : ICameraPopupService
 {
     private readonly IPopupService _popupService;
+    private bool _isPopupOpen;
 
     public MauiCameraPopupService(IPopupService popupService)
     {
@@ -23,12 +24,28 @@ public class MauiCameraPopupService : ICameraPopupService
         return result.WasDismissedByTappingOutsideOfPopup ? null : result.Result;
     }
 
-    public Task ShowAsync(bool isScanContinuously)
+    public async Task ShowAsync(bool isScanContinuously)
     {
-        return _popupService.ShowPopupAsync<CameraPopupViewModel>(
-            Shell.Current,
-            options: PopupOptions.Empty,
-            shellParameters: CreateCameraPopupParameters(isScanContinuously));
+        _isPopupOpen = true;
+        try
+        {
+            await _popupService.ShowPopupAsync<CameraPopupViewModel>(
+                Shell.Current,
+                options: PopupOptions.Empty,
+                shellParameters: CreateCameraPopupParameters(isScanContinuously));
+        }
+        finally
+        {
+            _isPopupOpen = false;
+        }
+    }
+
+    public async Task CloseAsync()
+    {
+        if (!_isPopupOpen)
+            return;
+
+        await _popupService.ClosePopupAsync(Shell.Current);
     }
 
     private static Dictionary<string, object> CreateCameraPopupParameters(bool isScanContinuously)

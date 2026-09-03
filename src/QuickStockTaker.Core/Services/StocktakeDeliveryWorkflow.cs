@@ -18,24 +18,28 @@ namespace QuickStockTaker.Core.Services
         private readonly StocktakeEmailConfigurationValidator _emailConfigurationValidator;
         private readonly IStocktakeEmailAdapter _emailAdapter;
         private readonly IStocktakeEmailConfigurationGate _emailConfigurationGate;
+        private readonly IStocktakeWorkspace _workspace;
 
         public event Action EmailDeliveryStarting;
 
         internal StocktakeDeliveryWorkflow(
             ICsvExportService csvExport,
-            ILogger<StocktakeDeliveryWorkflow> logger)
-            : this(csvExport, logger, new StocktakeDeliveryOperationGate())
+            ILogger<StocktakeDeliveryWorkflow> logger,
+            IStocktakeWorkspace workspace)
+            : this(csvExport, logger, new StocktakeDeliveryOperationGate(), workspace)
         {
         }
 
         internal StocktakeDeliveryWorkflow(
             ICsvExportService csvExport,
             ILogger<StocktakeDeliveryWorkflow> logger,
-            StocktakeDeliveryOperationGate operationGate)
+            StocktakeDeliveryOperationGate operationGate,
+            IStocktakeWorkspace workspace)
         {
             _csvExport = csvExport;
             _logger = logger;
             _operationGate = operationGate;
+            _workspace = workspace;
         }
 
         internal StocktakeDeliveryWorkflow(
@@ -45,7 +49,8 @@ namespace QuickStockTaker.Core.Services
             IAppPreferences preferences,
             ISecureStorageService secureStorage,
             StocktakeRemoteConfigurationValidator remoteConfigurationValidator,
-            IEnumerable<IStocktakeRemoteTransferAdapter> remoteTransferAdapters)
+            IEnumerable<IStocktakeRemoteTransferAdapter> remoteTransferAdapters,
+            IStocktakeWorkspace workspace)
             : this(
                 csvExport,
                 logger,
@@ -54,7 +59,8 @@ namespace QuickStockTaker.Core.Services
                 secureStorage,
                 remoteConfigurationValidator,
                 remoteTransferAdapters,
-                new StocktakeRemoteConfigurationGate())
+                new StocktakeRemoteConfigurationGate(),
+                workspace)
         {
         }
 
@@ -66,7 +72,8 @@ namespace QuickStockTaker.Core.Services
             ISecureStorageService secureStorage,
             StocktakeRemoteConfigurationValidator remoteConfigurationValidator,
             IEnumerable<IStocktakeRemoteTransferAdapter> remoteTransferAdapters,
-            IStocktakeRemoteConfigurationGate remoteConfigurationGate)
+            IStocktakeRemoteConfigurationGate remoteConfigurationGate,
+            IStocktakeWorkspace workspace)
         {
             _csvExport = csvExport;
             _logger = logger;
@@ -76,55 +83,7 @@ namespace QuickStockTaker.Core.Services
             _remoteConfigurationValidator = remoteConfigurationValidator;
             _remoteTransferAdapters = remoteTransferAdapters.ToArray();
             _remoteConfigurationGate = remoteConfigurationGate;
-        }
-
-        internal StocktakeDeliveryWorkflow(
-            ICsvExportService csvExport,
-            ILogger<StocktakeDeliveryWorkflow> logger,
-            StocktakeDeliveryOperationGate operationGate,
-            IAppPreferences preferences,
-            ISecureStorageService secureStorage,
-            StocktakeRemoteConfigurationValidator remoteConfigurationValidator,
-            IEnumerable<IStocktakeRemoteTransferAdapter> remoteTransferAdapters,
-            StocktakeEmailConfigurationValidator emailConfigurationValidator,
-            IStocktakeEmailAdapter emailAdapter)
-            : this(
-                csvExport,
-                logger,
-                operationGate,
-                preferences,
-                secureStorage,
-                remoteConfigurationValidator,
-                remoteTransferAdapters,
-                emailConfigurationValidator,
-                emailAdapter,
-                new StocktakeEmailConfigurationGate())
-        {
-        }
-
-        internal StocktakeDeliveryWorkflow(
-            ICsvExportService csvExport,
-            ILogger<StocktakeDeliveryWorkflow> logger,
-            StocktakeDeliveryOperationGate operationGate,
-            IAppPreferences preferences,
-            ISecureStorageService secureStorage,
-            StocktakeRemoteConfigurationValidator remoteConfigurationValidator,
-            IEnumerable<IStocktakeRemoteTransferAdapter> remoteTransferAdapters,
-            StocktakeEmailConfigurationValidator emailConfigurationValidator,
-            IStocktakeEmailAdapter emailAdapter,
-            IStocktakeEmailConfigurationGate emailConfigurationGate)
-            : this(
-                csvExport,
-                logger,
-                operationGate,
-                preferences,
-                secureStorage,
-                remoteConfigurationValidator,
-                remoteTransferAdapters)
-        {
-            _emailConfigurationValidator = emailConfigurationValidator;
-            _emailAdapter = emailAdapter;
-            _emailConfigurationGate = emailConfigurationGate;
+            _workspace = workspace;
         }
 
         internal StocktakeDeliveryWorkflow(
@@ -138,20 +97,21 @@ namespace QuickStockTaker.Core.Services
             StocktakeEmailConfigurationValidator emailConfigurationValidator,
             IStocktakeEmailAdapter emailAdapter,
             IStocktakeEmailConfigurationGate emailConfigurationGate,
-            IStocktakeRemoteConfigurationGate remoteConfigurationGate)
-            : this(
-                csvExport,
-                logger,
-                operationGate,
-                preferences,
-                secureStorage,
-                remoteConfigurationValidator,
-                remoteTransferAdapters,
-                remoteConfigurationGate)
+            IStocktakeRemoteConfigurationGate remoteConfigurationGate,
+            IStocktakeWorkspace workspace)
         {
+            _csvExport = csvExport;
+            _logger = logger;
+            _operationGate = operationGate;
+            _workspace = workspace;
+            _preferences = preferences;
+            _secureStorage = secureStorage;
+            _remoteConfigurationValidator = remoteConfigurationValidator;
+            _remoteTransferAdapters = remoteTransferAdapters.ToArray();
             _emailConfigurationValidator = emailConfigurationValidator;
             _emailAdapter = emailAdapter;
             _emailConfigurationGate = emailConfigurationGate;
+            _remoteConfigurationGate = remoteConfigurationGate;
         }
 
         public async Task<StocktakeDeliveryResult> CreateExportAsync(CancellationToken cancellationToken = default)
@@ -161,7 +121,7 @@ namespace QuickStockTaker.Core.Services
 
             try
             {
-                var export = await _csvExport.CreateExportAsync(cancellationToken);
+                var export = await CreateCurrentExportAsync(cancellationToken);
                 return export is null
                     ? StocktakeDeliveryResult.NoStocktakeData()
                     : StocktakeDeliveryResult.Succeeded(export);
@@ -194,12 +154,17 @@ namespace QuickStockTaker.Core.Services
                 if (configurationResult.ErrorMessage is not null)
                     return StocktakeDeliveryResult.InvalidConfiguration(configurationResult.ErrorMessage);
 
+                var current = await _workspace.GetCurrentAsync(cancellationToken);
+                if (current is null)
+                    return StocktakeDeliveryResult.NoStocktakeData();
+
                 var content = new StocktakeEmailContent(
                     _preferences.GetString(Constants.DeviceId, string.Empty),
-                    _preferences.GetInt(Constants.StocktakeNumber, 0),
-                    _preferences.GetString(Constants.Site, string.Empty),
-                    _preferences.GetDateTime(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString());
-                var export = await _csvExport.CreateExportAsync(cancellationToken);
+                    current.StocktakeNumber,
+                    current.Site,
+                    current.StocktakeDate.ToShortDateString());
+                var export = await _csvExport.CreateExportAsync(current, cancellationToken);
+
                 if (export is null)
                     return StocktakeDeliveryResult.NoStocktakeData();
 
@@ -248,7 +213,7 @@ namespace QuickStockTaker.Core.Services
                 if (configurationResult.ErrorMessage is not null)
                     return StocktakeDeliveryResult.InvalidConfiguration(configurationResult.ErrorMessage);
 
-                var export = await _csvExport.CreateExportAsync(cancellationToken);
+                var export = await CreateCurrentExportAsync(cancellationToken);
                 if (export is null)
                     return StocktakeDeliveryResult.NoStocktakeData();
 
@@ -278,6 +243,14 @@ namespace QuickStockTaker.Core.Services
             {
                 _operationGate.Exit();
             }
+        }
+
+        private async Task<StocktakeExport> CreateCurrentExportAsync(CancellationToken cancellationToken)
+        {
+            var current = await _workspace.GetCurrentAsync(cancellationToken);
+            return current is null
+                ? null
+                : await _csvExport.CreateExportAsync(current, cancellationToken);
         }
 
         private async Task<(StocktakeEmailConfiguration Configuration, string Sender, string ErrorMessage)> CaptureEmailConfigurationAsync(

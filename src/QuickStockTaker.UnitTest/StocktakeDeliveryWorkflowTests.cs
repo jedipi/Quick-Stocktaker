@@ -15,16 +15,18 @@ public sealed class StocktakeDeliveryWorkflowTests
         var tempDirectory = Directory.CreateTempSubdirectory("qst-delivery-cancelled-");
         try
         {
-            var exporter = new CsvExportService(
+            var preferences = new TestAppPreferences();
+            var exporter = TestCsvExportServiceFactory.Create(
                 new TestStocktakeItemRepository(
                 [
                     new StocktakeItem { Barcode = "ABC123", Qty = 1 }
                 ]),
-                new TestAppPreferences(),
+                preferences,
                 new TestAppFileSystem(tempDirectory.FullName));
             IStocktakeDeliveryWorkflow workflow = new StocktakeDeliveryWorkflow(
                 exporter,
-                NullLogger<StocktakeDeliveryWorkflow>.Instance);
+                NullLogger<StocktakeDeliveryWorkflow>.Instance,
+                TestCsvExportServiceFactory.CreateWorkspace(preferences));
             using var cancellation = new CancellationTokenSource();
             await cancellation.CancelAsync();
 
@@ -46,13 +48,15 @@ public sealed class StocktakeDeliveryWorkflowTests
         var tempDirectory = Directory.CreateTempSubdirectory("qst-delivery-empty-");
         try
         {
-            var exporter = new CsvExportService(
+            var preferences = new TestAppPreferences();
+            var exporter = TestCsvExportServiceFactory.Create(
                 new TestStocktakeItemRepository([]),
-                new TestAppPreferences(),
+                preferences,
                 new TestAppFileSystem(tempDirectory.FullName));
             IStocktakeDeliveryWorkflow workflow = new StocktakeDeliveryWorkflow(
                 exporter,
-                NullLogger<StocktakeDeliveryWorkflow>.Instance);
+                NullLogger<StocktakeDeliveryWorkflow>.Instance,
+                TestCsvExportServiceFactory.CreateWorkspace(preferences));
 
             var result = await workflow.CreateExportAsync(TestContext.Current.CancellationToken);
 
@@ -76,7 +80,7 @@ public sealed class StocktakeDeliveryWorkflowTests
             preferences.Set(Constants.Site, "WH-A");
             preferences.Set(Constants.DeviceId, "SCANNER-01");
 
-            var exporter = new CsvExportService(
+            var exporter = TestCsvExportServiceFactory.Create(
                 new TestStocktakeItemRepository(
                 [
                     new StocktakeItem
@@ -90,7 +94,8 @@ public sealed class StocktakeDeliveryWorkflowTests
                 new TestAppFileSystem(tempDirectory.FullName));
             IStocktakeDeliveryWorkflow workflow = new StocktakeDeliveryWorkflow(
                 exporter,
-                NullLogger<StocktakeDeliveryWorkflow>.Instance);
+                NullLogger<StocktakeDeliveryWorkflow>.Instance,
+                TestCsvExportServiceFactory.CreateWorkspace(preferences));
 
             var result = await workflow.CreateExportAsync(TestContext.Current.CancellationToken);
 

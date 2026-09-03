@@ -5,6 +5,8 @@
     /// </summary>
     public interface ICsvExportService
     {
-        Task<StocktakeExport> CreateExportAsync(CancellationToken cancellationToken = default);
+        Task<StocktakeExport> CreateExportAsync(
+            Models.Sqlite.Stocktake stocktake,
+            CancellationToken cancellationToken = default);
     }
 }

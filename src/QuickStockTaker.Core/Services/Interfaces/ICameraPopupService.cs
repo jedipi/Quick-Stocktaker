@@ -7,5 +7,7 @@ namespace QuickStockTaker.Core.Services.Interfaces
         Task<CameraPopupResult> ShowForResultAsync(bool isScanContinuously);
 
         Task ShowAsync(bool isScanContinuously);
+
+        Task CloseAsync();
     }
 }

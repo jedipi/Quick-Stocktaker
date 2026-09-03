@@ -13,7 +13,7 @@ public sealed class StocktakeEmailAdapterTests
             "recipient@example.com",
             "sender@example.com",
             new StocktakeEmailConfiguration("Other", "smtp.example.com", 587, "user", "password"),
-            new StocktakeEmailContent("SCANNER-01", 42, "WH-A", "26/08/2026"));
+            new StocktakeEmailContent("SCANNER-01", "42", "WH-A", "26/08/2026"));
         var sendCalled = false;
         var adapter = new StocktakeEmailAdapter((_, _, _) =>
         {
@@ -45,7 +45,7 @@ public sealed class StocktakeEmailAdapterTests
                 "smtp-password"),
             new StocktakeEmailContent(
                 "SCANNER-01",
-                42,
+                "42",
                 "WH-A",
                 "26/08/2026"));
         StocktakeEmailMessage? capturedMessage = null;

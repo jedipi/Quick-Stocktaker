@@ -9,6 +9,7 @@ namespace QuickStockTaker.Core.Data
         public static readonly string StocktakeNumber = "StocktakeNumber";
         public static readonly string Site = "Site";
         public static readonly string StocktakeDate = "StocktakeDate";
+        public static readonly string CurrentStocktakeId = "CurrentStocktakeId";
         public static readonly string ContinuousMode = "ContinuousMode";
         public static readonly string DeviceId = "DeviceId";
         public static readonly string SmtpProvider = "SmtpProvider";
@@ -23,6 +24,9 @@ namespace QuickStockTaker.Core.Data
         public static readonly string FtpFolder = "FtpFolder";
         public static readonly string FtpUsername = "FtpUsername";
         public static readonly string FtpPassword = "FtpPassword";
+        public static readonly string ProEntitlement = "ProEntitlement";
+
+        public const string ProProductId = "quick_stocktaker_pro";
 
         public static readonly List<string> SmtpHostProviders = new List<string>() { "Gmail", "Other" };
 

@@ -12,6 +12,28 @@ namespace QuickStockTaker.UnitTest;
 
 public sealed class DataUploadViewModelExportIsolationTests
 {
+    [Theory]
+    [InlineData(false, "Save")]
+    [InlineData(true, "Share", "Save")]
+    public async Task CsvCommand_OffersActionsForEntitlement(bool isPro, params string[] expectedOptions)
+    {
+        var actionSheets = new List<ActionSheetConfig>();
+        var dialogs = Substitute.For<IUserDialogs>();
+        dialogs.ActionSheet(Arg.Do<ActionSheetConfig>(actionSheets.Add));
+        var workflow = CreateSuccessfulExportWorkflow();
+        var viewModel = CreateViewModel(
+            dialogs,
+            workflow,
+            Substitute.For<IAppFileSystem>(),
+            isPro);
+
+        await viewModel.CsvCommand.ExecuteAsync(null);
+
+        actionSheets.Should().ContainSingle();
+        actionSheets[0].Options.Select(option => option.Text)
+            .Should().Equal(expectedOptions);
+    }
+
     [Fact]
     public async Task CsvCommand_WhenAnotherExportCompletes_FirstActionSheetStillSavesItsOwnExport()
     {
@@ -51,14 +73,28 @@ public sealed class DataUploadViewModelExportIsolationTests
     private static DataUploadViewModel CreateViewModel(
         IUserDialogs dialogs,
         IStocktakeDeliveryWorkflow workflow,
-        IAppFileSystem fileSystem)
+        IAppFileSystem fileSystem,
+        bool isPro = false)
     {
+        var entitlementService = Substitute.For<IEntitlementService>();
+        entitlementService.IsPro.Returns(isPro);
+
         return new DataUploadViewModel(
             dialogs,
             workflow,
             new EmailValidator(),
             fileSystem,
             Substitute.For<IPageDialogService>(),
+            entitlementService,
             Substitute.For<ILogger<DataUploadViewModel>>());
+    }
+
+    private static IStocktakeDeliveryWorkflow CreateSuccessfulExportWorkflow()
+    {
+        var workflow = Substitute.For<IStocktakeDeliveryWorkflow>();
+        workflow.CreateExportAsync(Arg.Any<CancellationToken>())
+            .Returns(StocktakeDeliveryResult.Succeeded(
+                new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")))));
+        return workflow;
     }
 }

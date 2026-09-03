@@ -1,22 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using QuickStockTaker.Core.Models.Sqlite;
 using QuickStockTaker.Core.Data;
-using System;
-using System.Collections.Generic;
+using QuickStockTaker.Core.Models.Sqlite;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using ZXing.Net.Maui;
-using QuickStockTaker.Core.Popups;
-using CommunityToolkit.Maui;
 using Controls.UserDialogs.Maui;
 using Microsoft.Extensions.Logging;
-using QuickStockTaker.Core.Repositories.Interfaces;
 using CommunityToolkit.Mvvm.Messaging;
 using Serilog;
 using QuickStockTaker.Core.Services.Interfaces;
+using QuickStockTaker.Core.Services;
 
 
 namespace QuickStockTaker.Core.ViewModels
@@ -24,20 +17,18 @@ namespace QuickStockTaker.Core.ViewModels
     public partial class EnterDateViewModel : ObservableObject, IRecipient<BarcodeResult[]>
     {
         #region fields
-        private const int FreeScannedItemLimit = 250;
+        private const int FreeStocktakeItemLimit = 250;
 
         private bool _isContinuousMode;
-        private string _deviceId;
-        private string _stocktakeNumber;
-        private string _site;
-        private string _stocktakeDate;
 
         private readonly ICameraPopupService _cameraPopupService;
         private readonly IUserDialogs _dialogs;
         private readonly ILogger<EnterDateViewModel> _logger;
         private readonly IAppPreferences _preferences;
+        private readonly IEntitlementService _entitlementService;
+        private readonly INavigationService _navigationService;
 
-        private ISQLiteRepository<StocktakeItem> _repo;
+        private readonly IStocktakeOperationsService _stocktakeOperations;
         #endregion
 
         #region properties
@@ -69,20 +60,20 @@ namespace QuickStockTaker.Core.ViewModels
             IUserDialogs dialogs,
             ICameraPopupService cameraPopupService,
             ILogger<EnterDateViewModel> logger,
-            ISQLiteRepository<StocktakeItem> repo,
-            IAppPreferences preferences)
+            IStocktakeOperationsService stocktakeOperations,
+            IAppPreferences preferences,
+            IEntitlementService entitlementService,
+            INavigationService navigationService)
         {
-            _repo = repo;
+            _stocktakeOperations = stocktakeOperations;
             _logger = logger;
             _dialogs = dialogs;
             _cameraPopupService = cameraPopupService;
             _preferences = preferences;
+            _entitlementService = entitlementService;
+            _navigationService = navigationService;
 
             _isContinuousMode = _preferences.GetBool(Constants.ContinuousMode, false);
-            _deviceId = _preferences.GetString(Constants.DeviceId, "");
-            _stocktakeNumber = _preferences.GetString(Constants.StocktakeNumber, "");
-            _site = _preferences.GetString(Constants.Site, "");
-            _stocktakeDate = _preferences.GetDateTime(Constants.StocktakeDate, DateTime.MinValue).ToShortDateString();
 
             AutoQty = true;
             LastAddedItems = new ObservableCollection<StocktakeItem>();
@@ -123,32 +114,28 @@ namespace QuickStockTaker.Core.ViewModels
                 return;
             }
 
-            var items = await _repo.GetAllAsync();
-            if (items.Count >= FreeScannedItemLimit)
+            await _entitlementService.InitializeAsync();
+            var freeItemCount = -1;
+            if (!_entitlementService.IsPro)
             {
-                await _dialogs.AlertAsync(
-                    $"You have reached the {FreeScannedItemLimit} item scan limit.",
-                    "Scan limit reached",
-                    "OK");
-                return;
+                var items = await _stocktakeOperations.GetItemsAsync();
+                freeItemCount = items.Count;
+                if (items.Count >= FreeStocktakeItemLimit)
+                {
+                    await ShowFreeItemLimitAsync();
+                    return;
+                }
             }
 
-            var item = new StocktakeItem()
+            var item = new StocktakeItem
             {
-                DeviceId = _deviceId,
-                StocktakeNumber = _stocktakeNumber,
-                Site = _site,
                 BayLocation = BayLocation,
                 Barcode = Barcode,
-                Description = "",
-                Qty = Qty,
-                StocktakeDate = _stocktakeDate,
-                InsertedAt = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToShortTimeString()}",
-                UpdatedAt = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToShortTimeString()}"
+                Qty = Qty
             };
 
             // add to db
-            var result = await _repo.InsertAsync(item);
+            var result = await _stocktakeOperations.AddItemAsync(item);
             if (result == 0)
             {
                 await _dialogs.AlertAsync($"{Barcode} failed to save. Please try again.", "Error", "OK");
@@ -166,6 +153,21 @@ namespace QuickStockTaker.Core.ViewModels
             if (LastAddedItems.Count > 5)
                 LastAddedItems.RemoveAt(0);
 
+            if (_isContinuousMode && freeItemCount == FreeStocktakeItemLimit - 1)
+                await ShowFreeItemLimitAsync();
+
+        }
+
+        private async Task ShowFreeItemLimitAsync()
+        {
+            await _cameraPopupService.CloseAsync();
+            var upgrade = await _dialogs.ConfirmAsync(
+                $"The free version supports up to {FreeStocktakeItemLimit} saved items per stocktake. Upgrade to Pro for unlimited items.",
+                "Free item limit reached",
+                "Upgrade",
+                "Not now");
+            if (upgrade)
+                await _navigationService.GoToAsync($"//{NavigationRoutes.AboutPage}");
         }
 
         [RelayCommand]
@@ -253,7 +255,7 @@ namespace QuickStockTaker.Core.ViewModels
         {
             try
             {
-                var items = await _repo.GetAllAsync();
+                var items = await _stocktakeOperations.GetItemsAsync();
                 BayUnits = (int)(items.Where(x => x.BayLocation == BayLocation).Sum(y => y.Qty));
             }
             catch (Exception e)

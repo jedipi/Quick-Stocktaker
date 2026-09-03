@@ -17,6 +17,7 @@ namespace QuickStockTaker.Core.ViewModels
         private readonly EmailValidator _emailValidator;
         private readonly IAppFileSystem _fileSystem;
         private readonly IPageDialogService _pageDialogService;
+        private readonly IEntitlementService _entitlementService;
         #endregion
         public DataUploadViewModel(
             IUserDialogs dialogs,
@@ -24,12 +25,14 @@ namespace QuickStockTaker.Core.ViewModels
             EmailValidator emailValidator,
             IAppFileSystem fileSystem,
             IPageDialogService pageDialogService,
+            IEntitlementService entitlementService,
             ILogger<DataUploadViewModel> logger) : base(dialogs, logger)
         {
             _deliveryWorkflow = deliveryWorkflow;
             _emailValidator = emailValidator;
             _fileSystem = fileSystem;
             _pageDialogService = pageDialogService;
+            _entitlementService = entitlementService;
         }
 
         #region Commands
@@ -57,6 +60,22 @@ namespace QuickStockTaker.Core.ViewModels
             try
             {
                 string filePath = _fileSystem.GetDownloadFilePath(exportedFile.Name);
+                await _entitlementService.InitializeAsync();
+
+                var options = new List<ActionSheetOption>();
+                if (_entitlementService.IsPro)
+                {
+                    options.Add(new ActionSheetOption(
+                        "Share",
+                        () => _ = ShareExportAsync(exportedFile),
+                        "ic_ios_share.png"));
+                }
+
+                options.Add(new ActionSheetOption("Save", async () =>
+                {
+                    File.Copy(exportedFile.FullName, filePath, true);
+                    await _dialogs.AlertAsync("File saved to: " + filePath, "Success", "OK", "ic_greentick.png");
+                }, "ic_download.png"));
 
                 var config = new ActionSheetConfig()
                 {
@@ -68,22 +87,7 @@ namespace QuickStockTaker.Core.ViewModels
                     }, "ic_error.png"),
                     Title = "CSV File",
                     Icon = "ic_csv.png",
-                    Options = new ActionSheetOption[]
-                    {
-                        /*
-                        new ActionSheetOption("Share", async () => await Share.Default.RequestAsync(new ShareFileRequest
-                        {
-                            Title = "Sharing file",
-                            File = new ShareFile(exportedFile.FullName)
-                        }), "ic_ios_share.png"),
-                        */
-
-                        new ActionSheetOption("Save", async () =>
-                        {
-                            File.Copy(exportedFile.FullName, filePath, true);
-                            await _dialogs.AlertAsync("File saved to: " + filePath, "Success", "OK", "ic_greentick.png");
-                        }, "ic_download.png")
-                    }
+                    Options = options.ToArray()
                 };
 
                 _dialogs.ActionSheet(config);
@@ -95,6 +99,27 @@ namespace QuickStockTaker.Core.ViewModels
             }
 
 
+        }
+
+        private async Task ShareExportAsync(FileInfo exportedFile)
+        {
+            try
+            {
+                await Share.Default.RequestAsync(new ShareFileRequest
+                {
+                    Title = "Sharing file",
+                    File = new ShareFile(exportedFile.FullName)
+                });
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Stocktake export sharing failed.");
+                await _dialogs.AlertAsync(
+                    "Unable to share the exported file. Please try again.",
+                    "Error",
+                    "OK",
+                    "ic_error.png");
+            }
         }
         /// <summary>
         /// Send stocktake data via email

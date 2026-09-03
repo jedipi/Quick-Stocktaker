@@ -20,19 +20,23 @@ public sealed class StocktakeDeliveryWorkflowConcurrencyTests
         {
             var repository = Substitute.For<ISQLiteRepository<StocktakeItem>>();
             repository.GetAllAsync().Returns(_ => ReadSnapshotAsync());
-            var exporter = new CsvExportService(
+            var preferences = new TestAppPreferences();
+            var exporter = TestCsvExportServiceFactory.Create(
                 repository,
-                new TestAppPreferences(),
+                preferences,
                 new TestAppFileSystem(tempDirectory.FullName));
+            var workspace = TestCsvExportServiceFactory.CreateWorkspace(preferences);
             var operationGate = new StocktakeDeliveryOperationGate();
             IStocktakeDeliveryWorkflow firstWorkflow = new StocktakeDeliveryWorkflow(
                 exporter,
                 NullLogger<StocktakeDeliveryWorkflow>.Instance,
-                operationGate);
+                operationGate,
+                workspace);
             IStocktakeDeliveryWorkflow secondWorkflow = new StocktakeDeliveryWorkflow(
                 exporter,
                 NullLogger<StocktakeDeliveryWorkflow>.Instance,
-                operationGate);
+                operationGate,
+                workspace);
 
             var firstOperation = firstWorkflow.CreateExportAsync(TestContext.Current.CancellationToken);
             await snapshotStarted.Task.WaitAsync(TestContext.Current.CancellationToken);

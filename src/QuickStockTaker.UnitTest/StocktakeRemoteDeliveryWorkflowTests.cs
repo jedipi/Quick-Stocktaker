@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using QuickStockTaker.Core.Data;
+using QuickStockTaker.Core.Models.Sqlite;
 using QuickStockTaker.Core.Services;
 using QuickStockTaker.Core.Services.Interfaces;
 using QuickStockTaker.Core.Validators;
@@ -41,7 +42,8 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
             preferences,
             secureStorage,
             new StocktakeRemoteConfigurationValidator(),
-            [adapter]);
+            [adapter],
+            CreateCurrentWorkspace());
 
         var result = await workflow.DeliverToConfiguredRemoteAsync(
             TestContext.Current.CancellationToken,
@@ -49,7 +51,7 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
 
         result.Status.Should().Be(StocktakeDeliveryStatus.InvalidConfiguration);
         result.Message.Should().Be(expectedMessage);
-        await exporter.DidNotReceive().CreateExportAsync(Arg.Any<CancellationToken>());
+        await exporter.DidNotReceive().CreateExportAsync(Arg.Any<Stocktake>(), Arg.Any<CancellationToken>());
         await adapter.DidNotReceive().TransferAsync(
             Arg.Any<StocktakeExport>(),
             Arg.Any<StocktakeRemoteConfiguration>(),
@@ -62,7 +64,7 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
     {
         var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));
         var exporter = Substitute.For<ICsvExportService>();
-        exporter.CreateExportAsync(TestContext.Current.CancellationToken).ReturnsForAnyArgs(export);
+        exporter.CreateExportAsync(Arg.Any<Stocktake>(), TestContext.Current.CancellationToken).ReturnsForAnyArgs(export);
         var preferences = new TestAppPreferences();
         preferences.Set(Constants.FtpUseSftp, false);
         preferences.Set(Constants.FtpHost, " ftp.example.com ");
@@ -87,7 +89,8 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
             preferences,
             secureStorage,
             new StocktakeRemoteConfigurationValidator(),
-            [adapter]);
+            [adapter],
+            CreateCurrentWorkspace());
 
         var result = await workflow.DeliverToConfiguredRemoteAsync(
             TestContext.Current.CancellationToken,
@@ -114,7 +117,7 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
     {
         var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));
         var exporter = Substitute.For<ICsvExportService>();
-        exporter.CreateExportAsync(TestContext.Current.CancellationToken).ReturnsForAnyArgs(export);
+        exporter.CreateExportAsync(Arg.Any<Stocktake>(), TestContext.Current.CancellationToken).ReturnsForAnyArgs(export);
         var preferences = CreateValidPreferences(useSftp: false);
         var secureStorage = CreateValidSecureStorage();
         var adapter = Substitute.For<IStocktakeRemoteTransferAdapter>();
@@ -128,7 +131,8 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
             preferences,
             secureStorage,
             new StocktakeRemoteConfigurationValidator(),
-            [adapter]);
+            [adapter],
+            CreateCurrentWorkspace());
         using var cancellation = new CancellationTokenSource();
         await cancellation.CancelAsync();
 
@@ -143,7 +147,7 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
     {
         var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));
         var exporter = Substitute.For<ICsvExportService>();
-        exporter.CreateExportAsync(TestContext.Current.CancellationToken).ReturnsForAnyArgs(export);
+        exporter.CreateExportAsync(Arg.Any<Stocktake>(), TestContext.Current.CancellationToken).ReturnsForAnyArgs(export);
         var adapter = Substitute.For<IStocktakeRemoteTransferAdapter>();
         adapter.Protocol.Returns(StocktakeRemoteProtocol.Sftp);
         adapter.TransferAsync(export, Arg.Any<StocktakeRemoteConfiguration>(), Arg.Any<CancellationToken>())
@@ -156,7 +160,8 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
             CreateValidPreferences(useSftp: true),
             CreateValidSecureStorage(),
             new StocktakeRemoteConfigurationValidator(),
-            [adapter]);
+            [adapter],
+            CreateCurrentWorkspace());
         using var cancellation = new CancellationTokenSource();
         await cancellation.CancelAsync();
 
@@ -171,7 +176,7 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
     {
         var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));
         var exporter = Substitute.For<ICsvExportService>();
-        exporter.CreateExportAsync(TestContext.Current.CancellationToken).ReturnsForAnyArgs(export);
+        exporter.CreateExportAsync(Arg.Any<Stocktake>(), TestContext.Current.CancellationToken).ReturnsForAnyArgs(export);
         var failure = new IOException("server ftp.example.com rejected secret");
         var adapter = Substitute.For<IStocktakeRemoteTransferAdapter>();
         adapter.Protocol.Returns(StocktakeRemoteProtocol.Ftp);
@@ -186,7 +191,8 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
             CreateValidPreferences(useSftp: false),
             CreateValidSecureStorage(),
             new StocktakeRemoteConfigurationValidator(),
-            [adapter]);
+            [adapter],
+            CreateCurrentWorkspace());
 
         var result = await workflow.DeliverToConfiguredRemoteAsync(
             TestContext.Current.CancellationToken,
@@ -204,7 +210,7 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
     {
         var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));
         var exporter = Substitute.For<ICsvExportService>();
-        exporter.CreateExportAsync(TestContext.Current.CancellationToken).ReturnsForAnyArgs(export);
+        exporter.CreateExportAsync(Arg.Any<Stocktake>(), TestContext.Current.CancellationToken).ReturnsForAnyArgs(export);
         var preferences = CreateValidPreferences(useSftp: false);
         preferences.Set(Constants.FtpHost, "ftp.example.com");
         var secureStorage = Substitute.For<ISecureStorageService>();
@@ -229,7 +235,8 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
             preferences,
             secureStorage,
             new StocktakeRemoteConfigurationValidator(),
-            [ftpAdapter, sftpAdapter]);
+            [ftpAdapter, sftpAdapter],
+            CreateCurrentWorkspace());
 
         await workflow.DeliverToConfiguredRemoteAsync(TestContext.Current.CancellationToken);
         await workflow.DeliverToConfiguredRemoteAsync(TestContext.Current.CancellationToken);
@@ -257,7 +264,7 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
     {
         var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));
         var exporter = Substitute.For<ICsvExportService>();
-        exporter.CreateExportAsync(Arg.Any<CancellationToken>()).Returns(export);
+        exporter.CreateExportAsync(Arg.Any<Stocktake>(), Arg.Any<CancellationToken>()).Returns(export);
         var preferences = CreateValidPreferences(useSftp: false);
         var usernameReadStarted = new TaskCompletionSource(
             TaskCreationOptions.RunContinuationsAsynchronously);
@@ -295,7 +302,8 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
             secureStorage,
             new StocktakeRemoteConfigurationValidator(),
             [adapter],
-            configurationGate);
+            configurationGate,
+            CreateCurrentWorkspace());
         var pageDialogs = Substitute.For<IPageDialogService>();
         pageDialogs.DisplayPromptAsync(
                 "FTP/SFTP Password",
@@ -328,7 +336,7 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
     {
         var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));
         var exporter = Substitute.For<ICsvExportService>();
-        exporter.CreateExportAsync(Arg.Any<CancellationToken>()).Returns(export);
+        exporter.CreateExportAsync(Arg.Any<Stocktake>(), Arg.Any<CancellationToken>()).Returns(export);
         var usernameReadStarted = new TaskCompletionSource(
             TaskCreationOptions.RunContinuationsAsynchronously);
         var releaseUsernameRead = new TaskCompletionSource(
@@ -351,7 +359,8 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
             secureStorage,
             new StocktakeRemoteConfigurationValidator(),
             [adapter],
-            new StocktakeRemoteConfigurationGate());
+            new StocktakeRemoteConfigurationGate(),
+            CreateCurrentWorkspace());
         using var cancellation = new CancellationTokenSource();
 
         var delivery = workflow.DeliverToConfiguredRemoteAsync(cancellation.Token);
@@ -371,7 +380,7 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
     public async Task DeliverToConfiguredRemoteAsync_WhenStocktakeHasNoData_ReturnsNoStocktakeDataWithoutTransfer()
     {
         var exporter = Substitute.For<ICsvExportService>();
-        exporter.CreateExportAsync(TestContext.Current.CancellationToken).ReturnsForAnyArgs((StocktakeExport)null!);
+        exporter.CreateExportAsync(Arg.Any<Stocktake>(), TestContext.Current.CancellationToken).ReturnsForAnyArgs((StocktakeExport)null!);
         var adapter = Substitute.For<IStocktakeRemoteTransferAdapter>();
         adapter.Protocol.Returns(StocktakeRemoteProtocol.Ftp);
         var transferStarting = Substitute.For<Action>();
@@ -382,7 +391,8 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
             CreateValidPreferences(useSftp: false),
             CreateValidSecureStorage(),
             new StocktakeRemoteConfigurationValidator(),
-            [adapter]);
+            [adapter],
+            CreateCurrentWorkspace());
 
         var result = await workflow.DeliverToConfiguredRemoteAsync(
             TestContext.Current.CancellationToken,
@@ -401,7 +411,7 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
     {
         var export = new StocktakeExport(new FileInfo(Path.Combine(Path.GetTempPath(), "stocktake.csv")));
         var exporter = Substitute.For<ICsvExportService>();
-        exporter.CreateExportAsync(TestContext.Current.CancellationToken).ReturnsForAnyArgs(export);
+        exporter.CreateExportAsync(Arg.Any<Stocktake>(), TestContext.Current.CancellationToken).ReturnsForAnyArgs(export);
         var transferStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var releaseTransfer = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var adapter = Substitute.For<IStocktakeRemoteTransferAdapter>();
@@ -422,7 +432,8 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
             preferences,
             secureStorage,
             new StocktakeRemoteConfigurationValidator(),
-            [adapter]);
+            [adapter],
+            CreateCurrentWorkspace());
         var secondWorkflow = new StocktakeDeliveryWorkflow(
             exporter,
             NullLogger<StocktakeDeliveryWorkflow>.Instance,
@@ -430,7 +441,8 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
             preferences,
             secureStorage,
             new StocktakeRemoteConfigurationValidator(),
-            [adapter]);
+            [adapter],
+            CreateCurrentWorkspace());
 
         var firstOperation = firstWorkflow.DeliverToConfiguredRemoteAsync(TestContext.Current.CancellationToken);
         await transferStarted.Task.WaitAsync(TestContext.Current.CancellationToken);
@@ -457,6 +469,13 @@ public sealed class StocktakeRemoteDeliveryWorkflowTests
         secureStorage.GetAsync(Constants.FtpUsername).Returns("stocktaker");
         secureStorage.GetAsync(Constants.FtpPassword).Returns("secret");
         return secureStorage;
+    }
+
+    private static IStocktakeWorkspace CreateCurrentWorkspace()
+    {
+        var workspace = Substitute.For<IStocktakeWorkspace>();
+        workspace.GetCurrentAsync(Arg.Any<CancellationToken>()).Returns(new Stocktake());
+        return workspace;
     }
 
     private sealed class CapturingLogger<T> : ILogger<T>

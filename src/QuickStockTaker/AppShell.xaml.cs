@@ -21,6 +21,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(NavigationRoutes.ItemDetailPage, typeof(ItemDetailPage));
         Routing.RegisterRoute(NavigationRoutes.ReviewPage, typeof(ReviewPage));
         Routing.RegisterRoute(NavigationRoutes.DataUploadPage, typeof(DataUploadPage));
+        Routing.RegisterRoute(nameof(SavedStocktakesPage), typeof(SavedStocktakesPage));
 
     }
 }

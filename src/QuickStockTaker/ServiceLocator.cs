@@ -8,6 +8,8 @@ using QuickStockTaker.Core.Repositories.Interfaces;
 using QuickStockTaker.Core.Repositories;
 using QuickStockTaker.Core.Data;
 using QuickStockTaker.Core.Services;
+using QuickStockTaker.Core.Services.Interfaces;
+using QuickStockTaker.Services;
 using IContainer = Autofac.IContainer;
 //using ZXing.Mobile;
 
@@ -52,6 +54,19 @@ namespace QuickStockTaker
                         .Where(t => t.Name.EndsWith("Service"))
                         .AsImplementedInterfaces();
 
+            autofacBuilder.RegisterType<EntitlementService>()
+                .As<IEntitlementService>()
+                .SingleInstance();
+#if ANDROID
+            autofacBuilder.RegisterType<GooglePlayPurchaseService>()
+                .As<IPlatformPurchaseService>()
+                .SingleInstance();
+#else
+            autofacBuilder.RegisterType<UnsupportedPurchaseService>()
+                .As<IPlatformPurchaseService>()
+                .SingleInstance();
+#endif
+
             autofacBuilder.RegisterAssemblyTypes(typeof(Constants).Assembly)
                 .Where(t => t.Name.EndsWith("Validator"));
 
@@ -73,6 +88,9 @@ namespace QuickStockTaker
             autofacBuilder.RegisterType<StocktakeEmailConfigurationGate>()
                 .AsImplementedInterfaces()
                 .SingleInstance();
+            autofacBuilder.RegisterType<StocktakeWorkspace>()
+                .As<IStocktakeWorkspace>()
+                .SingleInstance();
             autofacBuilder.RegisterAssemblyTypes(typeof(Constants).Assembly)
                 .Where(type => type.Name.EndsWith("StocktakeRemoteTransferAdapter"))
                 .AsImplementedInterfaces();
@@ -80,11 +98,9 @@ namespace QuickStockTaker
                 .Where(type => type.Name.EndsWith("StocktakeEmailAdapter"))
                 .AsImplementedInterfaces();
             autofacBuilder.RegisterType<StocktakeDeliveryWorkflow>()
-                .FindConstructorsWith(type => type
-                    .GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                    .Where(constructor => constructor.GetParameters().Length == 11)
-                    .ToArray())
-                .AsImplementedInterfaces();
+                .FindConstructorsWith(type => type.GetConstructors(
+                    BindingFlags.Instance | BindingFlags.NonPublic))
+                .As<IStocktakeDeliveryWorkflow>();
             autofacBuilder.RegisterType<EmailService>();
         }
     }

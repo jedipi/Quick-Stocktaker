@@ -23,8 +23,18 @@
                 <Image Source="ic_stocktake" HeightRequest="100" Margin="0,50,0,20"/>
 
                 <Label HorizontalTextAlignment="Justify">Thank you  for trying Quick StockTaker!</Label>
-                <Label HorizontalTextAlignment="Justify">This app is free to use for personal and commercial. If you have any questions, comments, suggestions, or features you'd like to see, I'd appreciate your feedback.</Label>
+                <Label HorizontalTextAlignment="Justify">The free version supports one Saved Stocktake with up to 250 items. Pro unlocks unlimited items, unlimited Saved Stocktakes, and Stocktake Export sharing.</Label>
                 <Label HorizontalTextAlignment="Justify">If you'd like to show your support for this project and help me continue development, please consider a donation.</Label>
+
+                <Label Text="PRO version active — unlimited items, Saved Stocktakes, and export sharing"
+                       FontAttributes="Bold"
+                       TextColor="Green"
+                       IsVisible="{Binding IsPro}" />
+                <Button Text="Upgrade to PRO version"
+                        Command="{Binding UpgradeToProCommand}"
+                        IsVisible="{Binding ShowUpgradeToPro}" />
+                <ActivityIndicator IsRunning="{Binding IsPurchaseInProgress}"
+                                   IsVisible="{Binding IsPurchaseInProgress}" />
                 <Label>
                     <Label.FormattedText>
                         <FormattedString>

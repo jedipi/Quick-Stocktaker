@@ -4,7 +4,6 @@ using Controls.UserDialogs.Maui;
 using Microsoft.Extensions.Logging;
 using QuickStockTaker.Core.Models;
 using QuickStockTaker.Core.Models.Sqlite;
-using QuickStockTaker.Core.Repositories.Interfaces;
 using QuickStockTaker.Core.Services;
 using QuickStockTaker.Core.Services.Interfaces;
 using System;
@@ -22,7 +21,7 @@ namespace QuickStockTaker.Core.ViewModels
     {
         #region fields
         private ObservableCollection<StocktakeItem> _unfilteredItems;
-        private ISQLiteRepository<StocktakeItem> _repo;
+        private readonly IStocktakeOperationsService _stocktakeOperations;
         private readonly INavigationService _navigationService;
         private readonly IPageDialogService _pageDialogService;
 
@@ -74,11 +73,11 @@ namespace QuickStockTaker.Core.ViewModels
         public BayDetailsViewModel(
             IUserDialogs dialogs,
             ILogger<BayDetailsViewModel> logger,
-            ISQLiteRepository<StocktakeItem> repo,
+            IStocktakeOperationsService stocktakeOperations,
             INavigationService navigationService,
             IPageDialogService pageDialogService) : base(dialogs, logger)
         {
-            _repo = repo;
+            _stocktakeOperations = stocktakeOperations;
             _navigationService = navigationService;
             _pageDialogService = pageDialogService;
         }
@@ -107,7 +106,7 @@ namespace QuickStockTaker.Core.ViewModels
             try
             {
                 // remove the select item from db and Items list
-                var result = await _repo.DeleteAsync(item);
+                var result = await _stocktakeOperations.DeleteItemAsync(item);
                 if (result != 0)
                 {
                     Items.Remove(item);
@@ -172,7 +171,7 @@ namespace QuickStockTaker.Core.ViewModels
 
             try
             {
-                var all = await _repo.GetAllAsync();
+                var all = await _stocktakeOperations.GetItemsAsync();
                 var list = all.Where(x => x.BayLocation == SelectedBay.BayLocation).OrderByDescending(x => x.Id).ToList();
 
                 // add to listview

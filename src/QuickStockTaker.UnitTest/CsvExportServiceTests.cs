@@ -15,7 +15,9 @@ public class CsvExportServiceTests
         {
             var service = CreateService([], tempDirectory.FullName);
 
-            var export = await service.CreateExportAsync(TestContext.Current.CancellationToken);
+            var export = await service.CreateExportAsync(
+                new Stocktake { Id = 1, Site = "WH-A" },
+                TestContext.Current.CancellationToken);
 
             export.Should().BeNull();
             Directory.GetFiles(tempDirectory.FullName).Should().BeEmpty();
@@ -48,7 +50,9 @@ public class CsvExportServiceTests
             };
             var service = CreateService([item], tempDirectory.FullName);
 
-            var export = await service.CreateExportAsync(TestContext.Current.CancellationToken);
+            var export = await service.CreateExportAsync(
+                new Stocktake { Id = 1, Site = "WH-A" },
+                TestContext.Current.CancellationToken);
 
             export.Should().NotBeNull();
             export!.File.Exists.Should().BeTrue();
@@ -77,7 +81,7 @@ public class CsvExportServiceTests
         preferences.Set(Constants.Site, "WH-A");
         preferences.Set(Constants.DeviceId, "SCANNER-01");
 
-        return new CsvExportService(
+        return TestCsvExportServiceFactory.Create(
             new TestStocktakeItemRepository(items),
             preferences,
             new TestAppFileSystem(appDataDirectory));

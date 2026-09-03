@@ -6,6 +6,8 @@ namespace QuickStockTaker.Core.Models.Sqlite
     [INotifyPropertyChanged]
     public partial class StocktakeItem : BaseModel
     {
+        [Indexed]
+        public int StocktakeId { get; set; }
 
         [NotNull]
         public string DeviceId { get; set; }

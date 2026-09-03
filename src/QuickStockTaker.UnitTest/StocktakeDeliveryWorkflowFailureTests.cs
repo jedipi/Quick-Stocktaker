@@ -17,11 +17,15 @@ public sealed class StocktakeDeliveryWorkflowFailureTests
         var failure = new IOException("private diagnostic");
         repository.GetAllAsync().Returns(Task.FromException<List<StocktakeItem>>(failure));
         var logger = new CapturingLogger<StocktakeDeliveryWorkflow>();
-        var exporter = new CsvExportService(
+        var preferences = new TestAppPreferences();
+        var exporter = TestCsvExportServiceFactory.Create(
             repository,
-            new TestAppPreferences(),
+            preferences,
             new TestAppFileSystem(Path.GetTempPath()));
-        IStocktakeDeliveryWorkflow workflow = new StocktakeDeliveryWorkflow(exporter, logger);
+        IStocktakeDeliveryWorkflow workflow = new StocktakeDeliveryWorkflow(
+            exporter,
+            logger,
+            TestCsvExportServiceFactory.CreateWorkspace(preferences));
 
         var result = await workflow.CreateExportAsync(TestContext.Current.CancellationToken);
 
