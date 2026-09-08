@@ -49,6 +49,8 @@ public sealed class StocktakeExportIsolationIntegrationTests
             builder.RegisterInstance(operations);
             builder.RegisterInstance<IAppFileSystem>(
                 new TestAppFileSystem(tempDirectory.FullName));
+            builder.RegisterInstance(Substitute.For<IEntitlementService>());
+            builder.RegisterType<QuickStockTaker.Core.Validators.ExportPresetValidator>();
             using var container = builder.Build();
             var exporter = container.Resolve<ICsvExportService>();
 
@@ -102,7 +104,8 @@ public sealed class StocktakeExportIsolationIntegrationTests
             ICsvExportService exporter = new CsvExportService(
                 operations,
                 preferences,
-                new TestAppFileSystem(tempDirectory.FullName));
+                new TestAppFileSystem(tempDirectory.FullName),
+                TestCsvExportServiceFactory.DefaultPresets());
 
             var export = await exporter.CreateExportAsync(
                 (await workspace.GetCurrentAsync(TestContext.Current.CancellationToken))!,

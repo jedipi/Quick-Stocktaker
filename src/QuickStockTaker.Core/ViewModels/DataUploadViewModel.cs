@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Controls.UserDialogs.Maui;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
 using QuickStockTaker.Core.Data;
 using QuickStockTaker.Core.Repositories.Interfaces;
@@ -18,6 +19,12 @@ namespace QuickStockTaker.Core.ViewModels
         private readonly IAppFileSystem _fileSystem;
         private readonly IPageDialogService _pageDialogService;
         private readonly IEntitlementService _entitlementService;
+        private readonly IExportPresetService _exportPresetService;
+        private readonly INavigationService _navigationService;
+        [ObservableProperty] private string _presetName = "Default CSV";
+        [ObservableProperty] private string _presetNotice;
+        [ObservableProperty] private bool _isSelectingPreset;
+        private bool DeliveryIsRunning => CsvCommand.IsRunning || EmailCommand.IsRunning || FTPCommand.IsRunning;
         #endregion
         public DataUploadViewModel(
             IUserDialogs dialogs,
@@ -26,6 +33,8 @@ namespace QuickStockTaker.Core.ViewModels
             IAppFileSystem fileSystem,
             IPageDialogService pageDialogService,
             IEntitlementService entitlementService,
+            IExportPresetService exportPresetService,
+            INavigationService navigationService,
             ILogger<DataUploadViewModel> logger) : base(dialogs, logger)
         {
             _deliveryWorkflow = deliveryWorkflow;
@@ -33,13 +42,98 @@ namespace QuickStockTaker.Core.ViewModels
             _fileSystem = fileSystem;
             _pageDialogService = pageDialogService;
             _entitlementService = entitlementService;
+            _exportPresetService = exportPresetService;
+            _navigationService = navigationService;
         }
 
         #region Commands
 
         [RelayCommand]
+        private async Task OnAppearing()
+        {
+            try
+            {
+                await RefreshSelectionAsync();
+            }
+            catch (Exception ex)
+            {
+                await _pageDialogService.DisplayAlertAsync("Export presets", ex.Message, "OK");
+            }
+        }
+
+        private async Task RefreshSelectionAsync()
+        {
+            var selection = await _exportPresetService.GetSelectionAsync();
+            PresetName = selection.Preset?.Name ?? "Default CSV";
+            if (!string.IsNullOrEmpty(selection.Notice))
+                PresetNotice = selection.Notice;
+        }
+
+        [RelayCommand]
+        private async Task OnSelectPreset()
+        {
+            if (DeliveryIsRunning)
+                return;
+            IsSelectingPreset = true;
+            try
+            {
+                IReadOnlyList<ExportPreset> presets = [];
+                try
+                {
+                    presets = await _exportPresetService.GetPresetsAsync();
+                }
+                catch (Exception ex)
+                {
+                    await _pageDialogService.DisplayAlertAsync("Export presets", ex.Message, "OK");
+                }
+                var names = new[] { "Default CSV" }.Concat(presets.Select(preset => "Preset: " + preset.Name)).ToArray();
+                var selected = await _pageDialogService.DisplayActionSheetAsync("Export format", "Cancel", null, names);
+                var index = Array.IndexOf(names, selected);
+                if (index < 0)
+                    return;
+                await _exportPresetService.SelectAsync(index == 0 ? "" : presets[index - 1].Id);
+                PresetNotice = null;
+                await RefreshSelectionAsync();
+            }
+            catch (Exception ex)
+            {
+                await _pageDialogService.DisplayAlertAsync("Export presets", ex.Message, "OK");
+            }
+            finally
+            {
+                IsSelectingPreset = false;
+            }
+        }
+
+        [RelayCommand]
+        private Task OnManagePresets() => DeliveryIsRunning || IsSelectingPreset
+            ? Task.CompletedTask
+            : _navigationService.GoToAsync("ExportPresetsPage");
+
+        private async Task<bool> PrepareDeliveryAsync()
+        {
+            if (IsSelectingPreset)
+                return false;
+            try
+            {
+                await RefreshSelectionAsync();
+                if (string.IsNullOrEmpty(PresetNotice))
+                    return true;
+                await _pageDialogService.DisplayAlertAsync("Export format changed", PresetNotice, "OK");
+                PresetNotice = null;
+            }
+            catch (Exception ex)
+            {
+                await _pageDialogService.DisplayAlertAsync("Export presets", ex.Message, "OK");
+            }
+            return false;
+        }
+
+        [RelayCommand]
         private async Task OnCsv()
         {
+            if (!await PrepareDeliveryAsync())
+                return;
             var result = await _deliveryWorkflow.CreateExportAsync();
             if (result.Status is not StocktakeDeliveryStatus.Succeeded || result.Export is null)
             {
@@ -128,6 +222,8 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         public async Task OnEmail()
         {
+            if (!await PrepareDeliveryAsync())
+                return;
 
             // ask for email address
             var result = await _pageDialogService.DisplayPromptAsync("Email Stocktake Data", "Please type in your email address:", accept: "OK");
@@ -201,6 +297,8 @@ namespace QuickStockTaker.Core.ViewModels
         [RelayCommand]
         public async Task OnFTP()
         {
+            if (!await PrepareDeliveryAsync())
+                return;
             try
             {
                 using var tokenSource = new CancellationTokenSource();

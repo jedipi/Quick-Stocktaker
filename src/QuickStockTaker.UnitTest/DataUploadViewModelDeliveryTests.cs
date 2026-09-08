@@ -443,6 +443,8 @@ public sealed class DataUploadViewModelDeliveryTests
             fileSystem,
             pageDialogs ?? Substitute.For<IPageDialogService>(),
             Substitute.For<IEntitlementService>(),
+            TestCsvExportServiceFactory.DefaultPresets(),
+            Substitute.For<INavigationService>(),
             Substitute.For<ILogger<DataUploadViewModel>>());
     }
 

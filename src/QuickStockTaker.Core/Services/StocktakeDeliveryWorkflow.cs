@@ -130,6 +130,10 @@ namespace QuickStockTaker.Core.Services
             {
                 return StocktakeDeliveryResult.Cancelled();
             }
+            catch (ExportPresetException ex)
+            {
+                return StocktakeDeliveryResult.Failed(ex.Message);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Stocktake export creation failed");
@@ -184,6 +188,10 @@ namespace QuickStockTaker.Core.Services
             {
                 return StocktakeDeliveryResult.Cancelled();
             }
+            catch (ExportPresetException ex)
+            {
+                return StocktakeDeliveryResult.Failed(ex.Message);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Stocktake email delivery failed");
@@ -233,6 +241,10 @@ namespace QuickStockTaker.Core.Services
             catch (Exception) when (cancellationToken.IsCancellationRequested)
             {
                 return StocktakeDeliveryResult.Cancelled();
+            }
+            catch (ExportPresetException ex)
+            {
+                return StocktakeDeliveryResult.Failed(ex.Message);
             }
             catch (Exception ex)
             {

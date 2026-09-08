@@ -36,7 +36,16 @@
    </ContentPage.Resources>  
    <ContentPage.Content>  
        <ScrollView Padding="0" Margin="0">  
-           <StackLayout>  
+           <StackLayout>
+               <VerticalStackLayout Padding="20" Spacing="8">
+                   <Label Text="Export format" FontAttributes="Bold" />
+                   <Label Text="{Binding PresetName}" />
+                   <Label Text="{Binding PresetNotice}" />
+                   <Button Text="Choose format" Command="{Binding SelectPresetCommand}" WidthRequest="-1" HeightRequest="48"
+                           TextColor="Black" BackgroundColor="{StaticResource Primary}" />
+                   <Button Text="Manage presets" Command="{Binding ManagePresetsCommand}" WidthRequest="-1" HeightRequest="48"
+                           TextColor="Black" BackgroundColor="{StaticResource Primary}" />
+               </VerticalStackLayout>
                <FlexLayout Wrap="Wrap" VerticalOptions="Start"  
                        JustifyContent="SpaceAround"  Margin="10">
 

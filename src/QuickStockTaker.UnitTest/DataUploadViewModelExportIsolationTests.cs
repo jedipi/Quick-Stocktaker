@@ -86,6 +86,8 @@ public sealed class DataUploadViewModelExportIsolationTests
             fileSystem,
             Substitute.For<IPageDialogService>(),
             entitlementService,
+            TestCsvExportServiceFactory.DefaultPresets(),
+            Substitute.For<INavigationService>(),
             Substitute.For<ILogger<DataUploadViewModel>>());
     }
 

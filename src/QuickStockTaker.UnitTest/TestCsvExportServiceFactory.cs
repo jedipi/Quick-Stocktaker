@@ -19,7 +19,15 @@ internal static class TestCsvExportServiceFactory
         operations.GetItemsAsync(stocktake.Id, Arg.Any<CancellationToken>())
             .Returns(async _ => (IReadOnlyList<StocktakeItem>)await repository.GetAllAsync());
 
-        return new CsvExportService(operations, preferences, fileSystem);
+        return new CsvExportService(operations, preferences, fileSystem, DefaultPresets());
+    }
+
+    public static IExportPresetService DefaultPresets()
+    {
+        var presets = Substitute.For<IExportPresetService>();
+        presets.GetSelectionAsync().Returns(new ExportPresetSelection(null!, null!));
+        presets.GetPresetsAsync().Returns(Array.Empty<ExportPreset>());
+        return presets;
     }
 
     public static IStocktakeWorkspace CreateWorkspace(IAppPreferences preferences)

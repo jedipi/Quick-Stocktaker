@@ -9,4 +9,10 @@ public partial class DataUploadPage : ContentPage
         InitializeComponent();
         BindingContext = vm;
     }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await ((DataUploadViewModel)BindingContext).AppearingCommand.ExecuteAsync(null);
+    }
 }

@@ -25,6 +25,8 @@ namespace QuickStockTaker.Core.Data
         public static readonly string FtpUsername = "FtpUsername";
         public static readonly string FtpPassword = "FtpPassword";
         public static readonly string ProEntitlement = "ProEntitlement";
+        public static readonly string ExportPresets = "ExportPresets";
+        public static readonly string SelectedExportPreset = "SelectedExportPreset";
 
         public const string ProProductId = "quick_stocktaker_pro";
 

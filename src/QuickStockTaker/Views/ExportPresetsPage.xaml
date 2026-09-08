@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:QuickStockTaker.Core.ViewModels;assembly=QuickStockTaker.Core"
+             x:Class="QuickStockTaker.Views.ExportPresetsPage"
+             x:Name="PresetPage"
+             x:DataType="vm:ExportPresetsViewModel"
+             Title="Export presets">
+    <ContentPage.Resources>
+        <Style TargetType="Button">
+            <Setter Property="TextColor" Value="Black" />
+            <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+            <Setter Property="MinimumHeightRequest" Value="48" />
+        </Style>
+    </ContentPage.Resources>
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+            <Label Text="Custom CSV presets" FontSize="Title" FontAttributes="Bold" />
+            <Label Text="Reuse a format across your Saved Stocktakes. Default CSV always remains available." />
+            <Label Text="{Binding Message}" SemanticProperties.Description="{Binding Message}" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+            <Picker Title="Saved preset" ItemsSource="{Binding SavedPresets}"
+                    ItemDisplayBinding="{Binding Name}" x:DataType="{x:Null}"
+                    SelectedItem="{Binding SelectedPreset}" IsEnabled="{Binding CanSelect}" />
+            <VerticalStackLayout Spacing="12" IsEnabled="{Binding CanEdit}">
+                <Button Text="New preset" Command="{Binding NewPresetCommand}" />
+                <Label Text="Preset name" />
+                <Entry Text="{Binding PresetName}" MaxLength="100" Placeholder="For example: Warehouse counts"
+                       SemanticProperties.Description="Preset name" />
+                <Label Text="Delimiter" />
+                <Picker Title="Delimiter" ItemsSource="{Binding Delimiters}" SelectedIndex="{Binding DelimiterIndex}" />
+                <Label Text="Date format" />
+                <Picker Title="Date format" ItemsSource="{Binding DateFormats}" SelectedIndex="{Binding DateFormatIndex}" />
+                <Label Text="Inserted At and Updated At retain their time (HH:mm:ss)." />
+                <HorizontalStackLayout Spacing="8">
+                    <Switch IsToggled="{Binding IncludeHeader}" SemanticProperties.Description="Include header row" />
+                    <Label Text="Include header row" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <Label Text="Columns" FontAttributes="Bold" />
+                <Label Text="Select columns, edit their headers, and move them into the required order." />
+                <VerticalStackLayout Spacing="12" BindableLayout.ItemsSource="{Binding Columns}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ExportColumnViewModel">
+                            <Border Padding="10" Stroke="Gray">
+                                <VerticalStackLayout Spacing="6">
+                                    <HorizontalStackLayout Spacing="8">
+                                        <CheckBox IsChecked="{Binding Included}" SemanticProperties.Description="{Binding Field}" />
+                                        <Label Text="{Binding Field}" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+                                    <Entry Text="{Binding Header}" Placeholder="Column header" IsEnabled="{Binding Included}"
+                                           SemanticProperties.Description="Column header" />
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Button Text="Move up" Command="{Binding Source={x:Reference PresetPage}, Path=BindingContext.MoveUpCommand}"
+                                                CommandParameter="{Binding .}" x:DataType="{x:Null}" />
+                                        <Button Text="Move down" Command="{Binding Source={x:Reference PresetPage}, Path=BindingContext.MoveDownCommand}"
+                                                CommandParameter="{Binding .}" x:DataType="{x:Null}" />
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+                <Button Text="Preview CSV" Command="{Binding ShowPreviewCommand}" />
+                <Button Text="Save preset" Command="{Binding SaveCommand}" />
+                <Button Text="Delete selected preset" Command="{Binding DeleteCommand}" />
+            </VerticalStackLayout>
+            <Editor Text="{Binding Preview}" IsReadOnly="True" AutoSize="TextChanges"
+                    MinimumHeightRequest="120" SemanticProperties.Description="CSV preview" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
